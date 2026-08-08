@@ -16,7 +16,7 @@ future; pull requests are welcomed for expanding the API equivalency.
 - [x] `getTemperatureAndPressure`
 
 ### Coalitions Singleton
-- [ ] `addGroup`
+- [x] `addGroup`
   - [ ] Sea
     - [ ] Group
     - [ ] Units
@@ -66,13 +66,13 @@ should use their independent logging and tracing functions.
 - [ ] <del>`getValueDictByKey`</del>
 
 ### Land Singleton
-- [ ] `getHeight`
+- [x] `getHeight`
 - [x] `getSurfaceHeightWithSeabed`
-- [ ] `getSurfaceType`
-- [ ] `isVisible`
+- [x] `getSurfaceType`
+- [x] `isVisible`
 - [x] `getIP`
 - [x] `profile`
-- [ ] `getClosestPointOnRoads`
+- [x] `getClosestPointOnRoads`
 - [x] `findPathOnRoads`
 
 ### Mission Commands Singleton
@@ -136,22 +136,22 @@ should use their independent logging and tracing functions.
 - [x] `setUnitInternalCargo`
 
 
-- [x] `outSound`
-- [x] `outSoundForCoalition`
-- [x] `outSoundForCountry`
-- [x] `outSoundForGroup`
+- [ ] `outSound`
+- [ ] `outSoundForCoalition`
+- [ ] `outSoundForCountry`
+- [ ] `outSoundForGroup`
 - [x] `outText`
 - [x] `outTextForCoalition`
-- [x] `outTextForCountry`
+- [ ] `outTextForCountry`
 - [x] `outTextForGroup`
 - [x] `outTextForUnit`
 
-- [x] `addOtherCommand`
-- [x] `removeOtherCommand`
-- [x] `addOtherCommandForCoalition`
-- [x] `removeOtherCommandForCoalition`
-- [x] `addOtherCommandForGroup`
-- [x] `removeOtherCommandForGroup`
+- [ ] `addOtherCommand`
+- [ ] `removeOtherCommand`
+- [ ] `addOtherCommandForCoalition`
+- [ ] `removeOtherCommandForCoalition`
+- [ ] `addOtherCommandForGroup`
+- [ ] `removeOtherCommandForGroup`
 
 
 - [x] `markToAll`
@@ -356,18 +356,18 @@ Primarily enhanced with `GRPC.exporters.unit`
   - [ ] Category
   - [x] `destroy`
   - [ ] `isExists`
-  - [x] `getCategory`
-  - [x] `getTypeName`
+  - [ ] `getCategory`
+  - [ ] `getTypeName`
   - [ ] `getDesc`
   - [ ] `hasAttribute`
-  - [x] `getName`
-  - [x] `getPoint`
-  - [ ] `getPosition`
-  - [x] `getVelocity`
-  - [ ] `inAir`
+  - [ ] `getName`
+  - [ ] `getPoint`
+  - [x] `getPosition`
+  - [ ] `getVelocity`
+  - [x] `inAir`
 - [ ] `CoalitionObject` class members
-  - [x] `getCoalition`
-  - [ ] `getCountry`
+  - [ ] `getCoalition`
+  - [x] `getCountry`
 - [ ] `Unit` Class members
   - [x] `isActive`
   - [x] `getPlayerName`
@@ -396,28 +396,28 @@ Primarily enhanced with `GRPC.exporters.unit`
   - [ ] Category
   - [ ] `destroy`
   - [ ] `isExists`
-  - [x] `getCategory`
+  - [ ] `getCategory`
   - [ ] `getTypeName`
   - [ ] `getDesc`
   - [ ] `hasAttribute`
-  - [x] `getName`
-  - [x] `getPoint`
+  - [ ] `getName`
+  - [ ] `getPoint`
   - [ ] `getPosition`
   - [ ] `getVelocity`
   - [ ] `inAir`
 - [ ] `CoalitionObject` class members
-  - [x] `getCoalition`
+  - [ ] `getCoalition`
   - [ ] `getCountry`
 - [ ] `Airbase` class members
   - [ ] `getDesc`
-  - [x] `getCallsign`
-  - [x] `getUnit`
-  - [ ] `getID`
-  - [ ] `getParking`
-  - [ ] `getRunways`
+  - [ ] `getCallsign`
+  - [ ] `getUnit`
+  - [x] `getID`
+  - [x] `getParking`
+  - [x] `getRunways`
   - [ ] `getTechObjectPos`
-  - [ ] `getRadioSilentMode`
-  - [ ] `setRadioSilentMode`
+  - [x] `getRadioSilentMode`
+  - [x] `setRadioSilentMode`
 
 ### StaticObject
 
@@ -426,19 +426,19 @@ Primarily enhanced with `GRPC.exporters.unit`
   - [ ] `destroy`
   - [ ] `isExists`
   - [ ] `getCategory`
-  - [x] `getTypeName`
+  - [ ] `getTypeName`
   - [ ] `getDesc`
   - [ ] `hasAttribute`
-  - [x] `getName`
-  - [x] `getPoint`
+  - [ ] `getName`
+  - [ ] `getPoint`
   - [ ] `getPosition`
   - [ ] `getVelocity`
   - [ ] `inAir`
 - [ ] `CoalitionObject` class members
-  - [x] `getCoalition`
+  - [ ] `getCoalition`
   - [ ] `getCountry`
 - [ ] `StaticObject` Class members
-  - [x] `getID`
+  - [ ] `getID`
   - [ ] `getLife`
   - [ ] `getCargoDisplayName`
   - [ ] `getCargoWeight`
@@ -451,10 +451,10 @@ Primarily enhanced with `GRPC.exporters.unit`
 - [x] `isExist`
 - [x] `activate`
 - [x] `destroy`
-- [x] `getCategory`
-- [x] `getCoalition`
-- [x] `getName`
-- [x] `getID`
+- [ ] `getCategory`
+- [ ] `getCoalition`
+- [ ] `getName`
+- [ ] `getID`
 - [x] `getUnit`
 - [x] `getUnits`
 - [x] `getSize`
@@ -561,14 +561,3 @@ Primarily enhanced with `GRPC.exporters.unit`
 
 ### Detection
 TODO
-
-### Spot
-- [ ] (static) `createInfraRed`
-- [x] `createLaser`
-- [x] `createInfraRed`
-- [x] `destroy`
-- [ ] `getCategory`
-- [x] `getPoint`
-- [ ] `setPoint`
-- [ ] `getCode`
-- [x] `setCode`

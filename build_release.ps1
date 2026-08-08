@@ -51,6 +51,10 @@ Write-Host "Copying files to release folder..."
 
 # Server DLL
 Copy-Item (Join-Path $RepoRoot "target\release\dcs_grpc.dll") (Join-Path $ReleaseFolder "Mods\tech\DCS-gRPC\") -Force
+# Debug symbols (PDB)
+if (Test-Path (Join-Path $RepoRoot "target\release\dcs_grpc.pdb")) {
+    Copy-Item (Join-Path $RepoRoot "target\release\dcs_grpc.pdb") (Join-Path $ReleaseFolder "Mods\tech\DCS-gRPC\") -Force
+}
 
 # Lua Bridge
 Copy-Item (Join-Path $RepoRoot "lua\Hooks\*") (Join-Path $ReleaseFolder "Scripts\Hooks\") -Recurse -Force
@@ -61,14 +65,35 @@ if (Test-Path (Join-Path $RepoRoot "target\release\repl.exe")) {
     Copy-Item (Join-Path $RepoRoot "target\release\repl.exe") (Join-Path $ReleaseFolder "Tools\DCS-gRPC\") -Force
 }
 
-# Protos
+# Protos (Tools)
 Copy-Item (Join-Path $RepoRoot "protos\dcs\*") (Join-Path $ReleaseFolder "Tools\DCS-gRPC\protos\dcs\") -Recurse -Force
+
+# Protos (Docs - for reference)
+$DocsProtosDir = Join-Path $ReleaseFolder "Docs\DCS-gRPC\protos\dcs"
+New-Item -ItemType Directory -Force -Path $DocsProtosDir | Out-Null
+Copy-Item (Join-Path $RepoRoot "protos\dcs\*") $DocsProtosDir -Recurse -Force
 
 # Docs
 $DocsToCopy = @("CHANGELOG.md", "README.md", "STATUS.md")
 foreach ($Doc in $DocsToCopy) {
     if (Test-Path (Join-Path $RepoRoot $Doc)) {
         Copy-Item (Join-Path $RepoRoot $Doc) (Join-Path $ReleaseFolder "Docs\DCS-gRPC\") -Force
+    }
+}
+
+# Example Mission
+$SampleMission = Join-Path $RepoRoot "sample_release\DCS-gRPC-0.8.1\Missions\DCS-gRPC-Example.miz"
+if (Test-Path $SampleMission) {
+    Copy-Item $SampleMission (Join-Path $ReleaseFolder "Missions\") -Force
+}
+
+# Third-party tools (grpcui, grpcurl) - copy from sample_release if available
+$SampleTools = Join-Path $RepoRoot "sample_release\DCS-gRPC-0.8.1\Tools\DCS-gRPC"
+$ToolFiles = @("grpcui.exe", "grpcui-LICENSE.txt", "grpcurl.exe", "grpcurl-LICENSE.txt")
+foreach ($Tool in $ToolFiles) {
+    $ToolPath = Join-Path $SampleTools $Tool
+    if (Test-Path $ToolPath) {
+        Copy-Item $ToolPath (Join-Path $ReleaseFolder "Tools\DCS-gRPC\") -Force
     }
 }
 

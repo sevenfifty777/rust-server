@@ -45,7 +45,7 @@ end
 
 GRPC.methods.findPathOnRoads = function(params)
   local startPoint = coord.LLtoLO(params.start.lat, params.start.lon)
-  local endPoint = coord.LLtoLO(params.end.lat, params.end.lon)
+  local endPoint = coord.LLtoLO(params["end"].lat, params["end"].lon)
   
   local path = land.findPathOnRoads(params.roadType, startPoint.x, startPoint.z, endPoint.x, endPoint.z)
   local pathJson = net.lua2json(path or {})
