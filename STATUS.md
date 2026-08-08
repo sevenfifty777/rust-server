@@ -67,13 +67,13 @@ should use their independent logging and tracing functions.
 
 ### Land Singleton
 - [ ] `getHeight`
-- [ ] `getSurfaceHeightWithSeabed`
+- [x] `getSurfaceHeightWithSeabed`
 - [ ] `getSurfaceType`
 - [ ] `isVisible`
-- [ ] `getIP`
-- [ ] `profile`
+- [x] `getIP`
+- [x] `profile`
 - [ ] `getClosestPointOnRoads`
-- [ ] `findPathOnRoads`
+- [x] `findPathOnRoads`
 
 ### Mission Commands Singleton
 - [x] `addCommand`
@@ -136,22 +136,22 @@ should use their independent logging and tracing functions.
 - [ ] `setUnitInternalCargo`
 
 
-- [ ] `outSound`
-- [ ] `outSoundForCoalition`
-- [ ] `outSoundForCountry`
-- [ ] `outSoundForGroup`
+- [x] `outSound`
+- [x] `outSoundForCoalition`
+- [x] `outSoundForCountry`
+- [x] `outSoundForGroup`
 - [x] `outText`
 - [x] `outTextForCoalition`
-- [ ] `outTextForCountry`
+- [x] `outTextForCountry`
 - [x] `outTextForGroup`
 - [x] `outTextForUnit`
 
-- [ ] `addOtherCommand`
-- [ ] `removeOtherCommand`
-- [ ] `addOtherCommandForCoalition`
-- [ ] `removeOtherCommandForCoalition`
-- [ ] `addOtherCommandForGroup`
-- [ ] `removeOtherCommandForGroup`
+- [x] `addOtherCommand`
+- [x] `removeOtherCommand`
+- [x] `addOtherCommandForCoalition`
+- [x] `removeOtherCommandForCoalition`
+- [x] `addOtherCommandForGroup`
+- [x] `removeOtherCommandForGroup`
 
 
 - [x] `markToAll`
@@ -213,7 +213,7 @@ should use their independent logging and tracing functions.
 - [x] `S_EVENT_BASE_CAPTURED`
 - [x] `S_EVENT_MISSION_START`
 - [x] `S_EVENT_MISSION_END`
-- [ ] `S_EVENT_TOOK_CONTROL`
+- [x] `S_EVENT_TOOK_CONTROL`
 - [x] `S_EVENT_REFUELING_STOP`
 - [x] `S_EVENT_BIRTH`
 - [x] `S_EVENT_HUMAN_FAILURE`
@@ -222,7 +222,7 @@ should use their independent logging and tracing functions.
 - [x] `S_EVENT_ENGINE_SHUTDOWN`
 - [x] `S_EVENT_PLAYER_ENTER_UNIT`
 - [x] `S_EVENT_PLAYER_LEAVE_UNIT`
-- [ ] `S_EVENT_PLAYER_COMMENT`
+- [x] `S_EVENT_PLAYER_COMMENT`
 - [x] `S_EVENT_SHOOTING_START`
 - [x] `S_EVENT_SHOOTING_END`
 - [x] `S_EVENT_MARK_ADDED`
@@ -235,9 +235,9 @@ should use their independent logging and tracing functions.
 - [ ] `S_EVENT_PARATROOPER_LENDING`
 - [x] `S_EVENT_DISCARD_CHAIR_AFTER_EJECTION`
 - [x] `S_EVENT_WEAPON_ADD`
-- [ ] `S_EVENT_TRIGGER_ZONE`
+- [x] `S_EVENT_TRIGGER_ZONE`
 - [x] `S_EVENT_LANDING_QUALITY_MARK`
-- [ ] `S_EVENT_BDA`
+- [x] `S_EVENT_BDA`
 - [ ] <strike>`S_EVENT_MAX`</strike> Not a real event
 
 ### DCS Control Functions
@@ -268,17 +268,17 @@ should use their independent logging and tracing functions.
 - [x] `exitProcess`
 - [x] `isMultiplayer`
 - [x] `isServer`
-- [ ] `getModelTime`
+- [x] `getModelTime`
 - [x] `getRealTime`
-- [ ] `getMissionOptions`
-- [ ] `getAvailableCoalitions`
-- [ ] `getAvailableSlots`
-- [ ] `getCurrentMission`
+- [x] `getMissionOptions`
+- [x] `getAvailableCoalitions`
+- [x] `getAvailableSlots`
+- [x] `getCurrentMission`
 - [x] `getMissionName`
 - [x] `getMissionDescription`
 - [x] `getMissionFilename`
-- [ ] `getMissionResult`
-- [ ] `getUnitProperty`
+- [x] `getMissionResult`
+- [x] `getUnitProperty`
 - [x] `getUnitType`
 - [ ] `getUnitTypeAttribute`
 - [ ] `writeDebriefing`
@@ -384,7 +384,7 @@ Primarily enhanced with `GRPC.exporters.unit`
   - [ ] `getRadar`
   - [x] `getDrawArgumentValue`
   - [ ] `getNearestCargos`
-  - [ ] `enableEmission`
+  - [x] `enableEmission`
   - [ ] `getDescentCateogry`
   - [ ] (static) `getByName`
   - [ ] (static) `getDescByName`
@@ -553,11 +553,11 @@ TODO
 
 ### Spot
 - [ ] (static) `createInfraRed`
-- [ ] `createLaser`
-- [ ] `createInfraRed`
-- [ ] `destroy`
+- [x] `createLaser`
+- [x] `createInfraRed`
+- [x] `destroy`
 - [ ] `getCategory`
-- [ ] `getPoint`
+- [x] `getPoint`
 - [ ] `setPoint`
 - [ ] `getCode`
-- [ ] `setCode`
+- [x] `setCode`
