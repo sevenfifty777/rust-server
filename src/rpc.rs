@@ -16,6 +16,7 @@ mod controller;
 mod custom;
 mod group;
 mod hook;
+mod land;
 mod metadata;
 mod mission;
 mod net;
@@ -23,7 +24,10 @@ mod srs;
 mod timer;
 mod trigger;
 mod unit;
+mod warehouse;
+mod weapon;
 mod world;
+mod spot;
 
 #[derive(Clone)]
 pub struct MissionRpc {

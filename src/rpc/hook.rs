@@ -161,4 +161,60 @@ impl HookService for HookRpc {
         let res = self.request("getBallisticsCount", request).await?;
         Ok(Response::new(res))
     }
+
+    async fn get_model_time(
+        &self,
+        request: Request<hook::v0::GetModelTimeRequest>,
+    ) -> Result<Response<hook::v0::GetModelTimeResponse>, Status> {
+        let res = self.request("getModelTime", request).await?;
+        Ok(Response::new(res))
+    }
+
+    async fn get_mission_options(
+        &self,
+        request: Request<hook::v0::GetMissionOptionsRequest>,
+    ) -> Result<Response<hook::v0::GetMissionOptionsResponse>, Status> {
+        let res = self.request("getMissionOptions", request).await?;
+        Ok(Response::new(res))
+    }
+
+    async fn get_current_mission(
+        &self,
+        request: Request<hook::v0::GetCurrentMissionRequest>,
+    ) -> Result<Response<hook::v0::GetCurrentMissionResponse>, Status> {
+        let res = self.request("getCurrentMission", request).await?;
+        Ok(Response::new(res))
+    }
+
+    async fn get_available_slots(
+        &self,
+        request: Request<hook::v0::GetAvailableSlotsRequest>,
+    ) -> Result<Response<hook::v0::GetAvailableSlotsResponse>, Status> {
+        let res = self.request("getAvailableSlots", request).await?;
+        Ok(Response::new(res))
+    }
+
+    async fn get_available_coalitions(
+        &self,
+        request: Request<hook::v0::GetAvailableCoalitionsRequest>,
+    ) -> Result<Response<hook::v0::GetAvailableCoalitionsResponse>, Status> {
+        let res = self.request("getAvailableCoalitions", request).await?;
+        Ok(Response::new(res))
+    }
+
+    async fn get_mission_result(
+        &self,
+        request: Request<hook::v0::GetMissionResultRequest>,
+    ) -> Result<Response<hook::v0::GetMissionResultResponse>, Status> {
+        let res = self.request("getMissionResult", request).await?;
+        Ok(Response::new(res))
+    }
+
+    async fn get_unit_property(
+        &self,
+        request: Request<hook::v0::GetUnitPropertyRequest>,
+    ) -> Result<Response<hook::v0::GetUnitPropertyResponse>, Status> {
+        let res = self.request("getUnitProperty", request).await?;
+        Ok(Response::new(res))
+    }
 }

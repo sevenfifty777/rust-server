@@ -125,15 +125,15 @@ should use their independent logging and tracing functions.
 ### Trigger Service
 - [x] `getUserFlag`
 - [x] `setUserFlag`
-- [ ] `getZone`
+- [x] `getZone`
 - [x] `explosion`
 - [x] `smoke`
-- [ ] `effectSmokeBig`
+- [x] `effectSmokeBig`
 - [x] `illuminationBomb`
 - [x] `signalFlare`
 - [ ] `radioTransmission`
 - [ ] `stopRadioTransmission`
-- [ ] `setUnitInternalCargo`
+- [x] `setUnitInternalCargo`
 
 
 - [x] `outSound`
@@ -160,29 +160,30 @@ should use their independent logging and tracing functions.
 - [x] `removeMark`
 - [x] `markupToAll`
 - [x] `markupToCoalition`
-- [ ] `lineToAll`
-- [ ] `circleToAll`
-- [ ] `rectToAll`
-- [ ] `quadToAll`
-- [ ] `textToAll`
-- [ ] `arrowToAll`
-- [ ] `setMarkupRadius`
-- [ ] `setMarkupText`
-- [ ] `setMarkupFontSize`
-- [ ] `setMarkupColor`
-- [ ] `setMarkupColorFill`
-- [ ] `setMarkupTypeLine`
-- [ ] `setMarkupPositionEnd`
+- [x] `lineToAll`
+- [x] `circleToAll`
+- [x] `rectToAll`
+- [x] `quadToAll`
+- [x] `textToAll`
+- [x] `arrowToAll`
+- [x] `setMarkupRadius`
+- [x] `setMarkupText`
+- [x] `setMarkupFontSize`
+- [x] `setMarkupColor`
+- [x] `setMarkupColorFill`
+- [x] `setMarkupTypeLine`
+- [x] `setMarkupPositionEnd`
+- [x] `setMarkupPositionStart`
 
 
-- [ ] `setAITask`
-- [ ] `pushAITask`
-- [ ] `activateGroup`
-- [ ] `deactivateGroup`
-- [ ] `setGroupAIOn`
-- [ ] `setGroupAIOff`
-- [ ] `groupStopMoving`
-- [ ] `groupContinueMoving`
+- [x] `setAITask`
+- [x] `pushAITask`
+- [x] `activateGroup`
+- [x] `deactivateGroup`
+- [x] `setGroupAIOn`
+- [x] `setGroupAIOff`
+- [x] `groupStopMoving`
+- [x] `groupContinueMoving`
 
 
 ### Voice Chat
@@ -308,25 +309,25 @@ should use their independent logging and tracing functions.
 
 ### Weapon
 
-- [ ] `Object` class members
+- [x] `Object` class members
   - [ ] Category
-  - [ ] `destroy`
-  - [ ] `isExists`
-  - [ ] `getCategory`
+  - [x] `destroy`
+  - [x] `isExist`
+  - [x] `getCategory`
   - [x] `getTypeName`
-  - [ ] `getDesc`
+  - [x] `getDesc`
   - [ ] `hasAttribute`
   - [x] `getName`
   - [x] `getPoint`
-  - [ ] `getPosition`
-  - [ ] `getVelocity`
-  - [ ] `inAir`
-- [ ] `CoalitionObject` class members
-  - [ ] `getCoalition`
-  - [ ] `getCountry`
-- [ ] `Weapon` class members
-  - [ ] `getLauncher`
-  - [ ] `getTarget`
+  - [x] `getPosition`
+  - [x] `getVelocity`
+  - [x] `inAir`
+- [x] `CoalitionObject` class members
+  - [x] `getCoalition`
+  - [x] `getCountry`
+- [x] `Weapon` class members
+  - [x] `getLauncher`
+  - [x] `getTarget`
   - [ ] `Desc.category`
   - [ ] `Desc.warhead.type`
   - [ ] `Desc.warhead.mass`
@@ -368,26 +369,26 @@ Primarily enhanced with `GRPC.exporters.unit`
   - [x] `getCoalition`
   - [ ] `getCountry`
 - [ ] `Unit` Class members
-  - [ ] `isActive`
-  - [ ] `getPlayerName`
+  - [x] `isActive`
+  - [x] `getPlayerName`
   - [x] `getID`
-  - [ ] `getNumber`
+  - [x] `getNumber`
   - [ ] `getController`
-  - [ ] `getGroup`
+  - [x] `getGroup`
   - [x] `getCallsign`
-  - [ ] `getLife`
-  - [ ] `getLife0`
-  - [ ] `getFuel`
-  - [ ] `getAmmo`
-  - [ ] `getSensors`
-  - [ ] `hasSensors`
-  - [ ] `getRadar`
+  - [x] `getLife`
+  - [x] `getLife0`
+  - [x] `getFuel`
+  - [x] `getAmmo`
+  - [x] `getSensors`
+  - [x] `hasSensors`
+  - [x] `getRadar`
   - [x] `getDrawArgumentValue`
-  - [ ] `getNearestCargos`
+  - [x] `getNearestCargos`
   - [x] `enableEmission`
-  - [ ] `getDescentCateogry`
-  - [ ] (static) `getByName`
-  - [ ] (static) `getDescByName`
+  - [x] `getDescentCapacity`
+  - [x] (static) `getByName`
+  - [x] (static) `getDescByName`
 
 ### Airbase
 
@@ -446,32 +447,42 @@ Primarily enhanced with `GRPC.exporters.unit`
   - [ ] (static) `getDescByName`
 
 ### Group
-- [ ] (static) `getByName`
-- [ ] `isExist`
+- [x] (static) `getByName`
+- [x] `isExist`
 - [x] `activate`
 - [x] `destroy`
 - [x] `getCategory`
 - [x] `getCoalition`
 - [x] `getName`
 - [x] `getID`
-- [ ] `getUnit`
-- [ ] `getUnits`
-- [ ] `getSize`
+- [x] `getUnit`
+- [x] `getUnits`
+- [x] `getSize`
 - [ ] `getController`
-- [ ] `enableEmission`
+- [x] `enableEmission`
+
+### Spot
+- [x] (static) `createLaser`
+- [x] (static) `createInfraRed`
+- [x] `destroy`
+- [x] `getCategory`
+- [x] `getPoint`
+- [x] `setPoint`
+- [x] `getCode`
+- [x] `setCode`
 
 ### Controller
-- [ ] `setTask`
-- [ ] `resetTask`
-- [ ] `pushTask`
-- [ ] `popTask`
-- [ ] `hasTask`
-- [ ] `setCommand`
-- [ ] `setOption`
-- [ ] `setOnOff`
-- [ ] `knowTarget`
-- [ ] `isTargetDetected`
-- [ ] `getDetectedTargets`
+- [x] `setTask`
+- [x] `resetTask`
+- [x] `pushTask`
+- [x] `popTask`
+- [x] `hasTask`
+- [x] `setCommand`
+- [x] `setOption`
+- [x] `setOnOff`
+- [x] `knowTarget`
+- [x] `isTargetDetected`
+- [x] `getDetectedTargets`
 - [Main Tasks](https://wiki.hoggitworld.com/view/DCS_task_mission)
   - [ ] `mission`
   - [ ] `AttackGroup`

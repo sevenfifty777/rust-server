@@ -254,3 +254,166 @@ GRPC.methods.getSensors = function(params)
 
   return GRPC.success({ sensors = categories })
 end
+
+GRPC.methods.getUnitLife = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    life = unit:getLife(),
+    life0 = unit:getLife0(),
+  })
+end
+
+GRPC.methods.getUnitFuel = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    fuel = unit:getFuel(),
+  })
+end
+
+GRPC.methods.getUnitAmmo = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  local ammo = unit:getAmmo()
+  local result = {}
+  if ammo then
+    for i, a in ipairs(ammo) do
+      result[i] = {
+        count = a.count,
+        typeName = a.desc and a.desc.typeName or "",
+        displayName = a.desc and a.desc.displayName or "",
+        category = a.desc and a.desc.category or 0,
+        missileCategory = a.desc and a.desc.missileCategory,
+        guidance = a.desc and a.desc.guidance,
+      }
+    end
+  end
+  return GRPC.success({ ammo = result })
+end
+
+GRPC.methods.getUnitInAir = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    inAir = unit:inAir(),
+  })
+end
+
+GRPC.methods.getUnitIsActive = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    isActive = unit:isActive(),
+  })
+end
+
+GRPC.methods.getUnitCountry = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    country = unit:getCountry(),
+  })
+end
+
+GRPC.methods.getUnitNumber = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    number = unit:getNumber(),
+  })
+end
+
+GRPC.methods.getUnitGroup = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  local group = unit:getGroup()
+  if group == nil then
+    return GRPC.errorNotFound("group not found")
+  end
+  return GRPC.success({
+    group = GRPC.exporters.group(group),
+  })
+end
+
+GRPC.methods.getUnitLife0 = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    life0 = unit:getLife0(),
+  })
+end
+
+GRPC.methods.unitHasSensors = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    hasSensors = unit:hasSensors(),
+  })
+end
+
+GRPC.methods.getUnitNearestCargos = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  
+  local cargos = unit:getNearestCargos()
+  local result = {}
+  if cargos ~= nil then
+    for i, cargo in ipairs(cargos) do
+      result[i] = GRPC.exporters.cargo(cargo)
+    end
+  end
+
+  return GRPC.success({
+    cargos = result,
+  })
+end
+
+GRPC.methods.getUnitDescentCapacity = function(params)
+  local unit = Unit.getByName(params.name)
+  if unit == nil then
+    return GRPC.errorNotFound("unit does not exist")
+  end
+  return GRPC.success({
+    capacity = unit:getDescentCapacity(),
+  })
+end
+
+GRPC.methods.getUnitDescByName = function(params)
+  -- This is a static method Unit.getDescByName(typeName)
+  local desc = Unit.getDescByName(params.typeName)
+  if desc == nil then
+    return GRPC.errorNotFound("unit type descriptor not found")
+  end
+  
+  local status, result = pcall(net.lua2json, desc)
+  if not status then
+    return GRPC.errorInternal("failed to encode descriptor to JSON")
+  end
+
+  return GRPC.success({
+    descJson = result,
+  })
+end

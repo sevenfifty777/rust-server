@@ -11,15 +11,19 @@ use stubs::controller::v0::controller_service_server::ControllerServiceServer;
 use stubs::custom::v0::custom_service_server::CustomServiceServer;
 use stubs::group::v0::group_service_server::GroupServiceServer;
 use stubs::hook::v0::hook_service_server::HookServiceServer;
+use stubs::land::v0::land_service_server::LandServiceServer;
 use stubs::metadata::v0::metadata_service_server::MetadataServiceServer;
 use stubs::mission::v0::StreamEventsResponse;
 use stubs::mission::v0::mission_service_server::MissionServiceServer;
 use stubs::net::v0::net_service_server::NetServiceServer;
+use stubs::spot::v0::spot_service_server::SpotServiceServer;
 pub use stubs::srs::v0::TransmitRequest;
 use stubs::srs::v0::srs_service_server::{SrsService, SrsServiceServer};
 use stubs::timer::v0::timer_service_server::TimerServiceServer;
 use stubs::trigger::v0::trigger_service_server::TriggerServiceServer;
 use stubs::unit::v0::unit_service_server::UnitServiceServer;
+use stubs::warehouse::v0::warehouse_service_server::WarehouseServiceServer;
+use stubs::weapon::v0::weapon_service_server::WeaponServiceServer;
 use stubs::world::v0::world_service_server::WorldServiceServer;
 use tokio::runtime::{Handle, Runtime};
 use tokio::sync::oneshot::{self, Receiver};
@@ -262,9 +266,11 @@ async fn try_run(
         .add_service(CustomServiceServer::new(mission_rpc.clone()))
         .add_service(GroupServiceServer::new(mission_rpc.clone()))
         .add_service(HookServiceServer::new(hook_rpc))
+        .add_service(LandServiceServer::new(mission_rpc.clone()))
         .add_service(MetadataServiceServer::new(mission_rpc.clone()))
         .add_service(MissionServiceServer::new(mission_rpc.clone()))
         .add_service(NetServiceServer::new(mission_rpc.clone()))
+        .add_service(SpotServiceServer::new(mission_rpc.clone()))
         .add_service(TimerServiceServer::new(mission_rpc.clone()))
         .add_service(TriggerServiceServer::new(mission_rpc.clone()))
         .add_service(SrsServiceServer::new(Srs::new(
@@ -275,6 +281,8 @@ async fn try_run(
             shutdown_signal.clone(),
         )))
         .add_service(UnitServiceServer::new(mission_rpc.clone()))
+        .add_service(WarehouseServiceServer::new(mission_rpc.clone()))
+        .add_service(WeaponServiceServer::new(mission_rpc.clone()))
         .add_service(WorldServiceServer::new(mission_rpc))
         .serve_with_shutdown(addr, after_shutdown.map(|_| ()))
         .await?;

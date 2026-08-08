@@ -59,6 +59,12 @@ GRPC.onDcsEvent = function(event)
     return nil
 
   elseif event.id == world.event.S_EVENT_SHOT then
+    if GRPC.ActiveWeapons and event.weapon then
+      local w = event.weapon
+      if w.getName and w:getName() then
+        GRPC.ActiveWeapons[w:getName()] = w
+      end
+    end
     return {
       time = event.time,
       event = {
@@ -196,7 +202,14 @@ GRPC.onDcsEvent = function(event)
       },
     }
 
-  -- S_EVENT_TOOK_CONTROL: not implemented as apparently not used anymore
+  elseif event.id == world.event.S_EVENT_TOOK_CONTROL then
+    return {
+      time = event.time,
+      event = {
+        type = "tookControl",
+        initiator = {initiator = typed_exporter(event.initiator)},
+      },
+    }
 
   elseif event.id == world.event.S_EVENT_REFUELING_STOP then
     return {
@@ -273,7 +286,15 @@ GRPC.onDcsEvent = function(event)
       },
     }
 
-  -- S_EVENT_PLAYER_COMMENT: not implemented as apparently not used anymore
+  elseif event.id == world.event.S_EVENT_PLAYER_COMMENT then
+    return {
+      time = event.time,
+      event = {
+        type = "playerComment",
+        initiator = {initiator = typed_exporter(event.initiator)},
+        comment = event.comment,
+      },
+    }
 
   elseif event.id == world.event.S_EVENT_SHOOTING_START then
     return {
@@ -410,7 +431,14 @@ GRPC.onDcsEvent = function(event)
       },
     }
 
-  -- S_EVENT_TRIGGER_ZONE: apparently not used yet
+  elseif event.id == world.event.S_EVENT_TRIGGER_ZONE then
+    return {
+      time = event.time,
+      event = {
+        type = "triggerZone",
+        initiator = {initiator = typed_exporter(event.initiator)},
+      },
+    }
 
   elseif event.id == world.event.S_EVENT_LANDING_QUALITY_MARK then
     return {
@@ -423,7 +451,15 @@ GRPC.onDcsEvent = function(event)
       },
     }
 
-  -- S_EVENT_BDA: apparently not used yet
+  elseif event.id == world.event.S_EVENT_BDA then
+    return {
+      time = event.time,
+      event = {
+        type = "bda",
+        initiator = {initiator = typed_exporter(event.initiator)},
+        target = {target = typed_exporter(event.target)},
+      },
+    }
   -- S_EVENT_MAX: assumingly an end marker for the events enum and thus not a real event
 
   else

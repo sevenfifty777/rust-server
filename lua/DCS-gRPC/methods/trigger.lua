@@ -204,3 +204,220 @@ GRPC.methods.signalFlare = function(params)
 
   return GRPC.success({})
 end
+
+GRPC.methods.effectSmokeBig = function(params)
+  local point = coord.LLtoLO(params.position.lat, params.position.lon)
+  point.y = land.getHeight({x = point.x, y = point.z})
+  
+  -- The preset maps directly to the enum values in DCS (1 to 8)
+  local density = params.density or 1.0
+  if density <= 0.0 then density = 1.0 end
+  
+  local name = params.name
+  if not name or name == "" then
+    name = tostring(math.random(1000000, 9999999))
+  end
+  
+  trigger.action.effectSmokeBig(point, params.preset, density, name)
+  return GRPC.success({})
+end
+
+GRPC.methods.effectSmokeStop = function(params)
+  trigger.action.effectSmokeStop(params.name)
+  return GRPC.success({})
+end
+
+GRPC.methods.setUnitInternalCargo = function(params)
+  trigger.action.setUnitInternalCargo(params.unitName, params.mass)
+  return GRPC.success({})
+end
+
+GRPC.methods.activateGroup = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.activateGroup(group)
+  return GRPC.success({})
+end
+
+GRPC.methods.deactivateGroup = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.deactivateGroup(group)
+  return GRPC.success({})
+end
+
+GRPC.methods.setGroupAIOn = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.setGroupAION(group)
+  return GRPC.success({})
+end
+
+GRPC.methods.setGroupAIOff = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.setGroupAIOFF(group)
+  return GRPC.success({})
+end
+
+GRPC.methods.groupStopMoving = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.groupStopMoving(group)
+  return GRPC.success({})
+end
+
+GRPC.methods.groupContinueMoving = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.groupContinueMoving(group)
+  return GRPC.success({})
+end
+
+GRPC.methods.setAITask = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.setAITask(group, params.taskIndex)
+  return GRPC.success({})
+end
+
+GRPC.methods.pushAITask = function(params)
+  local group = Group.getByName(params.groupName)
+  if group == nil then
+    return GRPC.errorNotFound("could not find group")
+  end
+  trigger.action.pushAITask(group, params.taskIndex)
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupRadius = function(params)
+  trigger.action.setMarkupRadius(params.id, params.radius)
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupText = function(params)
+  trigger.action.setMarkupText(params.id, params.text)
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupFontSize = function(params)
+  trigger.action.setMarkupFontSize(params.id, params.fontSize)
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupColor = function(params)
+  trigger.action.setMarkupColor(params.id, {params.color.red, params.color.green, params.color.blue, params.color.alpha})
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupColorFill = function(params)
+  trigger.action.setMarkupColorFill(params.id, {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha})
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupTypeLine = function(params)
+  trigger.action.setMarkupTypeLine(params.id, params.lineType)
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupPositionEnd = function(params)
+  local point = coord.LLtoLO(params.position.lat, params.position.lon, params.position.alt)
+  trigger.action.setMarkupPositionEnd(params.id, point)
+  return GRPC.success({})
+end
+
+GRPC.methods.setMarkupPositionStart = function(params)
+  local point = coord.LLtoLO(params.position.lat, params.position.lon, params.position.alt)
+  trigger.action.setMarkupPositionStart(params.id, point)
+  return GRPC.success({})
+end
+
+GRPC.methods.lineToAll = function(params)
+  local startPoint = coord.LLtoLO(params.startPoint.lat, params.startPoint.lon, params.startPoint.alt)
+  local endPoint = coord.LLtoLO(params.endPoint.lat, params.endPoint.lon, params.endPoint.alt)
+  local idx = getMarkId()
+  local color = {params.color.red, params.color.green, params.color.blue, params.color.alpha}
+  local coalition = params.coalition - 1
+  trigger.action.lineToAll(coalition, idx, startPoint, endPoint, color, params.lineType, params.readOnly, params.message)
+  return GRPC.success({id = idx})
+end
+
+GRPC.methods.circleToAll = function(params)
+  local center = coord.LLtoLO(params.center.lat, params.center.lon, params.center.alt)
+  local idx = getMarkId()
+  local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
+  local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
+  local coalition = params.coalition - 1
+  trigger.action.circleToAll(coalition, idx, center, params.radius, color, fillColor, params.lineType, params.readOnly, params.message)
+  return GRPC.success({id = idx})
+end
+
+GRPC.methods.rectToAll = function(params)
+  local startPoint = coord.LLtoLO(params.startPoint.lat, params.startPoint.lon, params.startPoint.alt)
+  local endPoint = coord.LLtoLO(params.endPoint.lat, params.endPoint.lon, params.endPoint.alt)
+  local idx = getMarkId()
+  local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
+  local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
+  local coalition = params.coalition - 1
+  trigger.action.rectToAll(coalition, idx, startPoint, endPoint, color, fillColor, params.lineType, params.readOnly, params.message)
+  return GRPC.success({id = idx})
+end
+
+GRPC.methods.quadToAll = function(params)
+  local p1 = coord.LLtoLO(params.p1.lat, params.p1.lon, params.p1.alt)
+  local p2 = coord.LLtoLO(params.p2.lat, params.p2.lon, params.p2.alt)
+  local p3 = coord.LLtoLO(params.p3.lat, params.p3.lon, params.p3.alt)
+  local p4 = coord.LLtoLO(params.p4.lat, params.p4.lon, params.p4.alt)
+  local idx = getMarkId()
+  local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
+  local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
+  local coalition = params.coalition - 1
+  trigger.action.quadToAll(coalition, idx, p1, p2, p3, p4, color, fillColor, params.lineType, params.readOnly, params.message)
+  return GRPC.success({id = idx})
+end
+
+GRPC.methods.textToAll = function(params)
+  local startPoint = coord.LLtoLO(params.startPoint.lat, params.startPoint.lon, params.startPoint.alt)
+  local idx = getMarkId()
+  local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
+  local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
+  local coalition = params.coalition - 1
+  trigger.action.textToAll(coalition, idx, startPoint, color, fillColor, params.fontSize, params.readOnly, params.text)
+  return GRPC.success({id = idx})
+end
+
+GRPC.methods.arrowToAll = function(params)
+  local startPoint = coord.LLtoLO(params.startPoint.lat, params.startPoint.lon, params.startPoint.alt)
+  local endPoint = coord.LLtoLO(params.endPoint.lat, params.endPoint.lon, params.endPoint.alt)
+  local idx = getMarkId()
+  local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
+  local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
+  local coalition = params.coalition - 1
+  trigger.action.arrowToAll(coalition, idx, startPoint, endPoint, color, fillColor, params.lineType, params.readOnly, params.message)
+  return GRPC.success({id = idx})
+end
+
+GRPC.methods.getZone = function(params)
+  local zone = trigger.misc.getZone(params.name)
+  if zone == nil then
+    return GRPC.errorNotFound("zone '" .. params.name .. "' not found")
+  end
+  return GRPC.success({
+    position = GRPC.exporters.position(zone.point),
+    radius = zone.radius,
+  })
+end

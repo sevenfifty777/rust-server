@@ -240,3 +240,96 @@ GRPC.methods.searchObjects = function(params)
   GRPC.logInfo("searchObjects: returning objects count="..tostring(#result))
   return GRPC.success({objects = result})
 end
+
+GRPC.methods.getAirbaseParking = function(params)
+  local airbase = Airbase.getByName(params.name)
+  if airbase == nil then
+    return GRPC.errorNotFound("airbase '" .. params.name .. "' not found")
+  end
+  local parking = airbase:getParking(params.available or false)
+  local result = {}
+  if parking then
+    for i, p in ipairs(parking) do
+      local lat, lon, alt = coord.LOtoLL(p.vTerminalPos)
+      result[i] = {
+        termIndex = p.Term_Index,
+        termType = p.Term_Type,
+        position = { lat = lat, lon = lon, alt = alt },
+        distanceToRunway = p.fDistToRW,
+        toAc = p.TO_AC,
+      }
+    end
+  end
+  return GRPC.success({ parking = result })
+end
+
+GRPC.methods.getAirbaseRunways = function(params)
+  local airbase = Airbase.getByName(params.name)
+  if airbase == nil then
+    return GRPC.errorNotFound("could not find airbase")
+  end
+
+  local runways = airbase:getRunways()
+  local out = {}
+
+  for i, r in ipairs(runways) do
+    local lat, lon, alt = coord.LOtoLL(r.position)
+    table.insert(out, {
+      name = r.name,
+      course = r.course,
+      length = r.length,
+      width = r.width,
+      position = {
+        lat = lat,
+        lon = lon,
+        alt = alt
+      }
+    })
+  end
+
+  return GRPC.success({
+    runways = out
+  })
+end
+
+GRPC.methods.getAirbaseID = function(params)
+  local airbase = Airbase.getByName(params.name)
+  if airbase == nil then
+    return GRPC.errorNotFound("could not find airbase")
+  end
+
+  return GRPC.success({
+    id = airbase:getID()
+  })
+end
+
+GRPC.methods.getAirbaseRadioSilentMode = function(params)
+  local airbase = Airbase.getByName(params.name)
+  if airbase == nil then
+    return GRPC.errorNotFound("could not find airbase")
+  end
+
+  return GRPC.success({
+    silent = airbase:getRadioSilentMode()
+  })
+end
+
+GRPC.methods.setAirbaseRadioSilentMode = function(params)
+  local airbase = Airbase.getByName(params.name)
+  if airbase == nil then
+    return GRPC.errorNotFound("could not find airbase")
+  end
+
+  airbase:setRadioSilentMode(params.silent)
+  return GRPC.success({})
+end
+
+GRPC.methods.setAirbaseCoalition = function(params)
+  local airbase = Airbase.getByName(params.name)
+  if airbase == nil then
+    return GRPC.errorNotFound("could not find airbase")
+  end
+
+  airbase:setCoalition(params.coalition)
+  return GRPC.success({})
+end

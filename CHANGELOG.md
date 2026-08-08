@@ -6,26 +6,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- UnitService: `GetSensors` RPC to expose DCS `Unit:getSensors()` data (radar/IRST/RWR/optical).
-- Protos for sensors: `SensorCategory`, `Sensor`, `RadarSensor`, `IrstSensor`, `RwrSensor`, `OpticalSensor`, `DetectionDistanceAir`, `Hemisphere`.
-- Lua: `GRPC.methods.getSensors` implementation.
-- World: `SearchObjects` RPC mirroring `world.searchObjects` with full volume support (sphere, box, segment, pyramid).
-  - Request uses `dcs.common.v0.ObjectCategory[]` and `SearchVolume` (with `InputPosition` for geo points).
-  - Response returns `dcs.common.v0.Target[]` for consistent object union across services.
-  - Lua implementation unwraps grpcui oneof wrapper (`volume.shape`) and supports both wrapped and flattened shapes.
-- Added `coalition`, `player_name`, and `to_all` fields to `PlayerSendChatEvent`.
+No unreleased changes — all pending items are included in **0.9.0**.
 
-### Fixed
-- Fixed output of `AtmosphereService.GetWind` to match Mission Editor settings.
+## [0.9.0] - 2026-08-08
+
+### Added
+- `WeaponService`: new gRPC service exposing DCS `Weapon` / `CoalitionObject` / `Object` functionality (RPCs include `GetLauncher`, `GetTarget`, `GetCategory`, `GetDesc`, `GetPosition`, `GetVelocity`, `InAir`, `IsExist`, `Destroy`, `GetCoalition`, `GetCountry`, `GetName`, `GetTypeName`, `GetPoint`). Note: due to DCS limitations weapons are tracked via event hooks; the Lua bridge caches active weapons (e.g. via `S_EVENT_SHOT`) for later queries.
+- `TriggerService` markup/drawing APIs: `LineToAll`, `CircleToAll`, `RectToAll`, `QuadToAll`, `TextToAll`, `ArrowToAll`, plus markup helpers: `SetMarkupRadius`, `SetMarkupText`, `SetMarkupFontSize`, `SetMarkupColor`, `SetMarkupColorFill`, `SetMarkupTypeLine`, `SetMarkupPositionEnd`. Added `Color` message and `LineType` enum to the protos.
+- `LandService`: terrain and surface APIs (`GetTerrainHeight`, `GetSurfaceType`, `IsVisible`, `GetClosestPointOnRoads`) to support elevation queries, LOS checks, and road snapping.
+- Unit data APIs added to `UnitService`: `GetUnitLife`, `GetUnitLife0`, `GetUnitFuel`, `GetUnitAmmo`, `GetUnitInAir`, `GetUnitIsActive`, `GetUnitCountry` for richer unit status reporting.
+- Airbase enrichment: `GetAirbaseParking` and `GetAirbaseRunways` to expose parking spots and runway metadata for ATC/marshalling features.
+- Group APIs: `GetGroupSize` and `GroupExists` to expose group membership and existence checks.
+- Corresponding protobuf definitions, Rust gRPC handlers, and Lua method implementations for the above services were added/updated.
+ - UnitService: `GetSensors` RPC to expose DCS `Unit:getSensors()` data (radar/IRST/RWR/optical).
+ - Protos for sensors: `SensorCategory`, `Sensor`, `RadarSensor`, `IrstSensor`, `RwrSensor`, `OpticalSensor`, `DetectionDistanceAir`, `Hemisphere`.
+ - Lua: `GRPC.methods.getSensors` implementation.
+ - World: `SearchObjects` RPC mirroring `world.searchObjects` with full volume support (sphere, box, segment, pyramid).
+   - Request uses `dcs.common.v0.ObjectCategory[]` and `SearchVolume` (with `InputPosition` for geo points).
+   - Response returns `dcs.common.v0.Target[]` for consistent object union across services.
+   - Lua implementation unwraps grpcui oneof wrapper (`volume.shape`) and supports both wrapped and flattened shapes.
+ - Added `coalition`, `player_name`, and `to_all` fields to `PlayerSendChatEvent`.
 
 ### Changed
-- Changed `weapon` and `unknown` object exporters to return the `id_` (runtime ID) property. For `unknown` objects it is a fall-back condition used in cases where the object has no name.
-- Changed `dcs.common.v0.Unit`, `dcs.common.v0.Weapon`, and `dcs.common.v0.Static` to set the `type` field as `Optional` as DCS doesn't always enforce this and the resulting log bloat was excessive.
-- Changed catch-all for objects whose category could not be determined to no longer include `getID` in log message as not all object types implement the method.
-- Changed `GRPC.onDCSEvent` to protect against an empty initiator for `S_EVENT_HIT`.
-- Changed `handler.onPlayerChangeSlot` callback to protect against a nil return from `net.get_player_info`.
-- Changed the `Unit` exporter to protect against `Group` being nil.
+- Build: `build.rs` and proto imports updated to include new service protos (land, weapon, trigger markup additions).
+ - Changed `weapon` and `unknown` object exporters to return the `id_` (runtime ID) property. For `unknown` objects it is a fall-back condition used in cases where the object has no name.
+ - Changed `dcs.common.v0.Unit`, `dcs.common.v0.Weapon`, and `dcs.common.v0.Static` to set the `type` field as `Optional` as DCS doesn't always enforce this and the resulting log bloat was excessive.
+ - Changed catch-all for objects whose category could not be determined to no longer include `getID` in log message as not all object types implement the method.
+ - Changed `GRPC.onDCSEvent` to protect against an empty initiator for `S_EVENT_HIT`.
+ - Changed `handler.onPlayerChangeSlot` callback to protect against a nil return from `net.get_player_info`.
+ - Changed the `Unit` exporter to protect against `Group` being nil.
+
 
 ## [0.8.1] 2024-11-05
 

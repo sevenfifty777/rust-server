@@ -10,6 +10,7 @@ pub mod controller;
 pub mod custom;
 pub mod group;
 pub mod hook;
+pub mod land;
 pub mod metadata;
 pub mod mission;
 pub mod net;
@@ -18,7 +19,10 @@ pub mod timer;
 pub mod trigger;
 pub mod unit;
 mod utils;
+pub mod warehouse;
+pub mod weapon;
 pub mod world;
+pub mod spot;
 
 #[cfg(test)]
 mod tests {

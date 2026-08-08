@@ -10,4 +10,8 @@ grpcurl.exe
 /doc
 *.exe
 protos/google
-releases/
+
+# Ignored folders
+/Feature_inplementation
+/sample_release
+/Releases
