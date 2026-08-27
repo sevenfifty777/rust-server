@@ -1,5 +1,5 @@
 mod client;
-mod message;
+pub mod message;
 mod messages_codec;
 mod stream;
 mod voice_codec;

@@ -133,7 +133,7 @@ end
 
 GRPC.methods.getUnitById = function(params)
   local unit = Unit.getByName(Unit.getName({ id_ = params.id }))
-  if unit == nil then
+  if unit == nil or not Object.isExist(unit) then
     return GRPC.errorNotFound("unit with id `" .. tostring(params.id) .. "` does not exist")
   end
 

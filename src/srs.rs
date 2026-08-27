@@ -21,7 +21,7 @@ use crate::shutdown::ShutdownHandle;
 
 #[derive(Clone, Default)]
 pub struct SrsClients {
-    pub clients: Arc<RwLock<HashMap<String, srs::Client>>>,
+    pub clients: Arc<RwLock<HashMap<String, srs::message::Client>>>,
 }
 
 pub async fn run_in_background(
@@ -76,7 +76,7 @@ pub async fn run_in_background(
     .await;
 }
 
-fn aggregate_frequencies(clients: &HashMap<String, srs::Client>) -> HashMap<u32, HashSet<u64>> {
+fn aggregate_frequencies(clients: &HashMap<String, srs::message::Client>) -> HashMap<u32, HashSet<u64>> {
     let mut map: HashMap<u32, HashSet<u64>> = HashMap::new();
     for c in clients.values() {
         if let Some(radio) = &c.radio_info {
