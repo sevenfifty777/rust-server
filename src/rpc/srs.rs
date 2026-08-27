@@ -273,10 +273,7 @@ impl SrsService for Srs {
                 if radio.unit_id != 0 && radio.unit != "CA" {
                     let freqs = unit_freqs.entry(radio.unit_id).or_default();
                     for r in &radio.radios {
-                        if matches!(
-                            r.modulation,
-                            ::srs::Modulation::Am | ::srs::Modulation::Fm
-                        ) {
+                        if matches!(r.modulation, ::srs::Modulation::Am | ::srs::Modulation::Fm) {
                             freqs.insert(r.freq as u64);
                         }
                     }
@@ -284,8 +281,8 @@ impl SrsService for Srs {
             }
         }
 
-        let clients = futures_util::future::join_all(unit_freqs.into_iter().map(
-            |(id, frequencies)| {
+        let clients =
+            futures_util::future::join_all(unit_freqs.into_iter().map(|(id, frequencies)| {
                 let frequencies = Vec::from_iter(frequencies);
                 self.rpc
                     .request::<_, GetUnitByIdResponse>(
@@ -298,12 +295,11 @@ impl SrsService for Srs {
                             frequencies,
                         })
                     })
-            },
-        ))
-        .await
-        .into_iter()
-        .flatten()
-        .collect();
+            }))
+            .await
+            .into_iter()
+            .flatten()
+            .collect();
 
         Ok(Response::new(srs::v0::GetClientsResponse { clients }))
     }

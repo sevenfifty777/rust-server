@@ -126,7 +126,7 @@ GRPC.methods.setOption = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   local val
   if params.value.boolValue ~= nil then
     val = params.value.boolValue
@@ -149,7 +149,7 @@ GRPC.methods.isTargetDetected = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   local target = Object.getByName(params.targetName)
   if target == nil then
     return GRPC.errorNotFound("Could not find target with provided name")
@@ -164,7 +164,7 @@ GRPC.methods.knowTarget = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   local target = Object.getByName(params.targetName)
   if target == nil then
     return GRPC.errorNotFound("Could not find target with provided name")
@@ -179,7 +179,7 @@ GRPC.methods.setTask = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   if type(params.task) ~= "table" then
     return GRPC.errorInvalidArgument("Task must be a valid task table")
   end
@@ -193,7 +193,7 @@ GRPC.methods.pushTask = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   if type(params.task) ~= "table" then
     return GRPC.errorInvalidArgument("Task must be a valid task table")
   end
@@ -207,7 +207,7 @@ GRPC.methods.popTask = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   controller:popTask()
   return GRPC.success({})
 end
@@ -217,7 +217,7 @@ GRPC.methods.resetTask = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   controller:resetTask()
   return GRPC.success({})
 end
@@ -227,7 +227,7 @@ GRPC.methods.setCommand = function(params)
   if controller == nil then
     return GRPC.errorNotFound("Could not find group or unit with provided name")
   end
-  
+
   if type(params.command) ~= "table" then
     return GRPC.errorInvalidArgument("Command must be a valid command table")
   end

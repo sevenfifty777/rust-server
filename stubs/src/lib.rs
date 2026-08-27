@@ -2,6 +2,8 @@
 // https://github.com/tokio-rs/prost/issues/661#issuecomment-1156606409
 #![allow(clippy::derive_partial_eq_without_eq)]
 #![allow(clippy::large_enum_variant)]
+// Generated tonic service methods return `tonic::Status` by value.
+#![allow(clippy::result_large_err)]
 
 pub mod atmosphere;
 pub mod coalition;
@@ -14,6 +16,7 @@ pub mod land;
 pub mod metadata;
 pub mod mission;
 pub mod net;
+pub mod spot;
 pub mod srs;
 pub mod timer;
 pub mod trigger;
@@ -22,7 +25,6 @@ mod utils;
 pub mod warehouse;
 pub mod weapon;
 pub mod world;
-pub mod spot;
 
 #[cfg(test)]
 mod tests {

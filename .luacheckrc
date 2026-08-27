@@ -5,6 +5,7 @@ globals = {
 }
 read_globals = {
   "AI",
+  "Airbase",
   "atmosphere",
   "coalition",
   "net",
@@ -17,10 +18,18 @@ read_globals = {
   "log",
   "Object",
   "StaticObject",
+  "Spot",
   "timer",
   "trigger",
   "Unit",
   "world",
   "missionCommands",
   "Export"
+}
+
+-- Avoid rewriting this legacy mixed-line-ending file for two whitespace-only lines.
+files["lua/DCS-gRPC/methods/unit.lua"] = {
+  ignore = {
+    "611",
+  },
 }

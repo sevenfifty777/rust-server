@@ -47,7 +47,8 @@ message AddItemRequest {
   int32 count = 4;
 }
 
-message AddItemResponse {}
+message AddItemResponse {
+}
 
 message RemoveItemRequest {
   oneof name {
@@ -58,7 +59,8 @@ message RemoveItemRequest {
   int32 count = 4;
 }
 
-message RemoveItemResponse {}
+message RemoveItemResponse {
+}
 
 message SetItemRequest {
   oneof name {
@@ -69,7 +71,8 @@ message SetItemRequest {
   int32 count = 4;
 }
 
-message SetItemResponse {}
+message SetItemResponse {
+}
 
 message GetLiquidAmountRequest {
   oneof name {
@@ -92,7 +95,8 @@ message AddLiquidRequest {
   double amount = 4;
 }
 
-message AddLiquidResponse {}
+message AddLiquidResponse {
+}
 
 message SetLiquidAmountRequest {
   oneof name {
@@ -103,7 +107,8 @@ message SetLiquidAmountRequest {
   double amount = 4;
 }
 
-message SetLiquidAmountResponse {}
+message SetLiquidAmountResponse {
+}
 
 message GetOwnerRequest {
   oneof name {

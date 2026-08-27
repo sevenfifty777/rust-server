@@ -272,7 +272,7 @@ GRPC.methods.getAirbaseRunways = function(params)
   local runways = airbase:getRunways()
   local out = {}
 
-  for i, r in ipairs(runways) do
+  for _, r in ipairs(runways) do
     local lat, lon, alt = coord.LOtoLL(r.position)
     table.insert(out, {
       name = r.name,

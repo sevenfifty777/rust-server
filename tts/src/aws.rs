@@ -12,6 +12,8 @@ pub struct AwsConfig {
 }
 
 /// Synthesize the `text` using AWS Polly. Returns a vec of opus frames.
+// Preserve Rusoto's concrete error value so callers retain its diagnostic details.
+#[allow(clippy::result_large_err)]
 pub async fn synthesize(text: &str, config: &AwsConfig) -> Result<Vec<Vec<u8>>, AwsError> {
     let dispatcher = HttpClient::new()?;
     let creds = StaticProvider::new(config.key.clone(), config.secret.clone(), None, None);

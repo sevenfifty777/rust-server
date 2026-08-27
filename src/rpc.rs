@@ -20,6 +20,7 @@ mod land;
 mod metadata;
 mod mission;
 mod net;
+mod spot;
 mod srs;
 mod timer;
 mod trigger;
@@ -27,7 +28,6 @@ mod unit;
 mod warehouse;
 mod weapon;
 mod world;
-mod spot;
 
 #[derive(Clone)]
 pub struct MissionRpc {
@@ -70,6 +70,7 @@ impl MissionRpc {
         self.eval_enabled = true;
     }
 
+    #[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
     pub async fn request<I, O>(&self, method: &str, request: Request<I>) -> Result<O, Status>
     where
         I: serde::Serialize + Send + Sync + 'static,
@@ -107,6 +108,7 @@ impl HookRpc {
         self.eval_enabled = true;
     }
 
+    #[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
     pub async fn request<I, O>(&self, method: &str, request: Request<I>) -> Result<O, Status>
     where
         I: serde::Serialize + Send + Sync + 'static,

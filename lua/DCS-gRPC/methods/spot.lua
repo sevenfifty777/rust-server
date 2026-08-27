@@ -1,5 +1,3 @@
-local net = net
-
 -- DCS doesn't expose a way to lookup spots by ID natively (they are just objects),
 -- so we maintain a local table to map an integer ID to the Spot object.
 local nextSpotId = 1
@@ -16,7 +14,7 @@ GRPC.methods.createLaser = function(params)
     y = params.offset.y,
     z = params.offset.z
   }
-  
+
   local dir = {
     x = params.direction.x,
     y = params.direction.y,
@@ -46,7 +44,7 @@ GRPC.methods.createInfraRed = function(params)
     y = params.offset.y,
     z = params.offset.z
   }
-  
+
   local dir = {
     x = params.direction.x,
     y = params.direction.y,

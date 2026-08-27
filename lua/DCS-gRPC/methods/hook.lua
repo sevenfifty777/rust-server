@@ -8,16 +8,16 @@ local GRPC = GRPC
 local net = net
 local Export = Export
 
-GRPC.methods.getModelTime = function(params)
+GRPC.methods.getModelTime = function()
   return GRPC.success({ time = DCS.getModelTime() })
 end
 
-GRPC.methods.getMissionOptions = function(params)
+GRPC.methods.getMissionOptions = function()
   local options = DCS.getMissionOptions()
   return GRPC.success({ optionsJson = net.lua2json(options or {}) })
 end
 
-GRPC.methods.getCurrentMission = function(params)
+GRPC.methods.getCurrentMission = function()
   local mission = DCS.getCurrentMission()
   return GRPC.success({ missionJson = net.lua2json(mission or {}) })
 end
@@ -27,7 +27,7 @@ GRPC.methods.getAvailableSlots = function(params)
   return GRPC.success({ slotsJson = net.lua2json(slots or {}) })
 end
 
-GRPC.methods.getAvailableCoalitions = function(params)
+GRPC.methods.getAvailableCoalitions = function()
   local coalitions = DCS.getAvailableCoalitions()
   return GRPC.success({ coalitionsJson = net.lua2json(coalitions or {}) })
 end

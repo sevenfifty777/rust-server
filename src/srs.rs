@@ -76,7 +76,9 @@ pub async fn run_in_background(
     .await;
 }
 
-fn aggregate_frequencies(clients: &HashMap<String, srs::message::Client>) -> HashMap<u32, HashSet<u64>> {
+fn aggregate_frequencies(
+    clients: &HashMap<String, srs::message::Client>,
+) -> HashMap<u32, HashSet<u64>> {
     let mut map: HashMap<u32, HashSet<u64>> = HashMap::new();
     for c in clients.values() {
         if let Some(radio) = &c.radio_info {
@@ -112,7 +114,10 @@ async fn run(
         let mut changed = false;
 
         match msg {
-            Message::Sync(SyncMessage { clients: sync_clients, .. }) => {
+            Message::Sync(SyncMessage {
+                clients: sync_clients,
+                ..
+            }) => {
                 clients_guard.clear();
                 for c in sync_clients {
                     clients_guard.insert(c.client_guid.clone(), c);
@@ -128,8 +133,13 @@ async fn run(
                 clients_guard.remove(&client.client_guid);
                 changed = true;
             }
-            Message::ServerSettings(ServerSettingsMessage { server_settings, .. }) => {
-                if server_settings.get("SHOW_TUNED_COUNT").is_none_or(|s| s != "True") {
+            Message::ServerSettings(ServerSettingsMessage {
+                server_settings, ..
+            }) => {
+                if server_settings
+                    .get("SHOW_TUNED_COUNT")
+                    .is_none_or(|s| s != "True")
+                {
                     log::warn!(
                         "`Show Tuned/Client Count` is disabled on your SRS server. \
                          Enable it if you want to receive the frequencies your SRS clients are on."
@@ -231,6 +241,7 @@ async fn disconnected(
     Some(unit)
 }
 
+#[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
 async fn get_unit_by_id(rpc: &MissionRpc, id: u32) -> Result<Unit, Status> {
     #[derive(serde::Serialize)]
     struct GetUnitByIdRequest {

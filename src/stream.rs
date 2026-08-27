@@ -22,6 +22,7 @@ use tonic::{Code, Request, Status};
 use crate::rpc::MissionRpc;
 
 /// Stream unit updates.
+#[allow(clippy::result_large_err)] // Preserve established tonic and channel error types.
 pub async fn stream_units(
     opts: StreamUnitsRequest,
     rpc: MissionRpc,
@@ -132,6 +133,7 @@ struct Context {
 }
 
 /// Update the given [State] based on the given [Event].
+#[allow(clippy::result_large_err)] // Preserve established tonic and channel error types.
 async fn handle_event(
     state: &mut State,
     time: f64,
@@ -197,6 +199,7 @@ async fn handle_event(
 }
 
 /// Updates all units inside of the provided [State].
+#[allow(clippy::result_large_err)] // Preserve established tonic and channel error types.
 async fn update_units(state: &mut State) -> Result<(), Error> {
     let mut units = std::mem::take(&mut state.units);
     // Update all units in parallel (will queue a request for each unit, but the execution will
@@ -215,6 +218,7 @@ async fn update_units(state: &mut State) -> Result<(), Error> {
     Ok(())
 }
 
+#[allow(clippy::result_large_err)] // Preserve established tonic and channel error types.
 async fn update_unit(ctx: &Context, unit_state: &mut UnitState) -> Result<(), Error> {
     if !unit_state.should_update() {
         return Ok(());
@@ -292,6 +296,7 @@ impl UnitState {
     }
 
     /// Check the unit for updates and return whether the unit got changed or not.
+    #[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
     async fn update(&mut self, ctx: &Context) -> Result<bool, Status> {
         let mut changed = false;
 

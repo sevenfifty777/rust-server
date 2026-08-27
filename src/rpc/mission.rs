@@ -191,6 +191,7 @@ impl MissionService for MissionRpc {
 }
 
 impl MissionRpc {
+    #[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
     pub(super) async fn get_scenario_start_time(&self) -> Result<OffsetDateTime, Status> {
         let cache = self.cache.read().await;
         if let Some(datetime) = &cache.scenario_start_time {
