@@ -460,6 +460,10 @@ GRPC.onDcsEvent = function(event)
         target = {target = typed_exporter(event.target)},
       },
     }
+  elseif world.event.S_EVENT_GROUP_CHANGE_OPTION ~= nil
+    and event.id == world.event.S_EVENT_GROUP_CHANGE_OPTION then
+    -- DCS does not expose the changed option or its value, so there is nothing useful to stream.
+    return nil
   -- S_EVENT_MAX: assumingly an end marker for the events enum and thus not a real event
 
   else

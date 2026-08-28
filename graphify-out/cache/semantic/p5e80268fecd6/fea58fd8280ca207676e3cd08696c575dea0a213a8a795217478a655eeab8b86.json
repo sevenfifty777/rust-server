@@ -1,0 +1,1 @@
+{"nodes": [{"id": "ci_workflow", "label": "CI Workflow", "file_type": "code", "source_file": ".github/workflows/ci.yml", "verification": "unverified"}], "edges": [{"source": "ci_workflow", "target": "protolint_yaml", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": ".github/workflows/ci.yml"}], "hyperedges": []}

@@ -1,0 +1,1 @@
+{"nodes": [{"id": "$graphify-root$_lua_dcs_grpc_methods_coalitions_lua", "label": "coalitions.lua", "file_type": "code", "source_file": "lua/DCS-gRPC/methods/coalitions.lua", "source_location": "L1"}], "edges": [], "raw_calls": []}
