@@ -298,14 +298,16 @@ Or if you want to use the hot reloading DLL (this is the same as `make build`):
 ```
 cargo build --features hot-reload
 copy target/debug/dcs_grpc.dll target/debug/dcs_grpc_hot_reload.dll
+```
 
 ## Release build and packaging
 
-Follow the release procedure in `Feature_inplementation/release_process.md` and use the included helper script to create a packaged release.
+Follow the release procedure in [`docs/release_process.md`](docs/release_process.md) and use the included helper script to create a packaged release.
 
 Prerequisites:
-- `cargo` (Rust toolchain) installed and on PATH
-- Optional: `protoc` and `protoc-gen-doc` if you want `api.html` generated
+
+- Rust toolchain `1.98.0` and Cargo
+- `protoc` and `protoc-gen-doc`; both are required because `api.html` is a required release artifact
 
 1. Bump the workspace version in `Cargo.toml` (update `[workspace.package].version`).
 2. Update `CHANGELOG.md` replacing the `## [Unreleased]` header with the new version and date.
@@ -321,15 +323,14 @@ powershell -ExecutionPolicy Bypass -File .\build_release.ps1
 
 The script will:
 - read the version from `Cargo.toml`
-- run `cargo build --release`
+- run the locked Rust 1.98.0 release build for the server and REPL
 - create the `DCS-gRPC-<version>` release folder with the expected DCS layout
 - copy the server DLL, Lua bridge, tools, protos and docs
-- attempt to generate `api.html` if `protoc` is available
+- generate and validate `api.html`
+- verify the required release files and ZIP entries
 - create `Releases/DCS-gRPC-<version>.zip`
 
-After the script finishes, publish the resulting ZIP and tag the commit as described in `Feature_inplementation/release_process.md`.
-
-```
+After the script finishes, publish the resulting ZIP and tag the commit as described in [`docs/release_process.md`](docs/release_process.md).
 
 ### Prepare DCS
 
