@@ -21,6 +21,7 @@ Update the workspace version in the root `Cargo.toml`:
 [workspace.package]
 version = "X.Y.Z"
 ```
+run cargo check --workspace
 
 The workspace members use `version.workspace = true`, so this updates the server, REPL, stubs, and other internal crates together.
 
