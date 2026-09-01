@@ -6,12 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.9.1] - 2026-09-01
+
 ### Added
 
 - Added `RecoveryService.GetRecoverySnapshot`, an additive callback-atomic mission API that returns one DCS timestamp, carrier and aircraft transforms, an echoed observation sequence, and an explicit optional draw-argument status.
 - Added bounded mission/hook IPC queues, cancellation-aware dequeueing, request correlation IDs, and queue-wait/Lua-execution diagnostics.
-
-## [0.9.1] - 2026-08-28
 
 ### Fixed
 - Ignore `S_EVENT_GROUP_CHANGE_OPTION` events because DCS does not expose the changed option or value, preventing repeated unimplemented-event warnings.
