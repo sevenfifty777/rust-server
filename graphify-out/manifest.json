@@ -1,0 +1,650 @@
+{
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\Cargo.toml": {
+    "mtime": 1786195506.0563476,
+    "seen": 1787916976.0641506,
+    "ast_hash": "7bedb911edcf22b3f242ab389861099e",
+    "semantic_hash": "7bedb911edcf22b3f242ab389861099e"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\build.rs": {
+    "mtime": 1786189802.339811,
+    "seen": 1787916976.0641506,
+    "ast_hash": "8f1b4388a27ec8752498b6b5f4146a66",
+    "semantic_hash": "8f1b4388a27ec8752498b6b5f4146a66"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\build_release.ps1": {
+    "mtime": 1787902956.417802,
+    "seen": 1787916976.0641506,
+    "ast_hash": "17c4e0910ae7ea3c1f11f94021257961",
+    "semantic_hash": "17c4e0910ae7ea3c1f11f94021257961"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\exporters\\object.lua": {
+    "mtime": 1786189802.34065,
+    "seen": 1787916976.0641506,
+    "ast_hash": "87267a1ca2f947091d40e91a0fed8e22",
+    "semantic_hash": "87267a1ca2f947091d40e91a0fed8e22"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\grpc-hook.lua": {
+    "mtime": 1786189802.34065,
+    "seen": 1787916976.0641506,
+    "ast_hash": "c2a1d19131ff1a5bab7ceaa19109e334",
+    "semantic_hash": "c2a1d19131ff1a5bab7ceaa19109e334"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\grpc-mission.lua": {
+    "mtime": 1786209169.567237,
+    "seen": 1787916976.0641506,
+    "ast_hash": "b7fae231015e49128f44a975a4cdf279",
+    "semantic_hash": "b7fae231015e49128f44a975a4cdf279"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\grpc.lua": {
+    "mtime": 1787860096.121654,
+    "seen": 1787916976.0641506,
+    "ast_hash": "4d6d445c304be5ead11d915ddc19e800",
+    "semantic_hash": "4d6d445c304be5ead11d915ddc19e800"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\atmosphere.lua": {
+    "mtime": 1786189802.3416536,
+    "seen": 1787916976.0641506,
+    "ast_hash": "73d2c81f77a3b37719edf8b3c479bd34",
+    "semantic_hash": "73d2c81f77a3b37719edf8b3c479bd34"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\coalitions.lua": {
+    "mtime": 1786189802.3416536,
+    "seen": 1787916976.0641506,
+    "ast_hash": "ffbb7a3e702e630015d12888d89bfbf1",
+    "semantic_hash": "ffbb7a3e702e630015d12888d89bfbf1"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\controllers.lua": {
+    "mtime": 1787863151.5351324,
+    "seen": 1787916976.0641506,
+    "ast_hash": "98d7973b80202e8c1218a14fc39b903b",
+    "semantic_hash": "98d7973b80202e8c1218a14fc39b903b"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\custom.lua": {
+    "mtime": 1786189802.3426538,
+    "seen": 1787916976.0641506,
+    "ast_hash": "68e167bd0d32edff5d48ecb4c3cb6b1f",
+    "semantic_hash": "68e167bd0d32edff5d48ecb4c3cb6b1f"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\group.lua": {
+    "mtime": 1786199738.4898465,
+    "seen": 1787916976.0641506,
+    "ast_hash": "1d5c6ec3268d912bb7282e5d4f6cb69b",
+    "semantic_hash": "1d5c6ec3268d912bb7282e5d4f6cb69b"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\hook.lua": {
+    "mtime": 1787862792.9891624,
+    "seen": 1787916976.0641506,
+    "ast_hash": "da4231a23544f3ec7e14308b6d8527e3",
+    "semantic_hash": "da4231a23544f3ec7e14308b6d8527e3"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\land.lua": {
+    "mtime": 1787863197.4293995,
+    "seen": 1787916976.0641506,
+    "ast_hash": "ad424a92665370d202bdaade1077a834",
+    "semantic_hash": "ad424a92665370d202bdaade1077a834"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\mission.lua": {
+    "mtime": 1786197987.1505334,
+    "seen": 1787916976.0641506,
+    "ast_hash": "6a8178978fd913229137fe6acd738bfe",
+    "semantic_hash": "6a8178978fd913229137fe6acd738bfe"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\net.lua": {
+    "mtime": 1786189802.3426538,
+    "seen": 1787916976.0641506,
+    "ast_hash": "e15adcb3a3c8d324ba12044dfed2cfcb",
+    "semantic_hash": "e15adcb3a3c8d324ba12044dfed2cfcb"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\spot.lua": {
+    "mtime": 1787863206.6962721,
+    "seen": 1787916976.0641506,
+    "ast_hash": "f15701448f6dbe636f1831edf766a10a",
+    "semantic_hash": "f15701448f6dbe636f1831edf766a10a"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\timer.lua": {
+    "mtime": 1786189802.343654,
+    "seen": 1787916976.0641506,
+    "ast_hash": "28f7f8a468f9fe22a7d8e31716ee5c33",
+    "semantic_hash": "28f7f8a468f9fe22a7d8e31716ee5c33"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\trigger.lua": {
+    "mtime": 1787863210.0241013,
+    "seen": 1787916976.0641506,
+    "ast_hash": "0e2616e0da43ace86772f46907338de0",
+    "semantic_hash": "0e2616e0da43ace86772f46907338de0"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\unit.lua": {
+    "mtime": 1787864029.2029114,
+    "seen": 1787916976.0641506,
+    "ast_hash": "71bbe414c858659e71bed73ed1907bcb",
+    "semantic_hash": "71bbe414c858659e71bed73ed1907bcb"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\warehouse.lua": {
+    "mtime": 1787863215.688058,
+    "seen": 1787916976.0641506,
+    "ast_hash": "50f0f120d35b19b26b22fb58a1f37c11",
+    "semantic_hash": "50f0f120d35b19b26b22fb58a1f37c11"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\weapon.lua": {
+    "mtime": 1787863218.4470892,
+    "seen": 1787916976.0641506,
+    "ast_hash": "9c0592c9db87a495bfcf82fd16218c17",
+    "semantic_hash": "9c0592c9db87a495bfcf82fd16218c17"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\methods\\world.lua": {
+    "mtime": 1787862794.6871731,
+    "seen": 1787916976.0641506,
+    "ast_hash": "834b21afe9ba526695699d31dd6766ca",
+    "semantic_hash": "834b21afe9ba526695699d31dd6766ca"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\DCS-gRPC\\version.lua": {
+    "mtime": 1787908582.006769,
+    "seen": 1787916976.0641506,
+    "ast_hash": "22c10c9f6e2a7c718c5d0e60b39e17df",
+    "semantic_hash": "22c10c9f6e2a7c718c5d0e60b39e17df"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua\\Hooks\\DCS-gRPC.lua": {
+    "mtime": 1786189802.3446536,
+    "seen": 1787916976.0641506,
+    "ast_hash": "409ed5d850aa7f7ec851922757a7c91b",
+    "semantic_hash": "409ed5d850aa7f7ec851922757a7c91b"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\lua_files.rs": {
+    "mtime": 1786189802.3446536,
+    "seen": 1787916976.0641506,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\repl\\Cargo.toml": {
+    "mtime": 1786189802.352438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "d6057aaba63edf1c4d41858a8e5663aa",
+    "semantic_hash": "d6057aaba63edf1c4d41858a8e5663aa"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\repl\\src\\main.rs": {
+    "mtime": 1786189802.353438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "da59bde1bc818d79f161d0d78b7a1828",
+    "semantic_hash": "da59bde1bc818d79f161d0d78b7a1828"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\authentication.rs": {
+    "mtime": 1786189802.353438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "79ba7a6592d27fb9f815366d3e5e17e4",
+    "semantic_hash": "79ba7a6592d27fb9f815366d3e5e17e4"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\config.rs": {
+    "mtime": 1786189802.353438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "30a4fea53e369bf23d20df2dae7fadb4",
+    "semantic_hash": "30a4fea53e369bf23d20df2dae7fadb4"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\fps.rs": {
+    "mtime": 1786189802.353438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "0cb83089e12b1e5e7d3e8d784a4e5f1e",
+    "semantic_hash": "0cb83089e12b1e5e7d3e8d784a4e5f1e"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\hot_reload.rs": {
+    "mtime": 1786189802.354438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "e80b1b9f4997cf92f393856bc4e7c978",
+    "semantic_hash": "e80b1b9f4997cf92f393856bc4e7c978"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\integrity.rs": {
+    "mtime": 1786189802.354438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "5f9943ef4de27f1bf20421120f3ec9f0",
+    "semantic_hash": "5f9943ef4de27f1bf20421120f3ec9f0"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lib.rs": {
+    "mtime": 1787864093.0053315,
+    "seen": 1787916976.0641506,
+    "ast_hash": "2001719b1016609f63cd6051e78798a8",
+    "semantic_hash": "2001719b1016609f63cd6051e78798a8"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lua5.1\\include\\lauxlib.h": {
+    "mtime": 1786189802.3554375,
+    "seen": 1787916976.0641506,
+    "ast_hash": "34e321b4b0473324cf5ce5c4d44e9da3",
+    "semantic_hash": "34e321b4b0473324cf5ce5c4d44e9da3"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lua5.1\\include\\lua.h": {
+    "mtime": 1786189802.3554375,
+    "seen": 1787916976.0641506,
+    "ast_hash": "65be7c5770d811f1c57497a340edecec",
+    "semantic_hash": "65be7c5770d811f1c57497a340edecec"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lua5.1\\include\\lua.hpp": {
+    "mtime": 1786189802.3554375,
+    "seen": 1787916976.0641506,
+    "ast_hash": "5d2dd4ff9f4c38d14220bb0e425b796c",
+    "semantic_hash": "5d2dd4ff9f4c38d14220bb0e425b796c"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lua5.1\\include\\luaconf.h": {
+    "mtime": 1786189802.3554375,
+    "seen": 1787916976.0641506,
+    "ast_hash": "84a20607cfb60d14108b7cad81b01694",
+    "semantic_hash": "84a20607cfb60d14108b7cad81b01694"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lua5.1\\include\\lualib.h": {
+    "mtime": 1786189802.3564377,
+    "seen": 1787916976.0641506,
+    "ast_hash": "7ef73e48905dfe2f9e391651d234c68f",
+    "semantic_hash": "7ef73e48905dfe2f9e391651d234c68f"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc.rs": {
+    "mtime": 1787863767.8111818,
+    "seen": 1787916976.0641506,
+    "ast_hash": "688f490a93c30795b5ebaeeea822ea0b",
+    "semantic_hash": "688f490a93c30795b5ebaeeea822ea0b"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\atmosphere.rs": {
+    "mtime": 1786189802.3564377,
+    "seen": 1787916976.0641506,
+    "ast_hash": "836d863f7345f232623ad89622af2478",
+    "semantic_hash": "836d863f7345f232623ad89622af2478"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\coalition.rs": {
+    "mtime": 1786189802.3574378,
+    "seen": 1787916976.0641506,
+    "ast_hash": "06d28ff2acc0a38a99feb5fce80c1330",
+    "semantic_hash": "06d28ff2acc0a38a99feb5fce80c1330"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\controller.rs": {
+    "mtime": 1787863235.8954644,
+    "seen": 1787916976.0641506,
+    "ast_hash": "9854693026fb28f12caa2578a0196394",
+    "semantic_hash": "9854693026fb28f12caa2578a0196394"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\custom.rs": {
+    "mtime": 1786189802.3574378,
+    "seen": 1787916976.0641506,
+    "ast_hash": "adc47b299b45a86f530df7c507c5ae60",
+    "semantic_hash": "adc47b299b45a86f530df7c507c5ae60"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\group.rs": {
+    "mtime": 1786199668.1936805,
+    "seen": 1787916976.0641506,
+    "ast_hash": "9918354fd713654d925fd29b8c4630ac",
+    "semantic_hash": "9918354fd713654d925fd29b8c4630ac"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\hook.rs": {
+    "mtime": 1786193809.5677035,
+    "seen": 1787916976.0641506,
+    "ast_hash": "a52e38ad26bb7c8bc7a0a16924e7142d",
+    "semantic_hash": "a52e38ad26bb7c8bc7a0a16924e7142d"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\land.rs": {
+    "mtime": 1786193354.1912584,
+    "seen": 1787916976.0641506,
+    "ast_hash": "04566a98218a9402fdd7dfe0f17575f7",
+    "semantic_hash": "04566a98218a9402fdd7dfe0f17575f7"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\metadata.rs": {
+    "mtime": 1786189802.358438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "2506ed16b200ee5b01198ad1a9ac08ff",
+    "semantic_hash": "2506ed16b200ee5b01198ad1a9ac08ff"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\mission.rs": {
+    "mtime": 1787863767.2588756,
+    "seen": 1787916976.0641506,
+    "ast_hash": "e3a1c1e68146a19e05ca16ab04109b8a",
+    "semantic_hash": "e3a1c1e68146a19e05ca16ab04109b8a"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\net.rs": {
+    "mtime": 1786189802.358438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "071130aa6df797912a44be50e4720f54",
+    "semantic_hash": "071130aa6df797912a44be50e4720f54"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\spot.rs": {
+    "mtime": 1786199644.099098,
+    "seen": 1787916976.0641506,
+    "ast_hash": "b9fa1f809771d7a93792e0f54a01a8c3",
+    "semantic_hash": "b9fa1f809771d7a93792e0f54a01a8c3"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\srs.rs": {
+    "mtime": 1787863235.9024644,
+    "seen": 1787916976.0641506,
+    "ast_hash": "2e50acffda7b0b0239647996a0c85af6",
+    "semantic_hash": "2e50acffda7b0b0239647996a0c85af6"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\timer.rs": {
+    "mtime": 1786189802.3594377,
+    "seen": 1787916976.0641506,
+    "ast_hash": "f82800930b26ae634b9c9951ebb99e9e",
+    "semantic_hash": "f82800930b26ae634b9c9951ebb99e9e"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\trigger.rs": {
+    "mtime": 1786197503.4548228,
+    "seen": 1787916976.0641506,
+    "ast_hash": "5a3fbe97a3ac8c6d3f649e605ab3d5fc",
+    "semantic_hash": "5a3fbe97a3ac8c6d3f649e605ab3d5fc"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\unit.rs": {
+    "mtime": 1786199681.7934656,
+    "seen": 1787916976.0641506,
+    "ast_hash": "cbe7619ec1f779c6be7bce7287d6f0f3",
+    "semantic_hash": "cbe7619ec1f779c6be7bce7287d6f0f3"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\warehouse.rs": {
+    "mtime": 1786192987.5177512,
+    "seen": 1787916976.0641506,
+    "ast_hash": "3cdcf1c565d1fdf7da6de2b58f2cb698",
+    "semantic_hash": "3cdcf1c565d1fdf7da6de2b58f2cb698"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\weapon.rs": {
+    "mtime": 1786197857.5174668,
+    "seen": 1787916976.0641506,
+    "ast_hash": "677e2abb8ca555290aca7c8f0ad4ac7c",
+    "semantic_hash": "677e2abb8ca555290aca7c8f0ad4ac7c"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\rpc\\world.rs": {
+    "mtime": 1786193400.3379376,
+    "seen": 1787916976.0641506,
+    "ast_hash": "d3e83b45497f91df001cde7ebf28e58a",
+    "semantic_hash": "d3e83b45497f91df001cde7ebf28e58a"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\server.rs": {
+    "mtime": 1786197897.9349027,
+    "seen": 1787916976.0641506,
+    "ast_hash": "6618ed918c83968d6241ba63335f5ad8",
+    "semantic_hash": "6618ed918c83968d6241ba63335f5ad8"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\shutdown.rs": {
+    "mtime": 1786189802.36044,
+    "seen": 1787916976.0641506,
+    "ast_hash": "dd447d56f962cd7276aceb4b7ec28d31",
+    "semantic_hash": "dd447d56f962cd7276aceb4b7ec28d31"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\srs.rs": {
+    "mtime": 1787863768.3625565,
+    "seen": 1787916976.0641506,
+    "ast_hash": "1d6ffef20f6347ac4d52126cedd0ea00",
+    "semantic_hash": "1d6ffef20f6347ac4d52126cedd0ea00"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\stats.rs": {
+    "mtime": 1786189802.36044,
+    "seen": 1787916976.0641506,
+    "ast_hash": "34c91406eb67be5630fc47f90b97de17",
+    "semantic_hash": "34c91406eb67be5630fc47f90b97de17"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\stream.rs": {
+    "mtime": 1787863768.9162934,
+    "seen": 1787916976.0641506,
+    "ast_hash": "cf6f4e18aab0c7945f1abc653b539913",
+    "semantic_hash": "cf6f4e18aab0c7945f1abc653b539913"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\Cargo.toml": {
+    "mtime": 1786189802.3614383,
+    "seen": 1787916976.0641506,
+    "ast_hash": "442b56c028e86dd018a13adcb9d2dcf2",
+    "semantic_hash": "442b56c028e86dd018a13adcb9d2dcf2"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\src\\client.rs": {
+    "mtime": 1786189802.3614383,
+    "seen": 1787916976.0641506,
+    "ast_hash": "ab879e4ef38c88b5a1c0389c1f93882d",
+    "semantic_hash": "ab879e4ef38c88b5a1c0389c1f93882d"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\src\\lib.rs": {
+    "mtime": 1786375665.7903733,
+    "seen": 1787916976.0641506,
+    "ast_hash": "d6c81fd36aacc9f559e0b5e616a24bec",
+    "semantic_hash": "d6c81fd36aacc9f559e0b5e616a24bec"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\src\\message.rs": {
+    "mtime": 1786189802.362438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "a23b4ec15b0eeef6bd6df5d3da13faf3",
+    "semantic_hash": "a23b4ec15b0eeef6bd6df5d3da13faf3"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\src\\messages_codec.rs": {
+    "mtime": 1786189802.362438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "af4e1b2ca62c80b26df4ee0c23273c28",
+    "semantic_hash": "af4e1b2ca62c80b26df4ee0c23273c28"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\src\\stream.rs": {
+    "mtime": 1786189802.362438,
+    "seen": 1787916976.0641506,
+    "ast_hash": "24b3a2e933401bad7c92d740350056af",
+    "semantic_hash": "24b3a2e933401bad7c92d740350056af"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\srs\\src\\voice_codec.rs": {
+    "mtime": 1786189802.3632522,
+    "seen": 1787916976.0641506,
+    "ast_hash": "836cbd305a15d364a47d631a733ed398",
+    "semantic_hash": "836cbd305a15d364a47d631a733ed398"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\Cargo.toml": {
+    "mtime": 1786189802.3632522,
+    "seen": 1787916976.0641506,
+    "ast_hash": "f531a22e7117fe2e73439b9dfeb7bce9",
+    "semantic_hash": "f531a22e7117fe2e73439b9dfeb7bce9"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\build.rs": {
+    "mtime": 1786189802.3632522,
+    "seen": 1787916976.0641506,
+    "ast_hash": "29f7faf2610ff6c76794553a452414a3",
+    "semantic_hash": "29f7faf2610ff6c76794553a452414a3"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\atmosphere.rs": {
+    "mtime": 1786189802.3632522,
+    "seen": 1787916976.0641506,
+    "ast_hash": "0527af5cd3741768081e6c4b985759f5",
+    "semantic_hash": "0527af5cd3741768081e6c4b985759f5"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\coalition.rs": {
+    "mtime": 1786189802.364256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "3e5589ee990746ae3cd3e2bbd55ceca8",
+    "semantic_hash": "3e5589ee990746ae3cd3e2bbd55ceca8"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\common.rs": {
+    "mtime": 1786189802.364256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "17d89edef50be5c8612b20f174cd5133",
+    "semantic_hash": "17d89edef50be5c8612b20f174cd5133"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\controller.rs": {
+    "mtime": 1786189802.364256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "05bf9127a528dbff77bf50cebb4f6641",
+    "semantic_hash": "05bf9127a528dbff77bf50cebb4f6641"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\custom.rs": {
+    "mtime": 1786189802.364256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "4422c740b43dcca4e61ae66bf9b1e549",
+    "semantic_hash": "4422c740b43dcca4e61ae66bf9b1e549"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\group.rs": {
+    "mtime": 1786189802.364256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "b12c6a92d4a75600bc6c64c7eb7606e0",
+    "semantic_hash": "b12c6a92d4a75600bc6c64c7eb7606e0"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\hook.rs": {
+    "mtime": 1786189802.3652556,
+    "seen": 1787916976.0641506,
+    "ast_hash": "ea5d795e5b39e9db86ee14317ec5a0be",
+    "semantic_hash": "ea5d795e5b39e9db86ee14317ec5a0be"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\land.rs": {
+    "mtime": 1786191824.0448396,
+    "seen": 1787916976.0641506,
+    "ast_hash": "fb65880dd1dc8ea13e532cf17ad92c28",
+    "semantic_hash": "fb65880dd1dc8ea13e532cf17ad92c28"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\lib.rs": {
+    "mtime": 1787863235.9234662,
+    "seen": 1787916976.0641506,
+    "ast_hash": "eb4492558fe354709f7c78cf778f922b",
+    "semantic_hash": "eb4492558fe354709f7c78cf778f922b"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\metadata.rs": {
+    "mtime": 1786189802.3652556,
+    "seen": 1787916976.0641506,
+    "ast_hash": "60932fb2fcff9f87d118bb98225302e0",
+    "semantic_hash": "60932fb2fcff9f87d118bb98225302e0"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\mission.rs": {
+    "mtime": 1786189802.3652556,
+    "seen": 1787916976.0641506,
+    "ast_hash": "09624543534679d22e875428b06b9028",
+    "semantic_hash": "09624543534679d22e875428b06b9028"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\net.rs": {
+    "mtime": 1786189802.3652556,
+    "seen": 1787916976.0641506,
+    "ast_hash": "58672678dd848f68ad02afa5570f2b85",
+    "semantic_hash": "58672678dd848f68ad02afa5570f2b85"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\spot.rs": {
+    "mtime": 1786193995.1101632,
+    "seen": 1787916976.0641506,
+    "ast_hash": "09a2ec26debe27ed60d7c7ecef784cdc",
+    "semantic_hash": "09a2ec26debe27ed60d7c7ecef784cdc"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\srs.rs": {
+    "mtime": 1786189802.3662555,
+    "seen": 1787916976.0641506,
+    "ast_hash": "c63a0454b3ae9c75d9471ffd13c42ee2",
+    "semantic_hash": "c63a0454b3ae9c75d9471ffd13c42ee2"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\timer.rs": {
+    "mtime": 1786189802.3662555,
+    "seen": 1787916976.0641506,
+    "ast_hash": "0031d727ffedaffb47b72bbc2e728b2d",
+    "semantic_hash": "0031d727ffedaffb47b72bbc2e728b2d"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\trigger.rs": {
+    "mtime": 1786189802.3662555,
+    "seen": 1787916976.0641506,
+    "ast_hash": "91e4cfe019527a409206d584f769fcd2",
+    "semantic_hash": "91e4cfe019527a409206d584f769fcd2"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\unit.rs": {
+    "mtime": 1786189802.3662555,
+    "seen": 1787916976.0641506,
+    "ast_hash": "c50292533d730c63dfdfc6d2c040ad07",
+    "semantic_hash": "c50292533d730c63dfdfc6d2c040ad07"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\utils.rs": {
+    "mtime": 1786189802.3662555,
+    "seen": 1787916976.0641506,
+    "ast_hash": "036ceb86d9a19eba5d56150fea699680",
+    "semantic_hash": "036ceb86d9a19eba5d56150fea699680"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\warehouse.rs": {
+    "mtime": 1786193041.4327524,
+    "seen": 1787916976.0641506,
+    "ast_hash": "fd6064a523c19fa0c79d7f515691d7ee",
+    "semantic_hash": "fd6064a523c19fa0c79d7f515691d7ee"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\weapon.rs": {
+    "mtime": 1786198321.4748676,
+    "seen": 1787916976.0641506,
+    "ast_hash": "c2ff187ffb5d33644e1e4a58ec28c151",
+    "semantic_hash": "c2ff187ffb5d33644e1e4a58ec28c151"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\stubs\\src\\world.rs": {
+    "mtime": 1786189802.3672557,
+    "seen": 1787916976.0641506,
+    "ast_hash": "1a8cb8efb1ddaf86f49133ccdc64970d",
+    "semantic_hash": "1a8cb8efb1ddaf86f49133ccdc64970d"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\tts\\Cargo.toml": {
+    "mtime": 1786189802.3672557,
+    "seen": 1787916976.0641506,
+    "ast_hash": "76090022d314d049e56fa56c197aca7e",
+    "semantic_hash": "76090022d314d049e56fa56c197aca7e"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\tts\\src\\aws.rs": {
+    "mtime": 1787862791.3201182,
+    "seen": 1787916976.0641506,
+    "ast_hash": "c724f899b138cf6b0a15f8c4d43e0da0",
+    "semantic_hash": "c724f899b138cf6b0a15f8c4d43e0da0"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\tts\\src\\azure.rs": {
+    "mtime": 1786189802.3672557,
+    "seen": 1787916976.0641506,
+    "ast_hash": "5986080942973481c09575f22e20db53",
+    "semantic_hash": "5986080942973481c09575f22e20db53"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\tts\\src\\gcloud.rs": {
+    "mtime": 1786189802.368256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "bd37c5d223d59462537ba370097b32e4",
+    "semantic_hash": "bd37c5d223d59462537ba370097b32e4"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\tts\\src\\lib.rs": {
+    "mtime": 1786189802.368256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "b5051ccb383cb7f86e236ddda198a90d",
+    "semantic_hash": "b5051ccb383cb7f86e236ddda198a90d"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\tts\\src\\win.rs": {
+    "mtime": 1786189802.368256,
+    "seen": 1787916976.0641506,
+    "ast_hash": "a5d16d255f5dec58acc7c217af2ff6f5",
+    "semantic_hash": "a5d16d255f5dec58acc7c217af2ff6f5"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\.github\\workflows\\ci.yml": {
+    "mtime": 1786189802.33674,
+    "seen": 1787916976.0641506,
+    "ast_hash": "80206a65571e24e8d11b1d8c87970273",
+    "semantic_hash": "80206a65571e24e8d11b1d8c87970273"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\.protolint.yaml": {
+    "mtime": 1786189802.3377397,
+    "seen": 1787916976.0641506,
+    "ast_hash": "068b65b67f4dfb7535f48e3f439d9df5",
+    "semantic_hash": "068b65b67f4dfb7535f48e3f439d9df5"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\CHANGELOG.md": {
+    "mtime": 1787860803.164296,
+    "seen": 1787916976.0641506,
+    "ast_hash": "77fb5bf7bdd749a76414abab936e2892",
+    "semantic_hash": "77fb5bf7bdd749a76414abab936e2892"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\CONTRIBUTING.md": {
+    "mtime": 1786189802.3377397,
+    "seen": 1787916976.0641506,
+    "ast_hash": "d4326d3ece5c587a1838891b0f3f1032",
+    "semantic_hash": "d4326d3ece5c587a1838891b0f3f1032"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\LICENSE.md": {
+    "mtime": 1645206506.0,
+    "seen": 1787916976.0641506,
+    "ast_hash": "114c0f46cb78b8bc309446102e59996c",
+    "semantic_hash": "114c0f46cb78b8bc309446102e59996c"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\README.md": {
+    "mtime": 1787906075.5426066,
+    "seen": 1787916976.0641506,
+    "ast_hash": "7ad77bfb439ecfa6b4b281856b37ee97",
+    "semantic_hash": "7ad77bfb439ecfa6b4b281856b37ee97"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\STATUS.md": {
+    "mtime": 1786233970.0452888,
+    "seen": 1787916976.0641506,
+    "ast_hash": "00ff13dbfe9ce9ce6c36e691001b8dbc",
+    "semantic_hash": "00ff13dbfe9ce9ce6c36e691001b8dbc"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\docs\\release_process.md": {
+    "mtime": 1787906123.8483388,
+    "seen": 1787916976.0641506,
+    "ast_hash": "b063205d3fe7436daf784b4e18213d75",
+    "semantic_hash": "b063205d3fe7436daf784b4e18213d75"
+  },
+  "C:\\Users\\thierry\\Documents\\GitHub\\sevenfifty777\\rust-server\\src\\lua5.1\\include\\LICENCE.txt": {
+    "mtime": 1786189802.3554375,
+    "seen": 1787916976.0641506,
+    "ast_hash": "e4da051d8129a181c354f2d232b59c16",
+    "semantic_hash": "e4da051d8129a181c354f2d232b59c16"
+  }
+}

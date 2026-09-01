@@ -21,10 +21,8 @@ use crate::shutdown::ShutdownHandle;
 
 #[derive(Clone, Default)]
 pub struct SrsClients {
-    pub clients: Arc<RwLock<HashMap<u32, Frequencies>>>,
+    pub clients: Arc<RwLock<HashMap<String, srs::message::Client>>>,
 }
-
-pub type Frequencies = HashSet<u64>;
 
 pub async fn run_in_background(
     rpc: MissionRpc,
@@ -78,6 +76,25 @@ pub async fn run_in_background(
     .await;
 }
 
+fn aggregate_frequencies(
+    clients: &HashMap<String, srs::message::Client>,
+) -> HashMap<u32, HashSet<u64>> {
+    let mut map: HashMap<u32, HashSet<u64>> = HashMap::new();
+    for c in clients.values() {
+        if let Some(radio) = &c.radio_info {
+            if radio.unit_id != 0 && radio.unit != "CA" {
+                let freqs = map.entry(radio.unit_id).or_default();
+                for r in &radio.radios {
+                    if matches!(r.modulation, Modulation::Am | Modulation::Fm) {
+                        freqs.insert(r.freq as u64);
+                    }
+                }
+            }
+        }
+    }
+    map
+}
+
 async fn run(
     rpc: MissionRpc,
     clients: SrsClients,
@@ -92,112 +109,29 @@ async fn run(
         };
         log::info!("srs msg: {msg:#?}");
 
+        let mut clients_guard = clients.clients.write().await;
+        let before = aggregate_frequencies(&clients_guard);
+        let mut changed = false;
+
         match msg {
             Message::Sync(SyncMessage {
                 clients: sync_clients,
                 ..
             }) => {
-                let mut clients = clients.clients.write().await;
-                let mut before =
-                    std::mem::replace(&mut *clients, HashMap::with_capacity(sync_clients.len()));
-
+                clients_guard.clear();
                 for c in sync_clients {
-                    let Some(radio) = c.radio_info else {
-                        continue;
-                    };
-
-                    if radio.unit_id == 0 || radio.unit == "CA" {
-                        continue;
-                    }
-
-                    let before = before.remove(&radio.unit_id);
-                    let after = radio
-                        .radios
-                        .into_iter()
-                        .filter_map(|r| {
-                            matches!(r.modulation, Modulation::Am | Modulation::Fm)
-                                .then_some(r.freq as u64)
-                        })
-                        .collect::<HashSet<_>>();
-
-                    let mut unit = None;
-                    if let Some(mut before) = before {
-                        for freq in &after {
-                            if !before.remove(freq) {
-                                unit = connected(&rpc, unit.take(), radio.unit_id, *freq).await;
-                            }
-                        }
-                        for freq in before {
-                            unit = disconnected(&rpc, unit.take(), radio.unit_id, freq).await;
-                        }
-                    } else {
-                        for freq in &after {
-                            unit = connected(&rpc, unit.take(), radio.unit_id, *freq).await;
-                        }
-                    }
-
-                    if unit.is_some() {
-                        clients.insert(radio.unit_id, after);
-                    }
+                    clients_guard.insert(c.client_guid.clone(), c);
                 }
+                changed = true;
             }
             Message::Update(UpdateMessage { client, .. })
             | Message::RadioUpdate(RadioUpdateMessage { client, .. }) => {
-                let Some(radio) = client.radio_info else {
-                    continue;
-                };
-
-                if radio.unit_id == 0 || radio.unit == "CA" {
-                    continue;
-                }
-
-                let mut clients = clients.clients.write().await;
-                let before = clients.remove(&radio.unit_id);
-                let after = radio
-                    .radios
-                    .into_iter()
-                    .filter_map(|r| {
-                        matches!(r.modulation, Modulation::Am | Modulation::Fm)
-                            .then_some(r.freq as u64)
-                    })
-                    .collect::<HashSet<_>>();
-
-                let mut unit = None;
-                if let Some(mut before) = before {
-                    for freq in &after {
-                        if !before.remove(freq) {
-                            unit = connected(&rpc, unit.take(), radio.unit_id, *freq).await;
-                        }
-                    }
-                    for freq in before {
-                        unit = disconnected(&rpc, unit.take(), radio.unit_id, freq).await;
-                    }
-                } else {
-                    for freq in &after {
-                        unit = connected(&rpc, unit.take(), radio.unit_id, *freq).await;
-                    }
-                }
-
-                if unit.is_some() {
-                    clients.insert(radio.unit_id, after);
-                }
+                clients_guard.insert(client.client_guid.clone(), client);
+                changed = true;
             }
             Message::ClientDisconnect(ClientDisconnectMessage { client, .. }) => {
-                let Some(radio) = client.radio_info else {
-                    continue;
-                };
-
-                if radio.unit_id == 0 || radio.unit == "CA" {
-                    continue;
-                }
-
-                let mut clients = clients.clients.write().await;
-                if let Some(freqs) = clients.remove(&radio.unit_id) {
-                    let mut unit = None;
-                    for freq in freqs {
-                        unit = disconnected(&rpc, unit.take(), radio.unit_id, freq).await;
-                    }
-                }
+                clients_guard.remove(&client.client_guid);
+                changed = true;
             }
             Message::ServerSettings(ServerSettingsMessage {
                 server_settings, ..
@@ -213,6 +147,30 @@ async fn run(
                 }
             }
             Message::Ping(_) | Message::VersionMismatch(_) => {}
+        }
+
+        if changed {
+            let after = aggregate_frequencies(&clients_guard);
+            drop(clients_guard);
+
+            for (unit_id, after_freqs) in &after {
+                let before_freqs = before.get(unit_id);
+                let mut unit_cache = None;
+                for freq in after_freqs {
+                    if before_freqs.is_none() || !before_freqs.unwrap().contains(freq) {
+                        unit_cache = connected(&rpc, unit_cache, *unit_id, *freq).await;
+                    }
+                }
+            }
+            for (unit_id, before_freqs) in &before {
+                let after_freqs = after.get(unit_id);
+                let mut unit_cache = None;
+                for freq in before_freqs {
+                    if after_freqs.is_none() || !after_freqs.unwrap().contains(freq) {
+                        unit_cache = disconnected(&rpc, unit_cache, *unit_id, *freq).await;
+                    }
+                }
+            }
         }
     }
 
@@ -283,6 +241,7 @@ async fn disconnected(
     Some(unit)
 }
 
+#[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
 async fn get_unit_by_id(rpc: &MissionRpc, id: u32) -> Result<Unit, Status> {
     #[derive(serde::Serialize)]
     struct GetUnitByIdRequest {

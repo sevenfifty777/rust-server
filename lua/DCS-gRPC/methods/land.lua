@@ -37,7 +37,7 @@ end
 GRPC.methods.getSurfaceHeightWithSeabed = function(params)
   local point = coord.LLtoLO(params.position.lat, params.position.lon)
   local height = land.getSurfaceHeightWithSeabed({x = point.x, y = point.z})
-  
+
   return GRPC.success({
     height = height
   })
@@ -46,10 +46,10 @@ end
 GRPC.methods.findPathOnRoads = function(params)
   local startPoint = coord.LLtoLO(params.start.lat, params.start.lon)
   local endPoint = coord.LLtoLO(params["end"].lat, params["end"].lon)
-  
+
   local path = land.findPathOnRoads(params.roadType, startPoint.x, startPoint.z, endPoint.x, endPoint.z)
   local pathJson = net.lua2json(path or {})
-  
+
   return GRPC.success({
     pathJson = pathJson
   })
@@ -58,18 +58,18 @@ end
 GRPC.methods.getIP = function(params)
   local origin = coord.LLtoLO(params.origin.lat, params.origin.lon)
   origin.y = params.origin.alt -- DCS uses y for altitude
-  
+
   local direction = {
     x = params.direction.lat, -- Assuming direction is passed as a vector through these fields
     y = params.direction.alt,
     z = params.direction.lon
   }
-  
+
   local ip = land.getIP(origin, direction, params.maxDist)
   if ip == nil then
     return GRPC.errorNotFound("No terrain intersection found")
   end
-  
+
   local lat, lon, alt = coord.LOtoLL(ip)
   return GRPC.success({
     intersectionPoint = {
@@ -83,10 +83,10 @@ end
 GRPC.methods.profile = function(params)
   local fromPoint = coord.LLtoLO(params.from.lat, params.from.lon)
   local toPoint = coord.LLtoLO(params.to.lat, params.to.lon)
-  
+
   local profileData = land.profile(fromPoint, toPoint)
   local profileJson = net.lua2json(profileData or {})
-  
+
   return GRPC.success({
     profileJson = profileJson
   })

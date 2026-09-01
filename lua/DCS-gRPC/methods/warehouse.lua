@@ -33,7 +33,7 @@ GRPC.methods.getItemCount = function(params)
   end
 
   local count = warehouse:getItemCount(params.itemName)
-  
+
   return GRPC.success({
     count = count
   })
@@ -46,7 +46,7 @@ GRPC.methods.addItem = function(params)
   end
 
   warehouse:addItem(params.itemName, params.count)
-  
+
   return GRPC.success({})
 end
 
@@ -57,7 +57,7 @@ GRPC.methods.removeItem = function(params)
   end
 
   warehouse:removeItem(params.itemName, params.count)
-  
+
   return GRPC.success({})
 end
 
@@ -68,7 +68,7 @@ GRPC.methods.setItem = function(params)
   end
 
   warehouse:setItem(params.itemName, params.count)
-  
+
   return GRPC.success({})
 end
 
@@ -79,7 +79,7 @@ GRPC.methods.getLiquidAmount = function(params)
   end
 
   local amount = warehouse:getLiquidAmount(params.liquidType)
-  
+
   return GRPC.success({
     amount = amount
   })
@@ -92,7 +92,7 @@ GRPC.methods.addLiquid = function(params)
   end
 
   warehouse:addLiquid(params.liquidType, params.amount)
-  
+
   return GRPC.success({})
 end
 
@@ -103,7 +103,7 @@ GRPC.methods.setLiquidAmount = function(params)
   end
 
   warehouse:setLiquidAmount(params.liquidType, params.amount)
-  
+
   return GRPC.success({})
 end
 
@@ -119,12 +119,12 @@ GRPC.methods.getOwner = function(params)
   end
 
   -- The owner is an Airbase or StaticObject, we need to return its name.
-  -- To be safe, we check its type. DCS objects have getCategory(). 
+  -- To be safe, we check its type. DCS objects have getCategory().
   -- But we can just use getName().
-  
+
   local category = owner:getCategory()
   local ownerName = owner:getName()
-  
+
   if category == Object.Category.BASE then
     return GRPC.success({
       airbaseName = ownerName

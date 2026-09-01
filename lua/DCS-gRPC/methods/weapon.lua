@@ -35,7 +35,7 @@ GRPC.methods.weaponGetPosition = function(params)
   if not w then return GRPC.errorNotFound("weapon not found") end
   local pos = w:getPosition()
   if not pos then return GRPC.errorNotFound("could not get position") end
-  
+
   local lat, lon, alt = coord.LOtoLL(pos.p)
   return GRPC.success({
     position = {

@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes — all pending items are included in **0.9.0**.
+## [0.9.1] - 2026-08-28
 
-## [0.9.0] - 2026-08-08
+### Fixed
+- Ignore `S_EVENT_GROUP_CHANGE_OPTION` events because DCS does not expose the changed option or value, preventing repeated unimplemented-event warnings.
+
+## [0.9.0] - 2026-08-27
 
 ### Added
 - `WeaponService`: new gRPC service exposing DCS `Weapon` / `CoalitionObject` / `Object` functionality (RPCs include `GetLauncher`, `GetTarget`, `GetCategory`, `GetDesc`, `GetPosition`, `GetVelocity`, `InAir`, `IsExist`, `Destroy`, `GetCoalition`, `GetCountry`, `GetName`, `GetTypeName`, `GetPoint`). Note: due to DCS limitations weapons are tracked via event hooks; the Lua bridge caches active weapons (e.g. via `S_EVENT_SHOT`) for later queries.
@@ -35,6 +38,10 @@ No unreleased changes — all pending items are included in **0.9.0**.
  - Changed `GRPC.onDCSEvent` to protect against an empty initiator for `S_EVENT_HIT`.
  - Changed `handler.onPlayerChangeSlot` callback to protect against a nil return from `net.get_player_info`.
  - Changed the `Unit` exporter to protect against `Group` being nil.
+
+### Fixed
+- Fixed `SrsService.GetClients` when SRS retains a stale DCS unit ID. `GetUnitById` now verifies that the unit still exists before exporting it, returning `NOT_FOUND` instead of raising an error from `Unit.getGroup()`.
+- Fixed the Lua RPC request handler to return structured gRPC error tables for method exceptions and unsupported methods, preventing the secondary `error converting Lua string to table` failure in the Rust bridge.
 
 
 ## [0.8.1] 2024-11-05

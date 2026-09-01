@@ -208,16 +208,16 @@ end
 GRPC.methods.effectSmokeBig = function(params)
   local point = coord.LLtoLO(params.position.lat, params.position.lon)
   point.y = land.getHeight({x = point.x, y = point.z})
-  
+
   -- The preset maps directly to the enum values in DCS (1 to 8)
   local density = params.density or 1.0
   if density <= 0.0 then density = 1.0 end
-  
+
   local name = params.name
   if not name or name == "" then
     name = tostring(math.random(1000000, 9999999))
   end
-  
+
   trigger.action.effectSmokeBig(point, params.preset, density, name)
   return GRPC.success({})
 end
@@ -320,12 +320,22 @@ GRPC.methods.setMarkupFontSize = function(params)
 end
 
 GRPC.methods.setMarkupColor = function(params)
-  trigger.action.setMarkupColor(params.id, {params.color.red, params.color.green, params.color.blue, params.color.alpha})
+  trigger.action.setMarkupColor(params.id, {
+    params.color.red,
+    params.color.green,
+    params.color.blue,
+    params.color.alpha
+  })
   return GRPC.success({})
 end
 
 GRPC.methods.setMarkupColorFill = function(params)
-  trigger.action.setMarkupColorFill(params.id, {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha})
+  trigger.action.setMarkupColorFill(params.id, {
+    params.fillColor.red,
+    params.fillColor.green,
+    params.fillColor.blue,
+    params.fillColor.alpha
+  })
   return GRPC.success({})
 end
 
@@ -352,7 +362,16 @@ GRPC.methods.lineToAll = function(params)
   local idx = getMarkId()
   local color = {params.color.red, params.color.green, params.color.blue, params.color.alpha}
   local coalition = params.coalition - 1
-  trigger.action.lineToAll(coalition, idx, startPoint, endPoint, color, params.lineType, params.readOnly, params.message)
+  trigger.action.lineToAll(
+    coalition,
+    idx,
+    startPoint,
+    endPoint,
+    color,
+    params.lineType,
+    params.readOnly,
+    params.message
+  )
   return GRPC.success({id = idx})
 end
 
@@ -362,7 +381,17 @@ GRPC.methods.circleToAll = function(params)
   local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
   local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
   local coalition = params.coalition - 1
-  trigger.action.circleToAll(coalition, idx, center, params.radius, color, fillColor, params.lineType, params.readOnly, params.message)
+  trigger.action.circleToAll(
+    coalition,
+    idx,
+    center,
+    params.radius,
+    color,
+    fillColor,
+    params.lineType,
+    params.readOnly,
+    params.message
+  )
   return GRPC.success({id = idx})
 end
 
@@ -373,7 +402,17 @@ GRPC.methods.rectToAll = function(params)
   local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
   local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
   local coalition = params.coalition - 1
-  trigger.action.rectToAll(coalition, idx, startPoint, endPoint, color, fillColor, params.lineType, params.readOnly, params.message)
+  trigger.action.rectToAll(
+    coalition,
+    idx,
+    startPoint,
+    endPoint,
+    color,
+    fillColor,
+    params.lineType,
+    params.readOnly,
+    params.message
+  )
   return GRPC.success({id = idx})
 end
 
@@ -386,7 +425,19 @@ GRPC.methods.quadToAll = function(params)
   local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
   local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
   local coalition = params.coalition - 1
-  trigger.action.quadToAll(coalition, idx, p1, p2, p3, p4, color, fillColor, params.lineType, params.readOnly, params.message)
+  trigger.action.quadToAll(
+    coalition,
+    idx,
+    p1,
+    p2,
+    p3,
+    p4,
+    color,
+    fillColor,
+    params.lineType,
+    params.readOnly,
+    params.message
+  )
   return GRPC.success({id = idx})
 end
 
@@ -407,7 +458,17 @@ GRPC.methods.arrowToAll = function(params)
   local color = {params.borderColor.red, params.borderColor.green, params.borderColor.blue, params.borderColor.alpha}
   local fillColor = {params.fillColor.red, params.fillColor.green, params.fillColor.blue, params.fillColor.alpha}
   local coalition = params.coalition - 1
-  trigger.action.arrowToAll(coalition, idx, startPoint, endPoint, color, fillColor, params.lineType, params.readOnly, params.message)
+  trigger.action.arrowToAll(
+    coalition,
+    idx,
+    startPoint,
+    endPoint,
+    color,
+    fillColor,
+    params.lineType,
+    params.readOnly,
+    params.message
+  )
   return GRPC.success({id = idx})
 end
 

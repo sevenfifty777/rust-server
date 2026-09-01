@@ -8,8 +8,10 @@ service LandService {
   rpc GetTerrainHeight(GetTerrainHeightRequest) returns (GetTerrainHeightResponse) {}
   rpc GetSurfaceType(GetSurfaceTypeRequest) returns (GetSurfaceTypeResponse) {}
   rpc IsVisible(IsVisibleRequest) returns (IsVisibleResponse) {}
-  rpc GetClosestPointOnRoads(GetClosestPointOnRoadsRequest) returns (GetClosestPointOnRoadsResponse) {}
-  rpc GetSurfaceHeightWithSeabed(GetSurfaceHeightWithSeabedRequest) returns (GetSurfaceHeightWithSeabedResponse) {}
+  rpc GetClosestPointOnRoads(GetClosestPointOnRoadsRequest)
+      returns (GetClosestPointOnRoadsResponse) {}
+  rpc GetSurfaceHeightWithSeabed(GetSurfaceHeightWithSeabedRequest)
+      returns (GetSurfaceHeightWithSeabedResponse) {}
   rpc FindPathOnRoads(FindPathOnRoadsRequest) returns (FindPathOnRoadsResponse) {}
   rpc GetIP(GetIPRequest) returns (GetIPResponse) {}
   rpc Profile(ProfileRequest) returns (ProfileResponse) {}
@@ -86,6 +88,8 @@ message ProfileResponse {
   string profile_json = 1;
 }
 
+// Existing values are part of the public API and cannot be renamed.
+// protolint:disable ENUM_FIELD_NAMES_PREFIX ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
 enum SurfaceType {
   LAND = 0;
   SHALLOW_WATER = 1;
@@ -93,3 +97,4 @@ enum SurfaceType {
   ROAD = 3;
   RUNWAY = 4;
 }
+// protolint:enable ENUM_FIELD_NAMES_PREFIX ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH

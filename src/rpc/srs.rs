@@ -266,23 +266,36 @@ impl SrsService for Srs {
             unit: Unit,
         }
 
+        let mut unit_freqs: std::collections::HashMap<u32, std::collections::HashSet<u64>> =
+            std::collections::HashMap::new();
+        for client in self.srs_clients.clients.read().await.values() {
+            if let Some(radio) = &client.radio_info {
+                if radio.unit_id != 0 && radio.unit != "CA" {
+                    let freqs = unit_freqs.entry(radio.unit_id).or_default();
+                    for r in &radio.radios {
+                        if matches!(r.modulation, ::srs::Modulation::Am | ::srs::Modulation::Fm) {
+                            freqs.insert(r.freq as u64);
+                        }
+                    }
+                }
+            }
+        }
+
         let clients =
-            futures_util::future::join_all(self.srs_clients.clients.read().await.iter().map(
-                |(id, frequencies)| {
-                    let frequencies = Vec::from_iter(frequencies.iter().copied());
-                    self.rpc
-                        .request::<_, GetUnitByIdResponse>(
-                            "getUnitById",
-                            tonic::Request::new(GetUnitByIdRequest { id: *id }),
-                        )
-                        .map(|unit| {
-                            unit.ok().map(|unit| srs::v0::get_clients_response::Client {
-                                unit: Some(unit.unit),
-                                frequencies,
-                            })
+            futures_util::future::join_all(unit_freqs.into_iter().map(|(id, frequencies)| {
+                let frequencies = Vec::from_iter(frequencies);
+                self.rpc
+                    .request::<_, GetUnitByIdResponse>(
+                        "getUnitById",
+                        tonic::Request::new(GetUnitByIdRequest { id }),
+                    )
+                    .map(|unit| {
+                        unit.ok().map(|unit| srs::v0::get_clients_response::Client {
+                            unit: Some(unit.unit),
+                            frequencies,
                         })
-                },
-            ))
+                    })
+            }))
             .await
             .into_iter()
             .flatten()

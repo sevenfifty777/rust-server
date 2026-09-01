@@ -186,14 +186,10 @@ local function handleRequest(method, params)
       return result
     else
       GRPC.logError("error executing "..method..": "..tostring(result))
-      return {
-        error = tostring(result)
-      }
+      return GRPC.error(tostring(result))
     end
   else
-    return {
-      error = "unsupported method "..method
-    }
+    return GRPC.errorUnimplemented("unsupported method "..method)
   end
 end
 

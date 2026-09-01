@@ -1,7 +1,7 @@
+use serde::Serialize;
 use stubs::controller;
 use stubs::controller::v0::controller_service_server::ControllerService;
 use tonic::{Request, Response, Status};
-use serde::Serialize;
 
 use super::MissionRpc;
 
@@ -67,15 +67,24 @@ impl ControllerService for MissionRpc {
         request: Request<controller::v0::SetTaskRequest>,
     ) -> Result<Response<controller::v0::SetTaskResponse>, Status> {
         let req = request.into_inner();
-        let task: serde_json::Value = serde_json::from_str(&req.task_json).map_err(|e| Status::invalid_argument(e.to_string()))?;
-        
+        let task: serde_json::Value = serde_json::from_str(&req.task_json)
+            .map_err(|e| Status::invalid_argument(e.to_string()))?;
+
         #[derive(Serialize)]
         struct Payload {
             name: Option<controller::v0::set_task_request::Name>,
             task: serde_json::Value,
         }
-        
-        let _res: () = self.request("setTask", Request::new(Payload { name: req.name, task })).await?;
+
+        let _res: () = self
+            .request(
+                "setTask",
+                Request::new(Payload {
+                    name: req.name,
+                    task,
+                }),
+            )
+            .await?;
         Ok(Response::new(controller::v0::SetTaskResponse {}))
     }
 
@@ -84,15 +93,24 @@ impl ControllerService for MissionRpc {
         request: Request<controller::v0::PushTaskRequest>,
     ) -> Result<Response<controller::v0::PushTaskResponse>, Status> {
         let req = request.into_inner();
-        let task: serde_json::Value = serde_json::from_str(&req.task_json).map_err(|e| Status::invalid_argument(e.to_string()))?;
-        
+        let task: serde_json::Value = serde_json::from_str(&req.task_json)
+            .map_err(|e| Status::invalid_argument(e.to_string()))?;
+
         #[derive(Serialize)]
         struct Payload {
             name: Option<controller::v0::push_task_request::Name>,
             task: serde_json::Value,
         }
-        
-        let _res: () = self.request("pushTask", Request::new(Payload { name: req.name, task })).await?;
+
+        let _res: () = self
+            .request(
+                "pushTask",
+                Request::new(Payload {
+                    name: req.name,
+                    task,
+                }),
+            )
+            .await?;
         Ok(Response::new(controller::v0::PushTaskResponse {}))
     }
 
@@ -117,15 +135,24 @@ impl ControllerService for MissionRpc {
         request: Request<controller::v0::SetCommandRequest>,
     ) -> Result<Response<controller::v0::SetCommandResponse>, Status> {
         let req = request.into_inner();
-        let command: serde_json::Value = serde_json::from_str(&req.command_json).map_err(|e| Status::invalid_argument(e.to_string()))?;
-        
+        let command: serde_json::Value = serde_json::from_str(&req.command_json)
+            .map_err(|e| Status::invalid_argument(e.to_string()))?;
+
         #[derive(Serialize)]
         struct Payload {
             name: Option<controller::v0::set_command_request::Name>,
             command: serde_json::Value,
         }
-        
-        let _res: () = self.request("setCommand", Request::new(Payload { name: req.name, command })).await?;
+
+        let _res: () = self
+            .request(
+                "setCommand",
+                Request::new(Payload {
+                    name: req.name,
+                    command,
+                }),
+            )
+            .await?;
         Ok(Response::new(controller::v0::SetCommandResponse {}))
     }
 }
