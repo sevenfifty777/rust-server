@@ -1,0 +1,23 @@
+[package]
+name = "dcs-module-ipc"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license = "MIT OR Apache-2.0"
+edition.workspace = true
+description = "Pull-based IPC communication for the DCS-gRPC Lua module."
+repository = "https://github.com/rkusa/dcs-module-ipc"
+
+[dependencies]
+log.workspace = true
+mlua = { version = "0.10", default-features = false, features = [
+    "lua51",
+    "serialize",
+] }
+serde.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }

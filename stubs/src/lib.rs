@@ -16,6 +16,7 @@ pub mod land;
 pub mod metadata;
 pub mod mission;
 pub mod net;
+pub mod recovery;
 pub mod spot;
 pub mod srs;
 pub mod timer;

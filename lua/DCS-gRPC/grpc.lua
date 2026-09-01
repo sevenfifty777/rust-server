@@ -158,6 +158,7 @@ dofile(GRPC.luaPath .. [[methods\hook.lua]])
 dofile(GRPC.luaPath .. [[methods\land.lua]])
 dofile(GRPC.luaPath .. [[methods\mission.lua]])
 dofile(GRPC.luaPath .. [[methods\net.lua]])
+dofile(GRPC.luaPath .. [[methods\recovery.lua]])
 dofile(GRPC.luaPath .. [[methods\spot.lua]])
 --dofile(GRPC.luaPath .. [[methods\srs.lua]])  does not exist don't add back
 dofile(GRPC.luaPath .. [[methods\timer.lua]])

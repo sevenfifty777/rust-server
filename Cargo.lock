@@ -501,8 +501,7 @@ dependencies = [
 [[package]]
 name = "dcs-module-ipc"
 version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77f7fd9be53b6f71edc7c8ad74004d532078d4ca9ef7bda768280ca271414b5d"
+source = "git+https://github.com/sevenfifty777/dcs-module-ipc?rev=55f0bf53764380845f507e0036dde57de5ce8580#55f0bf53764380845f507e0036dde57de5ce8580"
 dependencies = [
  "log",
  "mlua",
@@ -1687,7 +1686,7 @@ dependencies = [
 [[package]]
 name = "protoc-bundled"
 version = "27.0.0"
-source = "git+https://github.com/rkusa/protoc-bundled.git?rev=27.0.0#d8e8f513cfe007a6243a7eef571677fd366d2cb9"
+source = "git+https://github.com/sevenfifty777/protoc-bundled.git?rev=d8e8f513cfe007a6243a7eef571677fd366d2cb9#d8e8f513cfe007a6243a7eef571677fd366d2cb9"
 
 [[package]]
 name = "quinn"
