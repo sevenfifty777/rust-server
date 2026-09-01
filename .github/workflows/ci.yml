@@ -72,10 +72,19 @@ jobs:
     steps:
       - name: Install protolint
         run: |
+          protolint_version="0.57.0"
+          protolint_archive="protolint_${protolint_version}_linux_amd64.tar.gz"
+          protolint_sha256="ad8a340427a14f035c4ff8ee81d532467ea15b5a80fb02ad1529a01e1d945f47"
+          protolint_download="${RUNNER_TEMP}/${protolint_archive}"
+
           mkdir -p "$HOME/.local/bin"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          wget -c https://github.com/yoheimuta/protolint/releases/download/v0.35.2/protolint_0.35.2_Linux_x86_64.tar.gz  -O - \
-            | tar -xz -C $HOME/.local/bin protolint
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          curl --fail --location --retry 3 \
+            "https://github.com/yoheimuta/protolint/releases/download/v${protolint_version}/${protolint_archive}" \
+            --output "$protolint_download"
+          printf '%s  %s\n' "$protolint_sha256" "$protolint_download" | sha256sum --check -
+          tar -xzf "$protolint_download" -C "$HOME/.local/bin" protolint
+          "$HOME/.local/bin/protolint" --version
 
       - name: Checkout code
         uses: actions/checkout@v4
