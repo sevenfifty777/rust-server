@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use std::time::Instant;
 
 use dcs_module_ipc::IPC;
 use futures_util::Stream;
@@ -20,6 +21,7 @@ mod land;
 mod metadata;
 mod mission;
 mod net;
+mod recovery;
 mod spot;
 mod srs;
 mod timer;
@@ -77,10 +79,19 @@ impl MissionRpc {
         for<'de> O: serde::Deserialize<'de> + Send + Sync + std::fmt::Debug + 'static,
     {
         let _guard = self.stats.track_queue_size();
-        self.ipc
+        let started_at = Instant::now();
+        let result = self
+            .ipc
             .request(method, Some(request.into_inner()))
             .await
-            .map_err(to_status)
+            .map_err(to_status);
+        log::debug!(
+            "IPC RPC completed: method={} total_ms={:.3} outcome={}",
+            method,
+            started_at.elapsed().as_secs_f64() * 1_000.0,
+            if result.is_ok() { "success" } else { "error" }
+        );
+        result
     }
 
     pub async fn events(&self) -> impl Stream<Item = StreamEventsResponse> + use<> {
@@ -115,10 +126,19 @@ impl HookRpc {
         for<'de> O: serde::Deserialize<'de> + Send + Sync + std::fmt::Debug + 'static,
     {
         let _guard = self.stats.track_queue_size();
-        self.ipc
+        let started_at = Instant::now();
+        let result = self
+            .ipc
             .request(method, Some(request.into_inner()))
             .await
-            .map_err(to_status)
+            .map_err(to_status);
+        log::debug!(
+            "Hook IPC RPC completed: method={} total_ms={:.3} outcome={}",
+            method,
+            started_at.elapsed().as_secs_f64() * 1_000.0,
+            if result.is_ok() { "success" } else { "error" }
+        );
+        result
     }
 }
 
@@ -132,6 +152,8 @@ fn to_status(err: dcs_module_ipc::Error) -> Status {
             Some("UNIMPLEMENTED") => Status::unimplemented(message),
             _ => Status::internal(message),
         },
+        queue_full @ Error::QueueFull { .. } => Status::resource_exhausted(queue_full.to_string()),
+        closed @ Error::ResponseChannelClosed => Status::cancelled(closed.to_string()),
         err => Status::internal(err.to_string()),
     }
 }

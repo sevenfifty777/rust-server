@@ -16,6 +16,7 @@ use stubs::metadata::v0::metadata_service_server::MetadataServiceServer;
 use stubs::mission::v0::StreamEventsResponse;
 use stubs::mission::v0::mission_service_server::MissionServiceServer;
 use stubs::net::v0::net_service_server::NetServiceServer;
+use stubs::recovery::v0::recovery_service_server::RecoveryServiceServer;
 use stubs::spot::v0::spot_service_server::SpotServiceServer;
 pub use stubs::srs::v0::TransmitRequest;
 use stubs::srs::v0::srs_service_server::{SrsService, SrsServiceServer};
@@ -38,6 +39,9 @@ use crate::rpc::{HookRpc, MissionRpc, Srs};
 use crate::shutdown::{Shutdown, ShutdownHandle};
 use crate::srs::SrsClients;
 use crate::stats::Stats;
+
+const MISSION_IPC_QUEUE_CAPACITY: usize = 1_024;
+const HOOK_IPC_QUEUE_CAPACITY: usize = 128;
 
 pub struct Server {
     runtime: Runtime,
@@ -62,8 +66,8 @@ struct ServerState {
 
 impl Server {
     pub fn new(config: &Config) -> Result<Self, StartError> {
-        let ipc_mission = IPC::default();
-        let ipc_hook = IPC::default();
+        let ipc_mission = IPC::with_queue_capacity(MISSION_IPC_QUEUE_CAPACITY);
+        let ipc_hook = IPC::with_queue_capacity(HOOK_IPC_QUEUE_CAPACITY);
         let runtime = Runtime::new()?;
         let shutdown = Shutdown::new();
         let (tx, rx) = mpsc::channel(128);
@@ -270,6 +274,7 @@ async fn try_run(
         .add_service(MetadataServiceServer::new(mission_rpc.clone()))
         .add_service(MissionServiceServer::new(mission_rpc.clone()))
         .add_service(NetServiceServer::new(mission_rpc.clone()))
+        .add_service(RecoveryServiceServer::new(mission_rpc.clone()))
         .add_service(SpotServiceServer::new(mission_rpc.clone()))
         .add_service(TimerServiceServer::new(mission_rpc.clone()))
         .add_service(TriggerServiceServer::new(mission_rpc.clone()))

@@ -501,8 +501,6 @@ dependencies = [
 [[package]]
 name = "dcs-module-ipc"
 version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77f7fd9be53b6f71edc7c8ad74004d532078d4ca9ef7bda768280ca271414b5d"
 dependencies = [
  "log",
  "mlua",

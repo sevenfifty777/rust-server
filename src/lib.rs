@@ -128,15 +128,28 @@ pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
     if let Some(server) = &*SERVER.read().unwrap() {
         let _guard = server.stats().track_block_time(start);
 
-        let next = match env {
-            1 => server.ipc_mission().try_next(),
-            2 => server.ipc_hook().try_next(),
+        let (next, discarded_cancelled) = match env {
+            1 => {
+                let ipc = server.ipc_mission();
+                (ipc.try_next(), ipc.take_discarded_cancelled())
+            }
+            2 => {
+                let ipc = server.ipc_hook();
+                (ipc.try_next(), ipc.take_discarded_cancelled())
+            }
             _ => return Ok(false),
         };
+        server
+            .stats()
+            .track_cancelled_ipc_requests(discarded_cancelled);
 
         if let Some(mut next) = next {
             server.stats().track_call();
 
+            let request_id = next.id();
+            let queue_wait = next.queue_wait();
+            let queue_depth_at_enqueue = next.queue_depth_at_enqueue();
+            let queue_depth_at_dequeue = next.queue_depth_at_dequeue();
             let method = next.method().to_string();
             #[allow(clippy::arc_with_non_send_sync)]
             let params = next
@@ -153,6 +166,7 @@ pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
                 log::debug!("Sending request `{}`", method,);
             }
 
+            let execution_started_at = Instant::now();
             let result: LuaTable = callback.call((method.as_str(), params))?;
             let error: Option<LuaTable> = result.get("error")?;
 
@@ -161,6 +175,17 @@ pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
                 let kind: Option<String> = error.get("type")?;
 
                 next.error(message, kind);
+                server
+                    .stats()
+                    .track_ipc_request(crate::stats::IpcRequestMeasurement {
+                        request_id,
+                        method: &method,
+                        queue_wait,
+                        execution_time: execution_started_at.elapsed(),
+                        queue_depth_at_enqueue,
+                        queue_depth_at_dequeue,
+                        outcome: "script_error",
+                    });
                 return Ok(true);
             }
 
@@ -171,11 +196,22 @@ pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
                 #[allow(clippy::arc_with_non_send_sync)]
                 mlua::Error::ExternalError(Arc::new(Error::DeserializeResult {
                     err,
-                    method,
+                    method: method.clone(),
                     result: pretty_print_value(res, 0)
                         .unwrap_or_else(|err| format!("failed to pretty print result: {err}")),
                 }))
             })?;
+            server
+                .stats()
+                .track_ipc_request(crate::stats::IpcRequestMeasurement {
+                    request_id,
+                    method: &method,
+                    queue_wait,
+                    execution_time: execution_started_at.elapsed(),
+                    queue_depth_at_enqueue,
+                    queue_depth_at_dequeue,
+                    outcome: "success",
+                });
 
             return Ok(true);
         }

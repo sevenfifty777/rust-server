@@ -1,5 +1,5 @@
 [workspace]
-members = ["repl", "srs", "stubs", "tts"]
+members = ["ipc", "repl", "srs", "stubs", "tts"]
 resolver = "2"
 
 [workspace.package]
@@ -42,7 +42,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 backoff = { version = "0.4", features = ["tokio"] }
-dcs-module-ipc = "0.9"
+dcs-module-ipc = { path = "./ipc" }
 futures-util.workspace = true
 igrf = "0.2"
 libloading = { version = "0.8", optional = true }
