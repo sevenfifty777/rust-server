@@ -501,6 +501,7 @@ dependencies = [
 [[package]]
 name = "dcs-module-ipc"
 version = "0.9.1"
+source = "git+https://github.com/sevenfifty777/dcs-module-ipc?rev=55f0bf53764380845f507e0036dde57de5ce8580#55f0bf53764380845f507e0036dde57de5ce8580"
 dependencies = [
  "log",
  "mlua",

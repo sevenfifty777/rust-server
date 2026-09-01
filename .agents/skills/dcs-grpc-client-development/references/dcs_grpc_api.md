@@ -10,9 +10,9 @@
     - [GetWindResponse](#dcs-atmosphere-v0-GetWindResponse)
     - [GetWindWithTurbulenceRequest](#dcs-atmosphere-v0-GetWindWithTurbulenceRequest)
     - [GetWindWithTurbulenceResponse](#dcs-atmosphere-v0-GetWindWithTurbulenceResponse)
-  
+
     - [AtmosphereService](#dcs-atmosphere-v0-AtmosphereService)
-  
+
 - [dcs/coalition/v0/coalition.proto](#dcs_coalition_v0_coalition-proto)
     - [AddGroupRequest](#dcs-coalition-v0-AddGroupRequest)
     - [AddGroupRequest.GroundGroupTemplate](#dcs-coalition-v0-AddGroupRequest-GroundGroupTemplate)
@@ -38,7 +38,7 @@
     - [GetPlayerUnitsResponse](#dcs-coalition-v0-GetPlayerUnitsResponse)
     - [GetStaticObjectsRequest](#dcs-coalition-v0-GetStaticObjectsRequest)
     - [GetStaticObjectsResponse](#dcs-coalition-v0-GetStaticObjectsResponse)
-  
+
     - [AddGroupRequest.Point.AltitudeType](#dcs-coalition-v0-AddGroupRequest-Point-AltitudeType)
     - [AddGroupRequest.Point.PointType](#dcs-coalition-v0-AddGroupRequest-Point-PointType)
     - [AddGroupRequest.Skill](#dcs-coalition-v0-AddGroupRequest-Skill)
@@ -324,6 +324,16 @@
   
     - [NetService](#dcs-net-v0-NetService)
   
+- [dcs/recovery/v0/recovery.proto](#dcs_recovery_v0_recovery-proto)
+    - [DrawArgumentObservation](#dcs-recovery-v0-DrawArgumentObservation)
+    - [GetRecoverySnapshotRequest](#dcs-recovery-v0-GetRecoverySnapshotRequest)
+    - [GetRecoverySnapshotResponse](#dcs-recovery-v0-GetRecoverySnapshotResponse)
+    - [RecoveryTransform](#dcs-recovery-v0-RecoveryTransform)
+
+    - [DrawArgumentStatus](#dcs-recovery-v0-DrawArgumentStatus)
+
+    - [RecoveryService](#dcs-recovery-v0-RecoveryService)
+
 - [dcs/spot/v0/spot.proto](#dcs_spot_v0_spot-proto)
     - [CreateInfraRedRequest](#dcs-spot-v0-CreateInfraRedRequest)
     - [CreateInfraRedResponse](#dcs-spot-v0-CreateInfraRedResponse)
@@ -709,11 +719,11 @@
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-atmosphere-v0-AtmosphereService"></a>
@@ -727,7 +737,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_atmosphere
 | GetWindWithTurbulence | [GetWindWithTurbulenceRequest](#dcs-atmosphere-v0-GetWindWithTurbulenceRequest) | [GetWindWithTurbulenceResponse](#dcs-atmosphere-v0-GetWindWithTurbulenceResponse) | https://wiki.hoggitworld.com/view/DCS_func_getWindWithTurbulence |
 | GetTemperatureAndPressure | [GetTemperatureAndPressureRequest](#dcs-atmosphere-v0-GetTemperatureAndPressureRequest) | [GetTemperatureAndPressureResponse](#dcs-atmosphere-v0-GetTemperatureAndPressureResponse) | https://wiki.hoggitworld.com/view/DCS_func_getWindWithTurbulence |
 
- 
+
 
 
 
@@ -5253,6 +5263,120 @@ Contains the streaming APIs that streaming information out of the DCS server.
 
 
 
+<a name="dcs_recovery_v0_recovery-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dcs/recovery/v0/recovery.proto
+
+
+
+<a name="dcs-recovery-v0-DrawArgumentObservation"></a>
+
+### DrawArgumentObservation
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [DrawArgumentStatus](#dcs-recovery-v0-DrawArgumentStatus) |  |  |
+| value | [double](#double) | optional | Zero is a valid observed DCS draw-argument value. |
+
+
+
+
+
+
+<a name="dcs-recovery-v0-GetRecoverySnapshotRequest"></a>
+
+### GetRecoverySnapshotRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| carrier_name | [string](#string) |  |  |
+| aircraft_name | [string](#string) |  |  |
+| aircraft_draw_argument | [uint32](#uint32) | optional | Optional external-model argument to observe with the two transforms. |
+| sequence | [uint64](#uint64) |  | Client-generated correlation sequence, echoed unchanged by the server. |
+
+
+
+
+
+
+<a name="dcs-recovery-v0-GetRecoverySnapshotResponse"></a>
+
+### GetRecoverySnapshotResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| time | [double](#double) |  | Mission-relative time captured once for the whole callback observation. |
+| carrier | [RecoveryTransform](#dcs-recovery-v0-RecoveryTransform) |  |  |
+| aircraft | [RecoveryTransform](#dcs-recovery-v0-RecoveryTransform) |  |  |
+| aircraft_draw_argument | [DrawArgumentObservation](#dcs-recovery-v0-DrawArgumentObservation) |  |  |
+| sequence | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="dcs-recovery-v0-RecoveryTransform"></a>
+
+### RecoveryTransform
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| position | [dcs.common.v0.Position](#dcs-common-v0-Position) |  |  |
+| orientation | [dcs.common.v0.Orientation](#dcs-common-v0-Orientation) |  |  |
+| velocity | [dcs.common.v0.Velocity](#dcs-common-v0-Velocity) |  |  |
+
+
+
+
+
+
+
+
+<a name="dcs-recovery-v0-DrawArgumentStatus"></a>
+
+### DrawArgumentStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| DRAW_ARGUMENT_STATUS_UNSPECIFIED | 0 |  |
+| DRAW_ARGUMENT_STATUS_NOT_REQUESTED | 1 |  |
+| DRAW_ARGUMENT_STATUS_OBSERVED | 2 |  |
+| DRAW_ARGUMENT_STATUS_UNAVAILABLE | 3 |  |
+
+
+
+
+
+
+
+<a name="dcs-recovery-v0-RecoveryService"></a>
+
+### RecoveryService
+Recovery-specific, callback-atomic observations for grading clients.
+
+Both DCS objects are read sequentially inside one mission Lua callback and
+share one mission-relative timestamp. This is not a simulator-wide state
+transaction.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetRecoverySnapshot | [GetRecoverySnapshotRequest](#dcs-recovery-v0-GetRecoverySnapshotRequest) | [GetRecoverySnapshotResponse](#dcs-recovery-v0-GetRecoverySnapshotResponse) |  |
+
+
+
+
+
 <a name="dcs_spot_v0_spot-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -9275,4 +9399,3 @@ https://wiki.hoggitworld.com/view/DCS_singleton_world
 | <a name="bool" /> bool |  | bool | boolean | boolean | bool | bool | boolean | TrueClass/FalseClass |
 | <a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode | string | string | string | String (UTF-8) |
 | <a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str | []byte | ByteString | string | String (ASCII-8BIT) |
-
