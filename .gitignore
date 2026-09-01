@@ -15,3 +15,9 @@ protos/google
 /Feature_inplementation
 /sample_release
 /Releases
+
+# Repository-local Codex skill
+!/.agents/
+!/.agents/skills/
+!/.agents/skills/dcs-grpc-client-development/
+!/.agents/skills/dcs-grpc-client-development/**
