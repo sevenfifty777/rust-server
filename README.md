@@ -13,7 +13,7 @@ extract the zip file into your DCS Server directory.
 This is typically found in `C:\Users\USERNAME\Saved Games\DCS.openbeta_server`.
 Once extracted you will have a `Scripts\DCS-gRPC` folder, a `Mods\Tech\DCS-gRPC` folder, and a
 `Scripts\Hooks\DCS-gRPC.lua` file in your server folder. As well as these scripts there will be a `Docs/DCS-gRPC`
-folder containing documentation and a `Tools/DCS-gRPC` folder containing client tools.
+folder containing documentation and a `Tools/DCS-gRPC` folder containing the matching REPL and protobuf schemas.
 
 ### Prepare DCS
 
@@ -325,10 +325,16 @@ The script will:
 - read the version from `Cargo.toml`
 - run the locked Rust 1.98.0 release build for the server and REPL
 - create the `DCS-gRPC-<version>` release folder with the expected DCS layout
-- copy the server DLL, Lua bridge, tools, protos and docs
+- copy the server DLL, Lua bridge, current-build REPL, source protobufs, sample mission and docs
 - generate and validate `api.html`
-- verify the required release files and ZIP entries
+- verify the required release files and ZIP entries, including SHA-256 equality for the DLL, REPL, mission and every protobuf
 - create `Releases/DCS-gRPC-<version>.zip`
+
+The release does not bundle `grpcurl` or `grpcui`. They are optional third-party diagnostic clients, not runtime
+components of DCS-gRPC. Download a reviewed version directly from the upstream
+[`grpcurl`](https://github.com/fullstorydev/grpcurl/releases) or
+[`grpcui`](https://github.com/fullstorydev/grpcui/releases) release page when needed. These links are also included
+in the release as `Tools/DCS-gRPC/OPTIONAL-TOOLS.txt`.
 
 After the script finishes, publish the resulting ZIP and tag the commit as described in [`docs/release_process.md`](docs/release_process.md).
 
@@ -355,7 +361,8 @@ For development:
 - Search for `[GRPC]` in the DCS logs
 - Consult the gRPC Server logs at `Saved Games\DCS.openbeta\Logs\gRPC.log`
 
-Test the running server via [grpcurl](https://github.com/fullstorydev/grpcurl): (Remove the `.exe` when running on Linux).
+Test the running server via [grpcurl](https://github.com/fullstorydev/grpcurl) after installing it separately.
+(Remove the `.exe` when running on Linux.)
 
 > [!TIP]
 > FOR WINDOWS USERS on the command prompt, you may need to wrap the JSON in double quotes instead of single quotes in the commands below.
