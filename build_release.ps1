@@ -107,7 +107,7 @@ $LuaBridgeSourceDir = Join-Path $RepoRoot "lua\DCS-gRPC"
 $ProtosSourceDir = Join-Path $RepoRoot "protos\dcs"
 $SampleMission = Join-Path $RepoRoot "sample_release\DCS-gRPC-0.8.1\Missions\DCS-gRPC-Example.miz"
 $SampleTools = Join-Path $RepoRoot "sample_release\DCS-gRPC-0.8.1\Tools\DCS-gRPC"
-$DocsToCopy = @("CHANGELOG.md", "README.md", "STATUS.md")
+$DocsToCopy = @("CHANGELOG.md", "README.md", "STATUS.md", "docs\recovery_telemetry.md")
 $ToolFiles = @("grpcui.exe", "grpcui-LICENSE.txt", "grpcurl.exe", "grpcurl-LICENSE.txt")
 
 Assert-RequiredPath -Path $ServerDllPath -Description "server DLL" -PathType Leaf
@@ -231,6 +231,7 @@ $RequiredReleaseFiles = @(
     "Docs\DCS-gRPC\CHANGELOG.md",
     "Docs\DCS-gRPC\README.md",
     "Docs\DCS-gRPC\STATUS.md",
+    "Docs\DCS-gRPC\recovery_telemetry.md",
     "Docs\DCS-gRPC\api.html",
     "Missions\DCS-gRPC-Example.miz",
     "Tools\DCS-gRPC\grpcui.exe",

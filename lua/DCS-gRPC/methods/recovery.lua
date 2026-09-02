@@ -49,3 +49,136 @@ GRPC.methods.getRecoverySnapshot = function(params)
     sequence = params.sequence,
   })
 end
+
+--
+-- Source-buffered recovery telemetry
+--
+
+local telemetryConfig = GRPC.recoveryTelemetry or {}
+local telemetryEnabled = telemetryConfig.enabled == true and GRPC.isMissionEnv
+local telemetryEngine = nil
+local telemetryScheduled = false
+local telemetryConsecutiveFailures = 0
+
+local function configValue(name, default)
+  local value = telemetryConfig[name]
+  if value == nil then return default end
+  return value
+end
+
+local function telemetryError(kind, message)
+  if kind == "INVALID_ARGUMENT" then return GRPC.errorInvalidArgument(message) end
+  if kind == "ALREADY_EXISTS" then return GRPC.errorAlreadyExists(message) end
+  if kind == "PERMISSION_DENIED" then return GRPC.errorPermissionDenied(message) end
+  if kind == "RESOURCE_EXHAUSTED" then return GRPC.errorResourceExhausted(message) end
+  return GRPC.error(message)
+end
+
+local function ensureTelemetryScheduled()
+  if telemetryScheduled then return true end
+  local function nextCaptureTime(scheduledTime)
+    local ok, now = pcall(timer.getTime)
+    return ((ok and now) or scheduledTime) + telemetryEngine.state.config.periodSeconds
+  end
+  local function captureCallback(_, scheduledTime)
+    local ok, active, err = pcall(function()
+      return telemetryEngine.captureTick(telemetryEngine.state, timer.getTime())
+    end)
+    if not ok then
+      telemetryConsecutiveFailures = telemetryConsecutiveFailures + 1
+      if telemetryConsecutiveFailures == 1
+        or telemetryConsecutiveFailures == 10
+        or telemetryConsecutiveFailures % 100 == 0 then
+        GRPC.logError("Recovery telemetry capture failed; retrying (failure "
+          .. telemetryConsecutiveFailures .. "): " .. tostring(active))
+      end
+      return nextCaptureTime(scheduledTime)
+    end
+    telemetryConsecutiveFailures = 0
+    if active == nil then
+      telemetryScheduled = false
+      GRPC.logError("Recovery telemetry capture stopped: " .. tostring(err))
+      return nil
+    end
+    if not active then
+      telemetryScheduled = false
+      return nil
+    end
+    return nextCaptureTime(scheduledTime)
+  end
+
+  local ok, scheduleId = pcall(function()
+    return timer.scheduleFunction(captureCallback, nil,
+      timer.getTime() + configValue("periodSeconds", 0.05))
+  end)
+  if not ok or scheduleId == nil then
+    telemetryScheduled = false
+    local message = ok and "scheduleFunction returned no timer id" or tostring(scheduleId)
+    GRPC.logError("Failed to schedule recovery telemetry capture: " .. message)
+    return nil, message
+  end
+  telemetryScheduled = true
+  return true
+end
+
+if telemetryEnabled then
+  local module = dofile(GRPC.luaPath .. [[recovery_telemetry.lua]])
+  local state = module.new({
+    sourceEpoch = grpc.newSessionId(),
+    config = {
+      periodSeconds = configValue("periodSeconds", 0.05),
+      retentionSeconds = configValue("retentionSeconds", 30),
+      capacity = configValue("capacity", 600),
+      leaseSeconds = configValue("leaseSeconds", 60),
+      maxActiveRecoveries = configValue("maxActiveRecoveries", 16),
+      maxActiveCarriers = configValue("maxActiveCarriers", 8),
+      maxBatchSize = configValue("maxBatchSize", 100),
+      readsPerSecond = configValue("readsPerSecond", 20),
+    },
+    now = timer.getTime,
+    getUnitByName = Unit.getByName,
+    getUnitId = function(unit) return unit:getID() end,
+    exportRawTransform = GRPC.exporters.rawTransform,
+    monotonicTimeNs = grpc.monotonicTimeNs,
+    ensureScheduled = ensureTelemetryScheduled,
+  })
+  telemetryEngine = {
+    state = state,
+    start = module.start,
+    read = module.read,
+    stop = module.stop,
+    captureTick = module.captureTick,
+  }
+  GRPC.logInfo("Recovery telemetry enabled with source epoch " .. state.sourceEpoch)
+end
+
+local function requireTelemetry()
+  if not telemetryEnabled then
+    return GRPC.errorUnimplemented("recovery telemetry is disabled by server configuration")
+  end
+  return nil
+end
+
+GRPC.methods.startRecoveryTelemetry = function(params)
+  local disabled = requireTelemetry()
+  if disabled then return disabled end
+  local result, kind, message = telemetryEngine.start(telemetryEngine.state, params)
+  if not result then return telemetryError(kind, message) end
+  return GRPC.success(result)
+end
+
+GRPC.methods.readRecoveryTelemetry = function(params)
+  local disabled = requireTelemetry()
+  if disabled then return disabled end
+  local result, kind, message = telemetryEngine.read(telemetryEngine.state, params)
+  if not result then return telemetryError(kind, message) end
+  return GRPC.success(result)
+end
+
+GRPC.methods.stopRecoveryTelemetry = function(params)
+  local disabled = requireTelemetry()
+  if disabled then return disabled end
+  local result, kind, message = telemetryEngine.stop(telemetryEngine.state, params)
+  if not result then return telemetryError(kind, message) end
+  return GRPC.success(result)
+end

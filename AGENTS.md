@@ -27,6 +27,12 @@ Ordre des sources : résultat fraîchement exécuté > code courant du dépôt c
 
 ## État des dépôts et dépendances connu
 
+### Server DCS
+- Chemin installation : E:\DCS World Server\DCS World Server\bin\DCS_server.exe
+- Chemin Saved Games : C:\Users\Olivier\Saved Games\DCS.dcs_serverrelease
+- IP : 127.0.0.1
+- Port : 10308
+
 ### Client LSO courant
 
 - Dépôt : `E:\DCS stuffs\Initiative ESG\DCS-gRPC-lso`.

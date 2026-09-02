@@ -43,6 +43,111 @@ pub mod v0 {
         }
     }
 
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct RecoveryUnitObservationIntermediate {
+        status: i32,
+        expected_name: String,
+        expected_id: u32,
+        resolved_id: Option<u32>,
+        raw_transform: Option<RawTransform>,
+        read_started_offset_us: Option<u64>,
+        read_finished_offset_us: Option<u64>,
+    }
+
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct RecoveryTelemetrySnapshotIntermediate {
+        recovery_handle: String,
+        source_epoch: String,
+        sequence: u64,
+        capture_tick: u64,
+        capture_time: f64,
+        aircraft: Option<RecoveryUnitObservationIntermediate>,
+        carrier: Option<RecoveryUnitObservationIntermediate>,
+        capture_duration_us: Option<u64>,
+    }
+
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct ReadRecoveryTelemetryResponseIntermediate {
+        source_epoch: String,
+        recovery_handle: String,
+        lifecycle_status: i32,
+        oldest_available_sequence: u64,
+        newest_available_sequence: u64,
+        next_after_sequence: u64,
+        loss_reason: i32,
+        overflow_count: u64,
+        configured_period: f64,
+        capacity: u32,
+        retention_seconds: f64,
+        #[serde(default)]
+        snapshots: Vec<RecoveryTelemetrySnapshotIntermediate>,
+        diagnostics: Option<RecoveryTelemetryDiagnostics>,
+        lease_expires_at: f64,
+        read_time: f64,
+    }
+
+    impl From<RecoveryUnitObservationIntermediate> for RecoveryUnitObservation {
+        fn from(value: RecoveryUnitObservationIntermediate) -> Self {
+            Self {
+                status: value.status,
+                expected_name: value.expected_name,
+                expected_id: value.expected_id,
+                resolved_id: value.resolved_id,
+                transform: value.raw_transform.map(recovery_transform),
+                read_started_offset_us: value.read_started_offset_us,
+                read_finished_offset_us: value.read_finished_offset_us,
+            }
+        }
+    }
+
+    impl TryFrom<RecoveryTelemetrySnapshotIntermediate> for RecoveryTelemetrySnapshot {
+        type Error = String;
+
+        fn try_from(value: RecoveryTelemetrySnapshotIntermediate) -> Result<Self, Self::Error> {
+            Ok(Self {
+                recovery_handle: value.recovery_handle,
+                source_epoch: value.source_epoch,
+                sequence: value.sequence,
+                capture_tick: value.capture_tick,
+                capture_time: value.capture_time,
+                aircraft: Some(value.aircraft.ok_or("snapshot is missing aircraft")?.into()),
+                carrier: Some(value.carrier.ok_or("snapshot is missing carrier")?.into()),
+                capture_duration_us: value.capture_duration_us,
+            })
+        }
+    }
+
+    impl TryFrom<ReadRecoveryTelemetryResponseIntermediate> for ReadRecoveryTelemetryResponse {
+        type Error = String;
+
+        fn try_from(value: ReadRecoveryTelemetryResponseIntermediate) -> Result<Self, Self::Error> {
+            Ok(Self {
+                source_epoch: value.source_epoch,
+                recovery_handle: value.recovery_handle,
+                lifecycle_status: value.lifecycle_status,
+                oldest_available_sequence: value.oldest_available_sequence,
+                newest_available_sequence: value.newest_available_sequence,
+                next_after_sequence: value.next_after_sequence,
+                loss_reason: value.loss_reason,
+                overflow_count: value.overflow_count,
+                configured_period: value.configured_period,
+                capacity: value.capacity,
+                retention_seconds: value.retention_seconds,
+                snapshots: value
+                    .snapshots
+                    .into_iter()
+                    .map(TryInto::try_into)
+                    .collect::<Result<_, _>>()?,
+                diagnostics: value.diagnostics,
+                lease_expires_at: value.lease_expires_at,
+                read_time: value.read_time,
+            })
+        }
+    }
+
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -122,6 +227,67 @@ pub mod v0 {
             )
             .unwrap_err();
             assert!(error.to_string().contains("carrierRawTransform"));
+        }
+
+        #[test]
+        fn telemetry_batch_converts_nested_raw_transforms_and_metadata() {
+            let raw = r#"{
+                "position": {"lat":1.0,"lon":2.0,"alt":3.0,"u":4.0,"v":5.0},
+                "positionNorth":{"x":4.0,"y":0.0,"z":6.0},
+                "forward":{"x":0.0,"y":0.0,"z":1.0},
+                "right":{"x":1.0,"y":0.0,"z":0.0},
+                "up":{"x":0.0,"y":1.0,"z":0.0},
+                "velocity":{"x":3.0,"y":0.0,"z":4.0}
+            }"#;
+            let json = format!(
+                r#"{{
+                    "sourceEpoch":"epoch","recoveryHandle":"r1","lifecycleStatus":1,
+                    "oldestAvailableSequence":1,"newestAvailableSequence":1,
+                    "nextAfterSequence":1,"lossReason":4,"overflowCount":0,
+                    "configuredPeriod":0.05,"capacity":600,"retentionSeconds":30.0,
+                    "snapshots":[{{
+                        "recoveryHandle":"r1","sourceEpoch":"epoch","sequence":1,
+                        "captureTick":9,"captureTime":42.0,
+                        "aircraft":{{"status":1,"expectedName":"jet","expectedId":10,
+                            "resolvedId":10,"rawTransform":{raw}}},
+                        "carrier":{{"status":1,"expectedName":"ship","expectedId":20,
+                            "resolvedId":20,"rawTransform":{raw}}},
+                        "captureDurationUs":12
+                    }}],
+                    "diagnostics":{{
+                        "lastCaptureTime":42.0,"configuredPeriod":0.05,"observedGap":0.05,
+                        "missedCaptureIntervals":0,"snapshotsProduced":1,
+                        "invalidSnapshotsProduced":0,"snapshotsServed":1,
+                        "retentionExpirationCount":0,"capacityOverflowCount":0,
+                        "highWaterMark":1,"activeRecoveries":1,"activeCarriers":1,
+                        "lastCaptureDurationUs":12,"readBatches":1,"lastBatchSize":1,
+                        "sourceAge":0.0
+                    }},
+                    "leaseExpiresAt":102.0,"readTime":42.0
+                }}"#
+            );
+            let batch: ReadRecoveryTelemetryResponse = serde_json::from_str(&json).unwrap();
+            assert_eq!(batch.snapshots.len(), 1);
+            assert_eq!(
+                batch.loss_reason,
+                i32::from(RecoveryTelemetryLossReason::Mixed)
+            );
+            assert_eq!(batch.snapshots[0].capture_tick, 9);
+            assert_eq!(
+                batch.snapshots[0]
+                    .carrier
+                    .as_ref()
+                    .unwrap()
+                    .transform
+                    .as_ref()
+                    .unwrap()
+                    .velocity
+                    .as_ref()
+                    .unwrap()
+                    .speed,
+                5.0
+            );
+            assert_eq!(batch.diagnostics.unwrap().active_carriers, 1);
         }
     }
 }

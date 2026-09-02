@@ -1,4 +1,5 @@
 local isMissionEnv = DCS == nil
+GRPC.isMissionEnv = isMissionEnv
 
 if isMissionEnv then
   env.info("[GRPC] mission loading ...")
@@ -21,7 +22,8 @@ if isMissionEnv then
     integrityCheckDisabled = GRPC.integrityCheckDisabled,
     tts = GRPC.tts,
     srs = GRPC.srs,
-    auth = GRPC.auth
+    auth = GRPC.auth,
+    recoveryTelemetry = GRPC.recoveryTelemetry
   }))
 end
 
@@ -138,6 +140,16 @@ GRPC.errorPermissionDenied = function(msg)
   return {
     error = {
       type = "PERMISSION_DENIED",
+      message = msg,
+    }
+  }
+end
+
+--- The operation was rejected because a configured resource limit was reached.
+GRPC.errorResourceExhausted = function(msg)
+  return {
+    error = {
+      type = "RESOURCE_EXHAUSTED",
       message = msg,
     }
   }

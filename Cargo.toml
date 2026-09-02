@@ -3,7 +3,7 @@ members = ["repl", "srs", "stubs", "tts"]
 resolver = "2"
 
 [workspace.package]
-version = "0.9.1"
+version = "0.10.0"
 license = "AGPL-3.0-or-later"
 authors = ["Markus Ast <m@rkusa.st>"]
 rust-version = "1.85"
@@ -66,6 +66,7 @@ tokio.workspace = true
 tokio-stream.workspace = true
 tonic.workspace = true
 tonic-middleware = "0.3"
+uuid = { version = "1.10", features = ["v4"] }
 
 [build-dependencies]
 walkdir = "2.3"

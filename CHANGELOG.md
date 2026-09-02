@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-02
+
+### Added
+
+- Added additive `RecoveryService` start/read/stop telemetry RPCs backed by a lazy mission-Lua collector, per-recovery bounded rings, callback-wide source timestamps, per-recovery sequences, global capture ticks, source epochs, unit-incarnation validation, explicit loss/lifecycle metadata, leases, tombstones, resource limits, and owner-scoped access.
+- Added native UUID epoch generation and monotonic capture-cost timing plus deterministic Lua-engine tests for retries, pagination, overflow, carrier sharing, producer gaps, invalid unit incarnations, stop, and TTL expiry.
+
+### Changed
+
+- Authentication now propagates the configured client label (never the API token) to mission RPC handlers, and script `PERMISSION_DENIED`, `RESOURCE_EXHAUSTED`, and `UNAUTHENTICATED` errors retain their gRPC status codes.
+- Recovery telemetry read quotas are enforced before mission IPC enqueueing, and live tombstones now prevent ambiguous immediate handle reuse.
+
+### Fixed
+
+- Recovery capture callbacks survive unexpected Lua exceptions, scheduling failures roll back registrations, idle periods no longer inflate missed-tick diagnostics, empty rings expose a `0/0` sequence range, and mixed retention/capacity losses retain accurate provenance.
+
 
 ## [0.9.1] - 2026-09-01
 
