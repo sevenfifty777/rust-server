@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `HookService.GetOwnshipHookState`, an additive hook-environment API that returns the local player's raw `Export.LoGetMechInfo().hook` status/value, DCS model time, aircraft type, and ownship unit ID. The response explicitly reports unavailable evidence when ownship export or hook mechanization is not exposed.
 
 ## [0.9.1] - 2026-09-01
 
