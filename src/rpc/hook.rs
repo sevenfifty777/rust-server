@@ -170,6 +170,14 @@ impl HookService for HookRpc {
         Ok(Response::new(res))
     }
 
+    async fn get_ownship_hook_state(
+        &self,
+        request: Request<hook::v0::GetOwnshipHookStateRequest>,
+    ) -> Result<Response<hook::v0::GetOwnshipHookStateResponse>, Status> {
+        let res = self.request("getOwnshipHookState", request).await?;
+        Ok(Response::new(res))
+    }
+
     async fn get_mission_options(
         &self,
         request: Request<hook::v0::GetMissionOptionsRequest>,

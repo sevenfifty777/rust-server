@@ -8,8 +8,80 @@ local GRPC = GRPC
 local net = net
 local Export = Export
 
+local OWNSHIP_HOOK_OBSERVED = 1
+local OWNSHIP_HOOK_UNAVAILABLE = 2
+
+local function normalizeMechanizationValue(value)
+  if type(value) == "boolean" then
+    return value and 1 or 0
+  end
+  if type(value) == "number" then
+    return value
+  end
+  return nil
+end
+
 GRPC.methods.getModelTime = function()
   return GRPC.success({ time = DCS.getModelTime() })
+end
+
+GRPC.methods.getOwnshipHookState = function()
+  local modelTime = DCS.getModelTime()
+  local aircraftType = ""
+  local ownshipUnitId = nil
+
+  if Export ~= nil and type(Export.LoGetSelfData) == "function" then
+    local selfDataOk, selfData = pcall(Export.LoGetSelfData)
+    if selfDataOk and type(selfData) == "table" and type(selfData.Name) == "string" then
+      aircraftType = selfData.Name
+    end
+  end
+
+  if Export ~= nil and type(Export.LoGetPlayerPlaneId) == "function" then
+    local playerPlaneIdOk, playerPlaneId = pcall(Export.LoGetPlayerPlaneId)
+    if playerPlaneIdOk and type(playerPlaneId) == "number" then
+      ownshipUnitId = playerPlaneId
+    end
+  end
+
+  if Export == nil or type(Export.LoGetMechInfo) ~= "function" then
+    return GRPC.success({
+      observationStatus = OWNSHIP_HOOK_UNAVAILABLE,
+      modelTime = modelTime,
+      aircraftType = aircraftType,
+      ownshipUnitId = ownshipUnitId,
+    })
+  end
+
+  local mechInfoOk, mechInfo = pcall(Export.LoGetMechInfo)
+  if not mechInfoOk or type(mechInfo) ~= "table" or type(mechInfo.hook) ~= "table" then
+    return GRPC.success({
+      observationStatus = OWNSHIP_HOOK_UNAVAILABLE,
+      modelTime = modelTime,
+      aircraftType = aircraftType,
+      ownshipUnitId = ownshipUnitId,
+    })
+  end
+
+  local statusValue = normalizeMechanizationValue(mechInfo.hook.status)
+  local value = normalizeMechanizationValue(mechInfo.hook.value)
+  if statusValue == nil and value == nil then
+    return GRPC.success({
+      observationStatus = OWNSHIP_HOOK_UNAVAILABLE,
+      modelTime = modelTime,
+      aircraftType = aircraftType,
+      ownshipUnitId = ownshipUnitId,
+    })
+  end
+
+  return GRPC.success({
+    observationStatus = OWNSHIP_HOOK_OBSERVED,
+    modelTime = modelTime,
+    aircraftType = aircraftType,
+    statusValue = statusValue,
+    value = value,
+    ownshipUnitId = ownshipUnitId,
+  })
 end
 
 GRPC.methods.getMissionOptions = function()

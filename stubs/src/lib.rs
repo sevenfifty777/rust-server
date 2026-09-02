@@ -35,6 +35,7 @@ mod tests {
     use super::mission::v0::{StreamEventsResponse, stream_events_response as event};
     use super::world::v0::GetAirbasesResponse;
     use crate::common::v0::{Orientation, Velocity};
+    use crate::hook::v0::{GetOwnshipHookStateResponse, OwnshipHookObservationStatus};
 
     #[test]
     fn test_event_deserialization() {
@@ -186,5 +187,50 @@ mod tests {
                 }]
             }
         );
+    }
+
+    #[test]
+    fn test_ownship_hook_state_deserializes_raw_values() {
+        let response: GetOwnshipHookStateResponse = serde_json::from_str(
+            r#"{
+                "observationStatus": 1,
+                "modelTime": 42.5,
+                "aircraftType": "FA-18C_hornet",
+                "statusValue": 0.0,
+                "value": 1.0,
+                "ownshipUnitId": 42
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(
+            response.observation_status,
+            i32::from(OwnshipHookObservationStatus::Observed)
+        );
+        assert_eq!(response.model_time, 42.5);
+        assert_eq!(response.aircraft_type, "FA-18C_hornet");
+        assert_eq!(response.status_value, Some(0.0));
+        assert_eq!(response.value, Some(1.0));
+        assert_eq!(response.ownship_unit_id, Some(42));
+    }
+
+    #[test]
+    fn test_ownship_hook_state_deserializes_unavailable_observation() {
+        let response: GetOwnshipHookStateResponse = serde_json::from_str(
+            r#"{
+                "observationStatus": 2,
+                "modelTime": 42.5,
+                "aircraftType": ""
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(
+            response.observation_status,
+            i32::from(OwnshipHookObservationStatus::Unavailable)
+        );
+        assert_eq!(response.status_value, None);
+        assert_eq!(response.value, None);
+        assert_eq!(response.ownship_unit_id, None);
     }
 }
