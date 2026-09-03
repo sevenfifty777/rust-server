@@ -55,6 +55,8 @@ end
 -- APIs exposed to Lua
 --
 GRPC.tts = grpc.tts
+-- Monotonic wall-clock milliseconds provided by the DLL; usable even when `os` is sanitized.
+GRPC.monotonicMs = grpc.monotonicMs
 
 --
 -- Logging methods
@@ -143,6 +145,16 @@ GRPC.errorPermissionDenied = function(msg)
   }
 end
 
+--- Internal errors: some invariant expected by the underlying system has been broken.
+GRPC.errorInternal = function(msg)
+  return {
+    error = {
+      type = "INTERNAL",
+      message = msg,
+    }
+  }
+end
+
 GRPC.event = grpc.event
 --
 -- RPC methods
@@ -154,13 +166,17 @@ dofile(GRPC.luaPath .. [[methods\coalitions.lua]])
 dofile(GRPC.luaPath .. [[methods\controllers.lua]])
 dofile(GRPC.luaPath .. [[methods\custom.lua]])
 dofile(GRPC.luaPath .. [[methods\group.lua]])
-dofile(GRPC.luaPath .. [[methods\hook.lua]])
+if isMissionEnv then
+  -- Mission-scripting-only methods (need `Unit`, `timer`, ...); routed through `MissionRpc`.
+  dofile(GRPC.luaPath .. [[methods\recovery.lua]])
+else
+  -- Hook-only methods (need `DCS`, `net`, `Export`); routed through `HookRpc`.
+  dofile(GRPC.luaPath .. [[methods\hook.lua]])
+end
 dofile(GRPC.luaPath .. [[methods\land.lua]])
 dofile(GRPC.luaPath .. [[methods\mission.lua]])
 dofile(GRPC.luaPath .. [[methods\net.lua]])
-dofile(GRPC.luaPath .. [[methods\recovery.lua]])
 dofile(GRPC.luaPath .. [[methods\spot.lua]])
---dofile(GRPC.luaPath .. [[methods\srs.lua]])  does not exist don't add back
 dofile(GRPC.luaPath .. [[methods\timer.lua]])
 dofile(GRPC.luaPath .. [[methods\trigger.lua]])
 dofile(GRPC.luaPath .. [[methods\unit.lua]])
@@ -178,11 +194,13 @@ GRPC.stop = function()
   stopped = true
 end
 
-local function handleRequest(method, params)
+-- `meta` is an optional table provided by the DLL with per-request IPC diagnostics
+-- (`requestId`, `queueWaitMs`, `queueDepthAtEnqueue`, `queueDepthAtDequeue`).
+local function handleRequest(method, params, meta)
   local fn = GRPC.methods[method]
 
   if type(fn) == "function" then
-    local ok, result = xpcall(function() return fn(params) end, debug.traceback)
+    local ok, result = xpcall(function() return fn(params, meta) end, debug.traceback)
     if ok then
       return result
     else
@@ -257,7 +275,7 @@ else -- hook env
     local i = 0
     while grpc.next(HOOK_ENV, handleRequest) do
       i = i + 1
-      if i > callsPerTick then
+      if i >= callsPerTick then
         break
       end
     end

@@ -45,6 +45,10 @@ message DrawArgumentObservation {
   DrawArgumentStatus status = 1;
   // Zero is a valid observed DCS draw-argument value.
   optional double value = 2;
+  // Diagnostic detail set together with DRAW_ARGUMENT_STATUS_UNAVAILABLE: the
+  // Lua error raised by `Unit.getDrawArgumentValue`, or a description of the
+  // unexpected return type. Absent for every other status.
+  optional string detail = 3;
 }
 
 message GetRecoverySnapshotResponse {
@@ -54,4 +58,28 @@ message GetRecoverySnapshotResponse {
   RecoveryTransform aircraft = 3;
   DrawArgumentObservation aircraft_draw_argument = 4;
   uint64 sequence = 5;
+
+  // Server-side latency diagnostics. All of these fields are additive and
+  // optional: a field is absent whenever the bridge could not measure it.
+
+  // Wall-clock milliseconds the request spent in the mission IPC queue, from
+  // the moment the gRPC handler enqueued it until the mission scheduler
+  // dequeued it for execution. Measured by the Rust bridge with a monotonic
+  // clock at dequeue time and handed to the Lua callback; it does not include
+  // the Lua execution time or the gRPC transport.
+  optional double queue_wait_ms = 6;
+  // Wall-clock milliseconds spent inside the Lua `getRecoverySnapshot`
+  // callback, from entry until the observation (transforms and draw argument)
+  // was collected. Measured with the bridge's monotonic clock
+  // (`GRPC.monotonicMs`), falling back to `os.clock()` (CPU time) when the
+  // mission environment still exposes `os`. Absent when neither is available.
+  optional double lua_exec_ms = 7;
+  // Depth of the mission IPC queue when this request was enqueued, including
+  // the request itself (1 means the queue was otherwise empty).
+  optional uint32 queue_depth = 8;
+  // DCS `timer.getTime()` observed when the Lua callback started executing.
+  // It equals `time` because the whole observation happens inside that one
+  // callback; it is exposed separately so clients can compare it with model
+  // time obtained through other channels.
+  optional double dequeued_model_time = 9;
 }

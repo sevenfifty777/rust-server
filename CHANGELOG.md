@@ -6,9 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-09-03
+
 ### Added
 
-- Added `HookService.GetOwnshipHookState`, an additive hook-environment API that returns the local player's raw `Export.LoGetMechInfo().hook` status/value, DCS model time, aircraft type, and ownship unit ID. The response explicitly reports unavailable evidence when ownship export or hook mechanization is not exposed.
+- Added `HookService.GetOwnshipHookState`, an additive hook-environment API that returns the local player's raw `Export.LoGetMechInfo().hook` status/value, DCS model time, aircraft type, and ownship unit ID. The response explicitly reports unavailable evidence when ownship export or hook mechanization is not exposed. Note: this only works on a client DCS instance with a local cockpit (an ownship); on a dedicated server there is no ownship, so it always reports `OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE`.
+- Added latency diagnostics to `RecoveryService.GetRecoverySnapshot` (`queue_wait_ms`, `lua_exec_ms`, `queue_depth`, `dequeued_model_time`; all optional) and `DrawArgumentObservation.detail` carrying the Lua error text when a draw argument is unavailable.
+- Added `StreamUnitsRequest.poll_rate_ms` (takes precedence over `poll_rate`; minimum 50 ms).
+- Added `grpc.monotonicMs()` (re-exported as `GRPC.monotonicMs()`) to the Lua bridge, a monotonic wall-clock in milliseconds usable even when `os` is sanitized, and the DLL now passes per-request IPC metadata (`requestId`, `queueWaitMs`, `queueDepthAtEnqueue`, `queueDepthAtDequeue`) as a third argument to the Lua request handler.
+- Added the missing `GRPC.errorInternal` Lua helper (maps to gRPC `INTERNAL`).
+- Added a non-blocking `cargo audit` CI job.
+
+### Changed
+
+- `StreamUnits` is documented as a discovery / pre-filter API not suitable for sub-100 ms telemetry; it now caps concurrent `GetTransform` fan-out to 8 requests per stream and rejects a zero poll rate (or `poll_rate_ms` below 50) with `INVALID_ARGUMENT` instead of panicking the stream task.
+- `methods/recovery.lua` is now loaded only in the mission scripting environment and `methods/hook.lua` only in the hook environment; `hook.lua` no longer captures `DCS`/`Export` as load-time upvalues.
+- `dcs-module-ipc` is built from the vendored workspace crate in `ipc/` instead of a git revision (same content as `sevenfifty777/dcs-module-ipc@55f0bf5`).
+- The DLL no longer panics when the log file cannot be created or the server state lock is poisoned; `grpc.start` reports the failure to Lua and the other entry points return a Lua error (or return early for `event`).
+
+### Fixed
+
+- `GRPC.errorInternal` was called from `methods/spot.lua` and `methods/unit.lua` but never defined, turning those failures into `attempt to call field 'errorInternal' (a nil value)` errors.
+- The hook environment request loop executed one call more than `callsPerTick` per tick (off-by-one against the mission environment loop).
+- Removed the stray empty `lua_files.rs` at the repository root (the real file is generated into `OUT_DIR`).
 
 ## [0.9.1] - 2026-09-01
 

@@ -11,6 +11,10 @@ pub mod v0 {
         aircraft_raw_transform: Option<RawTransform>,
         aircraft_draw_argument: Option<DrawArgumentObservation>,
         sequence: u64,
+        queue_wait_ms: Option<f64>,
+        lua_exec_ms: Option<f64>,
+        queue_depth: Option<u32>,
+        dequeued_model_time: Option<f64>,
     }
 
     impl TryFrom<GetRecoverySnapshotResponseIntermediate> for GetRecoverySnapshotResponse {
@@ -30,6 +34,10 @@ pub mod v0 {
                 aircraft: Some(recovery_transform(aircraft)),
                 aircraft_draw_argument: value.aircraft_draw_argument,
                 sequence: value.sequence,
+                queue_wait_ms: value.queue_wait_ms,
+                lua_exec_ms: value.lua_exec_ms,
+                queue_depth: value.queue_depth,
+                dequeued_model_time: value.dequeued_model_time,
             })
         }
     }
@@ -48,6 +56,11 @@ pub mod v0 {
         use super::*;
 
         fn response_json(draw_argument: &str) -> String {
+            response_json_with_extra(draw_argument, "")
+        }
+
+        /// `extra` is spliced verbatim after `sequence`; pass e.g. `, "queueWaitMs": 1.5`.
+        fn response_json_with_extra(draw_argument: &str, extra: &str) -> String {
             format!(
                 r#"{{
                     "time": 42.125,
@@ -68,7 +81,7 @@ pub mod v0 {
                         "velocity": {{"x": 0.0, "y": 0.0, "z": 2.0}}
                     }},
                     "aircraftDrawArgument": {draw_argument},
-                    "sequence": 17
+                    "sequence": 17{extra}
                 }}"#
             )
         }
@@ -87,6 +100,43 @@ pub mod v0 {
                 DrawArgumentObservation {
                     status: DrawArgumentStatus::Observed.into(),
                     value: Some(0.0),
+                    detail: None,
+                }
+            );
+        }
+
+        #[test]
+        fn snapshot_diagnostics_are_absent_when_lua_omits_them() {
+            let response: GetRecoverySnapshotResponse =
+                serde_json::from_str(&response_json(r#"{"status": 1}"#)).unwrap();
+
+            assert_eq!(response.queue_wait_ms, None);
+            assert_eq!(response.lua_exec_ms, None);
+            assert_eq!(response.queue_depth, None);
+            assert_eq!(response.dequeued_model_time, None);
+            assert_eq!(response.aircraft_draw_argument.unwrap().detail, None);
+        }
+
+        #[test]
+        fn snapshot_diagnostics_are_carried_when_lua_provides_them() {
+            let response: GetRecoverySnapshotResponse =
+                serde_json::from_str(&response_json_with_extra(
+                    r#"{"status": 3, "detail": "getDrawArgumentValue returned nil"}"#,
+                    r#", "queueWaitMs": 12.5, "luaExecMs": 0.75, "queueDepth": 3,
+                        "dequeuedModelTime": 42.125"#,
+                ))
+                .unwrap();
+
+            assert_eq!(response.queue_wait_ms, Some(12.5));
+            assert_eq!(response.lua_exec_ms, Some(0.75));
+            assert_eq!(response.queue_depth, Some(3));
+            assert_eq!(response.dequeued_model_time, Some(42.125));
+            assert_eq!(
+                response.aircraft_draw_argument.unwrap(),
+                DrawArgumentObservation {
+                    status: DrawArgumentStatus::Unavailable.into(),
+                    value: None,
+                    detail: Some("getDrawArgumentValue returned nil".to_string()),
                 }
             );
         }

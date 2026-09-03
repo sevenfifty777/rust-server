@@ -215,6 +215,21 @@ The server will be running on port 50051 by default.
     }
     ```
 
+## Custom services
+
+This fork adds two services that do not exist upstream. Both are additive; see `protos/dcs/recovery/v0/recovery.proto`
+and `protos/dcs/hook/v0/hook.proto` for the full definitions.
+
+- `RecoveryService.GetRecoverySnapshot` (mission scripting environment) - reads one carrier and one aircraft transform
+  plus an optional external-model draw argument inside a single Lua callback, sharing one mission timestamp and echoing
+  a client sequence number. Since 0.9.2 the response also carries server-side latency diagnostics (`queue_wait_ms`,
+  `lua_exec_ms`, `queue_depth`, `dequeued_model_time`); every diagnostic field is optional and absent when it could not
+  be measured. Use this rather than `StreamUnits` for low-latency tracking of a small number of units.
+- `HookService.GetOwnshipHookState` (hook environment) - returns the raw `Export.LoGetMechInfo().hook` status/value
+  of the local player's aircraft. **It only works on a client DCS instance with a local cockpit** (the ownship, subject
+  to the DCS `allow_ownship_export` setting). On a dedicated server there is no ownship, so the call always returns
+  `OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE`; it can never observe other players' hooks.
+
 ## Client Development
 
 `DCS-gRPC`, as the name implies, uses the [gRPC](https://grpc.io/) framework to handle communication between clients

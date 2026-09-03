@@ -97,6 +97,18 @@ pub fn simulation_frame(lua: &Lua, time: f64) -> LuaResult<()> {
     }
 }
 
+pub fn monotonic_ms(lua: &Lua, arg: ()) -> LuaResult<f64> {
+    if let Some(ref lib) = *LIBRARY.read().unwrap() {
+        let f: Symbol<fn(lua: &Lua, arg: ()) -> LuaResult<f64>> = unsafe {
+            lib.get(b"monotonic_ms")
+                .map_err(|err| mlua::Error::ExternalError(Arc::new(err)))?
+        };
+        f(lua, arg).map_err(take_error_ownership)
+    } else {
+        Ok(0.0)
+    }
+}
+
 pub fn log_error(lua: &Lua, err: String) -> LuaResult<()> {
     if let Some(ref lib) = *LIBRARY.read().unwrap() {
         let f: Symbol<fn(lua: &Lua, err: String) -> LuaResult<()>> = unsafe {

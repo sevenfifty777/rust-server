@@ -2,11 +2,13 @@
 -- Hook actions
 -- Docs: /DCS World/API/DCS_ControlAPI.html
 --
+-- This file is only loaded in the hook (GameGUI) environment, see grpc.lua. `DCS` and `Export`
+-- are deliberately resolved at call time (not captured as upvalues at load time) so a load in
+-- an environment that lacks them can never permanently bind `nil`.
+--
 
-local DCS = DCS
 local GRPC = GRPC
 local net = net
-local Export = Export
 
 local OWNSHIP_HOOK_OBSERVED = 1
 local OWNSHIP_HOOK_UNAVAILABLE = 2

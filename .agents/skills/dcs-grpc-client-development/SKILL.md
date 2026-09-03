@@ -44,7 +44,7 @@ The current server registers 19 versioned services under `dcs.<domain>.v0`. Pack
 ## Streaming behavior to preserve
 
 - `MissionService.StreamEvents` is a long-running server stream and ends when the server or mission-side stream shuts down. Re-establish it after a transient disconnect.
-- `MissionService.StreamUnits` defaults `poll_rate` to 5 seconds and `max_backoff` to 30 seconds. The server clamps `max_backoff` to at least `poll_rate`, sends an initial unit snapshot, then emits `unit` changes or `gone` notifications. Do not treat it as high-rate Tacview telemetry.
+- `MissionService.StreamUnits` defaults `poll_rate` to 5 seconds and `max_backoff` to 30 seconds. The server clamps `max_backoff` to at least `poll_rate`, sends an initial unit snapshot, then emits `unit` changes or `gone` notifications. Do not treat it as high-rate Tacview telemetry. Since 0.9.2, `poll_rate_ms` (minimum 50) takes precedence over `poll_rate`, a zero poll rate is rejected with `INVALID_ARGUMENT`, and the server keeps at most 8 `GetTransform` calls in flight per stream; it is a discovery/pre-filter API, not suitable for sub-100 ms telemetry.
 - Use `MissionService.GetSessionId` when continuity across mission reloads matters; the contract states that the ID changes on mission change or server restart.
 - Treat stream timestamps according to their message documentation. Do not substitute wall-clock receipt time for mission-relative time.
 
@@ -63,7 +63,7 @@ Use `dcs.recovery.v0.RecoveryService.GetRecoverySnapshot` when a recovery-gradin
 
 ## Ownship hook mechanization
 
-Use `dcs.hook.v0.HookService.GetOwnshipHookState` when a client running beside an occupied DCS cockpit needs the raw hook mechanization returned by `Export.LoGetMechInfo().hook`.
+Use `dcs.hook.v0.HookService.GetOwnshipHookState` when a client running beside an occupied DCS cockpit needs the raw hook mechanization returned by `Export.LoGetMechInfo().hook`. It only works on a client DCS instance with a local cockpit; on a dedicated server there is no ownship and it always returns `OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE`.
 
 - This is a hook-environment, ownship-only observation. It is subject to DCS ownship-export permission and normally cannot describe AI aircraft, remote multiplayer aircraft, or an unoccupied dedicated server. `observation_status = UNAVAILABLE` is valid evidence of that limitation, not a hook-up indication.
 - The response captures `model_time`, `aircraft_type`, optional `ownship_unit_id`, and optional raw `status_value`/`value`. Boolean DCS `hook.status` values are normalized to `0.0` or `1.0`; numeric values are preserved.
