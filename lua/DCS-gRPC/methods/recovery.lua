@@ -59,6 +59,7 @@ local telemetryEnabled = telemetryConfig.enabled == true and GRPC.isMissionEnv
 local telemetryEngine = nil
 local telemetryScheduled = false
 local telemetryConsecutiveFailures = 0
+local telemetryObservationErrors = {}
 
 local function configValue(name, default)
   local value = telemetryConfig[name]
@@ -124,7 +125,7 @@ end
 if telemetryEnabled then
   local module = dofile(GRPC.luaPath .. [[recovery_telemetry.lua]])
   local state = module.new({
-    sourceEpoch = grpc.newSessionId(),
+    sourceEpoch = GRPC.newSessionId(),
     config = {
       periodSeconds = configValue("periodSeconds", 0.05),
       retentionSeconds = configValue("retentionSeconds", 30),
@@ -136,10 +137,18 @@ if telemetryEnabled then
       readsPerSecond = configValue("readsPerSecond", 20),
     },
     now = timer.getTime,
-    getUnitByName = Unit.getByName,
-    getUnitId = function(unit) return unit:getID() end,
+    getUnitByName = function(name) return Unit.getByName(name) end,
+    getUnitId = function(unit) return tonumber(unit:getID()) end,
     exportRawTransform = GRPC.exporters.rawTransform,
-    monotonicTimeNs = grpc.monotonicTimeNs,
+    monotonicTimeNs = GRPC.monotonicTimeNs,
+    reportObservationError = function(name, stage, detail)
+      local boundedDetail = string.sub(tostring(detail), 1, 256)
+      local key = tostring(name) .. "\0" .. tostring(stage) .. "\0" .. boundedDetail
+      if telemetryObservationErrors[key] then return end
+      telemetryObservationErrors[key] = true
+      GRPC.logError("Recovery telemetry read error for " .. tostring(name)
+        .. " at " .. tostring(stage) .. ": " .. boundedDetail)
+    end,
     ensureScheduled = ensureTelemetryScheduled,
   })
   telemetryEngine = {

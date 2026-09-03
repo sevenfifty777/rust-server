@@ -111,6 +111,11 @@ local function monotonicUs(engine)
   return math.floor(value / 1000)
 end
 
+local function reportObservationError(engine, expectedName, stage, detail)
+  if not engine.reportObservationError then return end
+  pcall(engine.reportObservationError, expectedName, stage, tostring(detail))
+end
+
 local function observation(engine, expectedName, expectedId, callbackStartedUs)
   local startedUs = monotonicUs(engine)
   local result = {
@@ -120,24 +125,35 @@ local function observation(engine, expectedName, expectedId, callbackStartedUs)
   }
   if startedUs and callbackStartedUs then result.readStartedOffsetUs = startedUs - callbackStartedUs end
 
-  local okResolve, unit = pcall(engine.getUnitByName, expectedName)
+  local okResolve, unit = pcall(function()
+    return engine.getUnitByName(expectedName)
+  end)
   if not okResolve then
     result.status = STATUS_READ_ERROR
+    reportObservationError(engine, expectedName, "resolve", unit)
   elseif unit == nil then
     result.status = STATUS_NOT_FOUND
   else
-    local okId, resolvedId = pcall(engine.getUnitId, unit)
+    local okId, resolvedId = pcall(function()
+      return engine.getUnitId(unit)
+    end)
+    local resolvedIdDetail = resolvedId
+    if okId then resolvedId = tonumber(resolvedId) end
     if not okId or not finite(resolvedId) then
       result.status = STATUS_READ_ERROR
+      reportObservationError(engine, expectedName, "id", resolvedIdDetail)
     else
       resolvedId = math.floor(resolvedId)
       result.resolvedId = resolvedId
       if resolvedId ~= expectedId then
         result.status = STATUS_ID_MISMATCH
       else
-        local okTransform, rawTransform = pcall(engine.exportRawTransform, unit)
+        local okTransform, rawTransform = pcall(function()
+          return engine.exportRawTransform(unit)
+        end)
         if not okTransform then
           result.status = STATUS_READ_ERROR
+          reportObservationError(engine, expectedName, "transform", rawTransform)
         elseif not validRawTransform(rawTransform) then
           result.status = STATUS_INVALID_DATA
         else
@@ -239,6 +255,7 @@ function M.new(options)
     getUnitId = assert(options.getUnitId),
     exportRawTransform = assert(options.exportRawTransform),
     monotonicTimeNs = options.monotonicTimeNs,
+    reportObservationError = options.reportObservationError,
     ensureScheduled = options.ensureScheduled,
     recoveries = {},
     tombstones = {},

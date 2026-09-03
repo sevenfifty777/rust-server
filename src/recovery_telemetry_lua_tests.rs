@@ -1,5 +1,15 @@
 use mlua::Lua;
 
+#[test]
+fn recovery_method_uses_environment_safe_native_helpers() {
+    let method = include_str!("../lua/DCS-gRPC/methods/recovery.lua");
+    assert!(!method.contains("grpc.newSessionId"));
+    assert!(!method.contains("grpc.monotonicTimeNs"));
+    assert!(method.contains("GRPC.newSessionId"));
+    assert!(method.contains("GRPC.monotonicTimeNs"));
+    assert!(method.contains("tonumber(unit:getID())"));
+}
+
 fn run_harness(body: &str) {
     let lua = Lua::new();
     let engine = include_str!("../lua/DCS-gRPC/recovery_telemetry.lua");
@@ -106,8 +116,108 @@ local resumed = assert(M.read(state, {
   afterSequence = 3, limit = 100,
 }))
 assert(#resumed.snapshots == 1 and resumed.snapshots[1].sequence == 4)
-assert(resumed.diagnostics.observedGap == 1.0)
+assert(math.abs(resumed.diagnostics.observedGap - 1.0) < 0.000001)
 assert(resumed.diagnostics.missedCaptureIntervals == 19)
+"#,
+        ]
+        .concat(),
+    );
+}
+
+#[test]
+fn read_errors_are_explicit_and_report_the_failing_stage() {
+    run_harness(
+        &[
+            SETUP,
+            r#"
+local reports = {}
+local failingState = M.new({
+  sourceEpoch = "epoch-failure",
+  config = state.config,
+  now = function() return now end,
+  getUnitByName = function() error("diagnostic resolve failure") end,
+  getUnitId = state.getUnitId,
+  exportRawTransform = state.exportRawTransform,
+  reportObservationError = function(name, stage, detail)
+    table.insert(reports, { name = name, stage = stage, detail = detail })
+  end,
+})
+assert(M.start(failingState, {
+  owner = "test-owner", recoveryHandle = "failure", aircraftName = "aircraft1",
+  aircraftId = 1, carrierName = "carrier", carrierId = 100,
+}))
+now = 0.05
+assert(M.captureTick(failingState, now))
+local batch = assert(M.read(failingState, {
+  owner = "test-owner", recoveryHandle = "failure", expectedSourceEpoch = "epoch-failure",
+  afterSequence = 0, limit = 100,
+}))
+assert(batch.snapshots[1].aircraft.status == 4 and batch.snapshots[1].carrier.status == 4)
+assert(#reports == 2 and reports[1].stage == "resolve")
+assert(string.find(reports[1].detail, "diagnostic resolve failure", 1, true))
+"#,
+        ]
+        .concat(),
+    );
+}
+
+#[test]
+fn unit_ids_are_normalized_before_validation() {
+    run_harness(
+        &[
+            SETUP,
+            r#"
+local idReports = {}
+local function stateWithIds(epoch, aircraftId, carrierId)
+  return M.new({
+    sourceEpoch = epoch,
+    config = state.config,
+    now = function() return now end,
+    getUnitByName = state.getUnitByName,
+    getUnitId = function(unit)
+      if unit.name == "aircraft1" then return aircraftId end
+      return carrierId
+    end,
+    exportRawTransform = state.exportRawTransform,
+    reportObservationError = function(name, stage, detail)
+      table.insert(idReports, { name = name, stage = stage, detail = detail })
+    end,
+  })
+end
+
+local function captureWithIds(epoch, aircraftId, carrierId)
+  local tested = stateWithIds(epoch, aircraftId, carrierId)
+  assert(M.start(tested, {
+    owner = "test-owner", recoveryHandle = "normalization",
+    aircraftName = "aircraft1", aircraftId = 2,
+    carrierName = "carrier", carrierId = 100,
+  }))
+  now = now + 0.05
+  assert(M.captureTick(tested, now))
+  return assert(M.read(tested, {
+    owner = "test-owner", recoveryHandle = "normalization",
+    expectedSourceEpoch = epoch, afterSequence = 0, limit = 5,
+  })).snapshots[1]
+end
+
+local numeric = captureWithIds("epoch-numeric", 2, 100)
+assert(numeric.aircraft.status == 1 and numeric.carrier.status == 1)
+assert(numeric.aircraft.resolvedId == 2 and numeric.carrier.resolvedId == 100)
+assert(numeric.captureTime == now,
+  "aircraft and carrier must belong to the snapshot's common capture timestamp")
+
+local numericString = captureWithIds("epoch-string", "2", "100")
+assert(numericString.aircraft.status == 1 and numericString.carrier.status == 1)
+assert(numericString.aircraft.resolvedId == 2 and numericString.carrier.resolvedId == 100)
+
+local invalid = captureWithIds("epoch-invalid", "not-an-id", 100)
+assert(invalid.aircraft.status == 4 and invalid.aircraft.resolvedId == nil)
+assert(#idReports == 1 and idReports[1].name == "aircraft1")
+assert(idReports[1].stage == "id" and idReports[1].detail == "not-an-id")
+
+local mismatch = captureWithIds("epoch-mismatch", "3", 100)
+assert(mismatch.aircraft.status == 3 and mismatch.aircraft.resolvedId == 3)
+assert(#idReports == 1, "an ID mismatch must not be reported as a read error")
 "#,
         ]
         .concat(),

@@ -216,10 +216,43 @@ local function testInvalidLifecycleRetentionAndIsolation()
   assert(c.read("unknown", 0, 100, "old-epoch").lifecycleStatus == 5)
 end
 
+local function testUnitIdNormalization()
+  local c = setup()
+  assert(c.start("numeric", "aircraft2", 2))
+  c.setNow(0.05)
+  assert(M.captureTick(c.state, 0.05))
+  local numeric = c.read("numeric", 0).snapshots[1]
+  assert(numeric.aircraft.status == 1 and numeric.carrier.status == 1)
+  assert(numeric.aircraft.resolvedId == 2 and numeric.carrier.resolvedId == 100)
+  assert(numeric.captureTime == 0.05,
+    "aircraft and carrier must belong to the snapshot's common capture timestamp")
+
+  c.units.aircraft2.id = "2"
+  c.units.carrier.id = "100"
+  c.setNow(0.1)
+  assert(M.captureTick(c.state, 0.1))
+  local numericString = c.read("numeric", 1).snapshots[1]
+  assert(numericString.aircraft.status == 1 and numericString.carrier.status == 1)
+  assert(numericString.aircraft.resolvedId == 2 and numericString.carrier.resolvedId == 100)
+
+  c.units.aircraft2.id = "not-an-id"
+  c.setNow(0.15)
+  assert(M.captureTick(c.state, 0.15))
+  local invalid = c.read("numeric", 2).snapshots[1]
+  assert(invalid.aircraft.status == 4 and invalid.aircraft.resolvedId == nil)
+
+  c.units.aircraft2.id = "3"
+  c.setNow(0.2)
+  assert(M.captureTick(c.state, 0.2))
+  local mismatch = c.read("numeric", 3).snapshots[1]
+  assert(mismatch.aircraft.status == 3 and mismatch.aircraft.resolvedId == 3)
+end
+
 testRingRetryAndCarrierSharing()
 testDeliveryDelayAndProducerFreeze()
 testEmptyRangeIdleResetAndSchedulingFailure()
 testMixedLossProvenance()
 testInvalidLifecycleRetentionAndIsolation()
 testLimitsRetentionAndIndependentFailures()
+testUnitIdNormalization()
 print("recovery telemetry Lua tests passed")

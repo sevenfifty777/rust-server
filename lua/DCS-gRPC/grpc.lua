@@ -57,6 +57,12 @@ end
 -- APIs exposed to Lua
 --
 GRPC.tts = grpc.tts
+-- Mission method files are loaded with `dofile`, which evaluates them in the
+-- mission global environment rather than this file's private loader
+-- environment. Expose only the native helpers they need through GRPC instead
+-- of leaking the complete native module as a global.
+GRPC.newSessionId = grpc.newSessionId
+GRPC.monotonicTimeNs = grpc.monotonicTimeNs
 
 --
 -- Logging methods
