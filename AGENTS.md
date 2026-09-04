@@ -1,6 +1,8 @@
 # Contexte de discussion Codex — évolution DCS-gRPC pour LSO
 
-> Document machine-first dédié aux futures discussions et modifications du fork DCS-gRPC nécessaires à l’acquisition bufferisée des positions avion/porte-avions. Synthèse établie le 2 septembre 2026 depuis `.agents/agents.md`, `.ignore/prompt.md`, `.ignore/tasking-v3.md` et la documentation Markdown du dépôt. Ce document décrit une cible et des contrats à implémenter ; il ne constitue pas une preuve de fonctionnement dans DCS réel.
+> **Statut au 4 septembre 2026 : la cible décrite ci-dessous est implémentée.** `dcs.recovery.v0.RecoveryService` (`StartRecoveryTelemetry`/`ReadRecoveryTelemetry`/`StopRecoveryTelemetry`) existe dans ce dépôt (`protos/dcs/recovery/v0/recovery.proto`, `lua/DCS-gRPC/recovery_telemetry.lua`, `lua/DCS-gRPC/methods/recovery.lua`, `src/rpc/recovery.rs`), suit dans les grandes lignes les décisions ci-dessous, et LSO le consomme par défaut (`--position-source buffered`). Ce document reste utile comme **rationale de conception et historique de décisions**, mais pour l'état réel du contrat, préférer `docs/recovery_telemetry.md` (à jour) et le code. Voir « Session du 4 septembre 2026 » en fin de fichier pour les derniers raffinements et l'état de déploiement/validation live.
+>
+> Document machine-first dédié aux futures discussions et modifications du fork DCS-gRPC nécessaires à l’acquisition bufferisée des positions avion/porte-avions. Synthèse établie le 2 septembre 2026 depuis `.agents/agents.md`, `.ignore/prompt.md`, `.ignore/tasking-v3.md` et la documentation Markdown du dépôt. Ce document décrivait une cible et des contrats à implémenter ; il ne constitue toujours pas, à lui seul, une preuve de fonctionnement dans DCS réel — voir la section de statut ci-dessus.
 
 ## Objet de ce contexte
 
@@ -37,31 +39,29 @@ Ordre des sources : résultat fraîchement exécuté > code courant du dépôt c
 
 - Dépôt : `E:\DCS stuffs\Initiative ESG\DCS-gRPC-lso`.
 - Branche : `feature/refonte-v3-lua-buffer`.
-- HEAD de base : `f962498109b78eac40c16af14962a888024f17fe`.
+- HEAD : `7008830b01412bd4b5acda66884415bb9692d2dd` (2026-09-03) ; la refonte v3 Rust est **commitée**. Le worktree ne porte plus que le delta d'optimisation du 4 septembre (voir plus bas), pas toute la refonte.
 - Crate `lso` 0.2.0, Rust 2021.
-- Worktree volontairement dirty : la refonte v3 Rust est non commitée.
 - `tonic = 0.13`; résolution actuelle `tonic 0.13.1`.
-- Stubs : `sevenfifty777/rust-server`, tag `v0.9.0`, commit verrouillé `5bd6d6e42491c8697a5c5a95e80a2e689923bd3b`.
-- Serveur attendu : fork officiel 0.9.0. Un serveur 0.9.1 a été observé dans un corpus, mais sa compatibilité fonctionnelle n’est pas validée.
+- Stubs : **dépendance de chemin local** dans `Cargo.toml` (`path = "../DCS-gRPC/stubs"`) pointant directement vers ce dépôt (checkout frère), pas un tag/commit Git figé. `v0.9.0` / `5bd6d6e4...` est une référence historique périmée maintenant que `RecoveryService` existe ici. Le remplacement par un pin Git immuable et revu reste à faire avant tout packaging release (rappelé dans `CHANGES.md` de LSO et le `CHANGELOG.md`/section « Changed » de ce dépôt).
+- Serveur attendu pour le dev local : ce dépôt en `v0.10.0`, servi depuis `E:\DCS World Server\DCS World Server\bin\DCS_server.exe`. Compatibilité fonctionnelle avec un serveur distinct/plus ancien non validée.
 
-Dernière validation locale consignée dans `.agents/agents.md` :
+Dernière validation locale consignée dans `.agents/agents.md` de LSO (4 septembre 2026) :
 
 - `cargo fmt --all -- --check` réussi ;
-- `cargo test --locked --no-fail-fast` : 125 tests réussis ;
+- `cargo test --locked --no-fail-fast` : 133 tests réussis (131 binaire + 2 provenance) ;
 - `cargo clippy --locked --all-targets -- -D warnings` réussi ;
-- `git diff --check` réussi ;
-- aucune validation DCS live de la source bufferisée, puisqu’elle n’existe pas encore.
+- `cargo build --release --locked` réussi, `lso.exe` déployé pour un test live (voir « Session du 4 septembre 2026 ») ;
+- aucune validation DCS live du dernier patch (source bufferisée déjà validée par des runs antérieurs à ce patch, cf. `.agents/agents.md` de LSO pour le détail des runs précédents).
 
-### Ce qui est déjà préparé dans LSO
+### Ce qui est déjà préparé dans LSO — **et déjà branché sur ce fork**
 
-- `src/tasks/position_collector.rs` isole les deux transforms prioritaires, leur alignement et leurs métriques.
-- L’implémentation actuelle reste `paired_unary_polling_v1` et utilise deux `GetTransform` concurrents.
-- La frontière `PositionCollector` est destinée à recevoir une seconde implémentation alimentée par le batch source.
+- `src/tasks/position_collector.rs` isole les deux transforms prioritaires, leur alignement et leurs métriques, avec deux implémentations concrètes derrière `PositionCollectorKind` : `Unary` (deux `GetTransform` concurrents, rollback) et `Buffered` (consomme `RecoveryService.ReadRecoveryTelemetry` par lots `after_sequence`).
+- `--position-source buffered` (`acquisition_source = "source_buffered_batch_v1"`) est la **valeur par défaut** de `lso run` depuis la refonte v3 ; `paired_unary_polling_v1` reste un rollback explicite via `--position-source unary`.
 - `MissedTickBehavior::Skip`, `--positions-only`, la suspension des détecteurs et les métriques par recovery sont déjà présents.
 - Les sorties, le hook et les événements sont séparés du collecteur prioritaire.
 - La complétude positionnelle ne peut être affectée que par la perte réelle des positions ; les overflows hook/event sont seulement diagnostiques.
 
-Ne pas refaire cette refonte Rust dans le fork DCS-gRPC. Le travail du fork est d’ajouter une source fiable et observable, puis le client LSO devra la consommer derrière sa frontière existante.
+Cette section décrivait à l'origine un état futur ; elle est maintenant l'état réel. Les décisions n°1 à 12 ci-dessous documentent pourquoi le contrat a été conçu ainsi — elles restent la référence de rationale, mais ne plus les lire comme une TODO. Toute évolution future du contrat (nouveau RPC, nouveau message compact, changement de cadence) doit rester additive et continuer de respecter la frontière métier Lua/Rust ci-dessous.
 
 ## Problème mesuré à résoudre
 
@@ -535,12 +535,28 @@ Les hooks de faute doivent être compilés ou chargés uniquement dans le harnai
 9. Générer/consommer les nouveaux stubs dans une branche LSO et brancher la source derrière `PositionCollector`.
 10. Exécuter la matrice de validation live avec manifeste complet avant toute conclusion ou promotion.
 
+## Session du 4 septembre 2026
+
+Point de départ : `.ignore/analyse-tests-traps-local.md` côté LSO, un audit de trois traps locaux (20 Hz, `complete/green`, zéro perte) montrant que le mécanisme fonctionne mais retient/transporte plus de données que nécessaire. Changements apportés à ce dépôt (voir diff pour le détail exact) :
+
+- `ReadRecoveryTelemetry` purge maintenant du ring les séquences `<= after_sequence` **au début de la lecture suivante**, jamais celles du lot qu'elle est en train de renvoyer — donc toujours idempotent/rejouable sur retry, cf. « Anti-solutions » ci-dessus (« ACK destructif/read-and-pop » reste évité : ce n'est pas un pop au moment de servir, mais une purge différée basée sur l'acquittement implicite du curseur client). `capacityOverflowCount` ne compte plus que les vraies saturations ; un nouveau compteur interne (`ackEvictedThrough`) suit séparément les évictions par acquittement pour que la classification de perte (`RETENTION_EXPIRED`/`CAPACITY_OVERFLOW`/`MIXED`) reste correcte si un client redemandait un curseur déjà purgé (cas normalement impossible en usage nominal).
+- Le bloc `diagnostics` de `ReadRecoveryTelemetryResponse` n'est plus renvoyé à chaque batch mais au maximum une fois par `recoveryTelemetry.diagnosticsIntervalSeconds` (nouvelle clé de config, défaut 1.0 s) par recovery ; le champ protobuf était déjà optionnel donc aucun changement de schéma côté wire.
+- `telemetryObservationErrors` (dédup des erreurs `getUnitByName`/`getUnitId`/`exportRawTransform`) est maintenant bornée à 128 entrées distinctes avec éviction FIFO, au lieu de croître pour toute la durée de la mission.
+- Fichiers modifiés : `lua/DCS-gRPC/recovery_telemetry.lua`, `lua/DCS-gRPC/methods/recovery.lua`, `src/config.rs`, `CHANGELOG.md`, `README.md`, `docs/recovery_telemetry.md`.
+
+**Non traité intentionnellement**, proposé par l'analyse mais nécessitant une décision séparée : cadence de lecture LSO adaptative 100/200 ms selon la zone (l'analyse demande elle-même une validation A/B avant promotion) ; nouveau message `RecoveryTelemetry` compact pour réduire la charge par snapshot (~35 % de gain théorique estimé) — un changement de protocole additif mais substantiel (nouveaux champs/RPC, régénération des stubs, impact sur `src/rpc/recovery.rs` et le client LSO) qui mérite son propre chantier plutôt qu'une décision unilatérale.
+
+**Validation** : `cargo build`/`cargo fmt --check`/`cargo clippy --locked -- -D warnings` réussis pour ce dépôt. `cargo test --workspace` **n'a pas pu être exécuté dans cet environnement** : le crate `dcs-grpc` est compilé avec la feature `mlua "module"` (extension chargée par un process Lua hôte, pas de runtime Lua embarqué) et l'exécutable de test échoue au chargement (`STATUS_DLL_NOT_FOUND`, `lua51.dll` absent du PATH local). Les 7 scénarios des deux fichiers de tests (`tests/lua/recovery_telemetry_test.lua`, `src/recovery_telemetry_lua_tests.rs`) ont été relus à la main contre la nouvelle logique de purge/diagnostics et aucune régression n'a été identifiée, mais **ce n'est pas une preuve d'exécution**. Prochaine étape recommandée : relancer `cargo test --workspace` sur un poste ou CI disposant du runtime Lua 5.1 (le job `rust` de `.github/workflows/ci.yml` sur `windows-latest` le fait déjà) avant de considérer ces changements validés.
+
+**Déploiement** : `dcs_grpc.dll`/`.pdb` reconstruits en release (`cargo build --release --locked -p dcs-grpc`) et copiés vers `Saved Games\DCS.dcs_serverrelease\Mods\tech\DCS-gRPC` ; `lua\DCS-gRPC\*` copié vers `Saved Games\DCS.dcs_serverrelease\Scripts\DCS-gRPC` (diff vérifié identique au dépôt après copie). Le serveur DCS n'était pas démarré au dernier contrôle (`Logs\gRPC.log` arrêté le 2026-09-03 20:38) : aucun test live n'a encore eu lieu avec ce patch. Voir `.agents/agents.md` de LSO, section « Session du 4 septembre 2026 », pour le pendant côté client.
+
 ## Sources internes utiles
 
 Sources principales :
 
-- `.agents/agents.md` : état intégral et règles de continuité du projet LSO ;
+- `.agents/agents.md` : état intégral et règles de continuité du projet LSO, y compris la « Session du 4 septembre 2026 » côté client ;
 - `.ignore/prompt.md` : analyse du run live, diagnostic du polling et justification de la capture source ;
+- `.ignore/analyse-tests-traps-local.md` (dans LSO) : audit de la première vague de tests locaux avec `RecoveryTelemetry` en usage réel et optimisations recommandées, source de la « Session du 4 septembre 2026 » ci-dessus ;
 - `.ignore/tasking-v3.md` : roadmap, décisions batch/cadence/rétention et introduction du buffer Lua ;
 - `docs/DCS_GRPC_FORK_MIGRATION.md` : pin du fork, versions Tonic/stubs et procédure d’upgrade ;
 - `docs/RELIABILITY_ARCHITECTURE.md` : temps, gaps, gates, isolation et complétude ;

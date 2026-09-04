@@ -101,6 +101,7 @@ recoveryTelemetry.maxActiveRecoveries = 16   -- hard maximum: 64
 recoveryTelemetry.maxActiveCarriers = 8      -- hard maximum: 32
 recoveryTelemetry.maxBatchSize = 100         -- hard maximum: 100
 recoveryTelemetry.readsPerSecond = 20        -- pre-IPC quota per authenticated client label
+recoveryTelemetry.diagnosticsIntervalSeconds = 1.0 -- minimum spacing between full diagnostics blocks
 
 -- The default TTS provider to use if a TTS request does not explicitly specify another one.
 tts.defaultProvider = "win"

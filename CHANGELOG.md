@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `ReadRecoveryTelemetry` now purges ring entries acknowledged by `after_sequence` on the following read instead of retaining them until capacity/retention eviction, cutting steady-state ring occupancy without weakening same-request retry safety; genuine capacity overflow (`capacityOverflowCount`) is now counted separately from these acknowledged evictions.
+- The `diagnostics` block on `ReadRecoveryTelemetryResponse` is now refreshed at most once per `recoveryTelemetry.diagnosticsIntervalSeconds` (default 1s, new config key) per recovery instead of every batch; it is omitted from responses in between.
+- The deduplicated `telemetryObservationErrors` table is now bounded to the 128 most recent distinct errors instead of growing for the life of the mission.
+
 ## [0.10.0] - 2026-09-02
 
 ### Added

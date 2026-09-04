@@ -47,6 +47,8 @@ pub struct RecoveryTelemetryConfig {
     pub max_batch_size: u32,
     #[serde(default = "default_recovery_reads_per_second")]
     pub reads_per_second: f64,
+    #[serde(default = "default_recovery_diagnostics_interval")]
+    pub diagnostics_interval_seconds: f64,
 }
 
 impl Default for RecoveryTelemetryConfig {
@@ -61,6 +63,7 @@ impl Default for RecoveryTelemetryConfig {
             max_active_carriers: default_recovery_max_carriers(),
             max_batch_size: default_recovery_max_batch(),
             reads_per_second: default_recovery_reads_per_second(),
+            diagnostics_interval_seconds: default_recovery_diagnostics_interval(),
         }
     }
 }
@@ -88,6 +91,9 @@ fn default_recovery_max_batch() -> u32 {
 }
 fn default_recovery_reads_per_second() -> f64 {
     20.0
+}
+fn default_recovery_diagnostics_interval() -> f64 {
+    1.0
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]

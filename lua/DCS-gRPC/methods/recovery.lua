@@ -60,6 +60,8 @@ local telemetryEngine = nil
 local telemetryScheduled = false
 local telemetryConsecutiveFailures = 0
 local telemetryObservationErrors = {}
+local telemetryObservationErrorOrder = {}
+local TELEMETRY_OBSERVATION_ERROR_CAPACITY = 128
 
 local function configValue(name, default)
   local value = telemetryConfig[name]
@@ -135,6 +137,7 @@ if telemetryEnabled then
       maxActiveCarriers = configValue("maxActiveCarriers", 8),
       maxBatchSize = configValue("maxBatchSize", 100),
       readsPerSecond = configValue("readsPerSecond", 20),
+      diagnosticsIntervalSeconds = configValue("diagnosticsIntervalSeconds", 1.0),
     },
     now = timer.getTime,
     getUnitByName = function(name) return Unit.getByName(name) end,
@@ -146,6 +149,11 @@ if telemetryEnabled then
       local key = tostring(name) .. "\0" .. tostring(stage) .. "\0" .. boundedDetail
       if telemetryObservationErrors[key] then return end
       telemetryObservationErrors[key] = true
+      table.insert(telemetryObservationErrorOrder, key)
+      while #telemetryObservationErrorOrder > TELEMETRY_OBSERVATION_ERROR_CAPACITY do
+        local oldest = table.remove(telemetryObservationErrorOrder, 1)
+        telemetryObservationErrors[oldest] = nil
+      end
       GRPC.logError("Recovery telemetry read error for " .. tostring(name)
         .. " at " .. tostring(stage) .. ": " .. boundedDetail)
     end,

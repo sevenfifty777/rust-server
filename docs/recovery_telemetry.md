@@ -52,6 +52,15 @@ loss reasons. A batch is limited to 100 snapshots. Repeating the same read is
 safe and returns the same retained data; clients deduplicate with
 `(source_epoch, recovery_handle, sequence)`.
 
+A `Read` also purges ring entries whose sequence is `<= after_sequence`: that
+cursor is an implicit acknowledgment of everything the client already has,
+never of the batch the call is about to return, so retrying the same request
+is still non-destructive. This keeps steady-state ring occupancy close to what
+the client has actually consumed instead of the full configured capacity, and
+counts these acknowledged evictions separately from genuine capacity overwrite
+so `capacityOverflowCount` only reflects the ring actually running out of room
+for unread data.
+
 An empty ring is reported as the explicit range `0/0`. If a requested missing
 range spans both age expiration and capacity overwrite, `loss_reason` is
 `MIXED`; otherwise it identifies the single cause affecting that cursor.
@@ -80,6 +89,15 @@ age expiration, high-water mark, active recovery/carrier counts and native
 capture duration, read time, source age and batch counts/sizes when available.
 These are technical facts only: Lua performs
 no gate detection, interpolation, grading or hook/catch correlation.
+
+The `diagnostics` block is refreshed at most once per
+`recoveryTelemetry.diagnosticsIntervalSeconds` (default 1 second) per recovery
+instead of on every batch; it is otherwise omitted from the response. Clients
+that only consume `snapshots` are unaffected, and the last batch before a
+client stops reading is at most one interval stale. Deduplicated observation
+errors (`getUnitByName`/`getUnitId`/`exportRawTransform` failures) are kept in
+a small bounded structure (128 most recent distinct errors) instead of growing
+for the life of the mission.
 
 ## Validation scope
 

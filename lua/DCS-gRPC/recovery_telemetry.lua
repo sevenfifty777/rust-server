@@ -104,6 +104,24 @@ local function cleanRetention(recovery, now, retentionSeconds)
   end
 end
 
+-- A read with after_sequence = N is an implicit acknowledgment of every
+-- sequence <= N: the client already has that data and only needs it again on
+-- retry of the *current* request, whose snapshots all have sequence > N. So
+-- purging up to (and not past) after_sequence never removes data this or a
+-- retried call would still need, while keeping ring occupancy close to what
+-- LSO has actually consumed instead of the full configured capacity.
+local function purgeAcknowledged(recovery, afterSequence)
+  local lastRemoved = nil
+  while recovery.ring.count > 0 do
+    local first = ringFirst(recovery.ring)
+    if first.sequence > afterSequence then break end
+    lastRemoved = ringRemoveFirst(recovery.ring)
+  end
+  if lastRemoved then
+    recovery.ackEvictedThrough = lastRemoved.sequence
+  end
+end
+
 local function monotonicUs(engine)
   if not engine.monotonicTimeNs then return nil end
   local ok, value = pcall(engine.monotonicTimeNs)
@@ -361,6 +379,8 @@ function M.start(engine, params)
     retentionExpirationCount = 0,
     retentionEvictedThrough = 0,
     capacityEvictedThrough = 0,
+    ackEvictedThrough = 0,
+    lastDiagnosticsAt = nil,
     snapshotsProduced = 0,
     invalidSnapshotsProduced = 0,
     snapshotsServed = 0,
@@ -526,16 +546,18 @@ function M.read(engine, params)
 
   recovery.leaseExpiresAt = now + engine.config.leaseSeconds
   cleanRetention(recovery, now, engine.config.retentionSeconds)
+  purgeAcknowledged(recovery, params.afterSequence)
   local first = ringFirst(recovery.ring)
   local last = ringLast(recovery.ring)
   local oldest = first and first.sequence or 0
   local newest = last and last.sequence or 0
   local lossReason = LOSS_NONE
   local evictedThrough = math.max(
-    recovery.retentionEvictedThrough, recovery.capacityEvictedThrough)
+    recovery.retentionEvictedThrough, recovery.capacityEvictedThrough, recovery.ackEvictedThrough)
   if params.afterSequence < evictedThrough then
     local retentionLoss = params.afterSequence < recovery.retentionEvictedThrough
-    local capacityLoss = params.afterSequence < recovery.capacityEvictedThrough
+    local capacityLoss = params.afterSequence
+      < math.max(recovery.capacityEvictedThrough, recovery.ackEvictedThrough)
     if retentionLoss and capacityLoss then
       lossReason = LOSS_MIXED
     elseif retentionLoss then
@@ -564,6 +586,20 @@ function M.read(engine, params)
   recovery.lastBatchSize = #snapshots
   local nextAfter = params.afterSequence
   if #snapshots > 0 then nextAfter = snapshots[#snapshots].sequence end
+
+  -- The full diagnostics block is a fixed per-batch cost that LSO only
+  -- consumes once, at the end of the recovery. Sending it on every batch
+  -- (thousands per trap) is pure overhead, so it is refreshed on a timer
+  -- instead; the wire field is already optional, so omitting it is a no-op
+  -- for readers that only look at snapshots.
+  local includeDiagnostics = recovery.lastDiagnosticsAt == nil
+    or (now - recovery.lastDiagnosticsAt) >= (engine.config.diagnosticsIntervalSeconds or 1.0)
+  local diagnosticsPayload = nil
+  if includeDiagnostics then
+    diagnosticsPayload = diagnostics(engine, recovery, now)
+    recovery.lastDiagnosticsAt = now
+  end
+
   return {
     sourceEpoch = engine.sourceEpoch,
     recoveryHandle = recovery.handle,
@@ -577,7 +613,7 @@ function M.read(engine, params)
     capacity = engine.config.capacity,
     retentionSeconds = engine.config.retentionSeconds,
     snapshots = snapshots,
-    diagnostics = diagnostics(engine, recovery, now),
+    diagnostics = diagnosticsPayload,
     leaseExpiresAt = recovery.leaseExpiresAt,
     readTime = now,
   }
