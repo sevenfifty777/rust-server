@@ -62,10 +62,12 @@ struct ServerState {
     srs_config: SrsConfig,
     srs_transmit: Arc<Mutex<mpsc::Receiver<TransmitRequest>>>,
     auth_config: AuthConfig,
+    recovery_reads_per_second: Option<f64>,
 }
 
 impl Server {
     pub fn new(config: &Config) -> Result<Self, StartError> {
+        validate_recovery_telemetry_config(config)?;
         let ipc_mission = IPC::with_queue_capacity(MISSION_IPC_QUEUE_CAPACITY);
         let ipc_hook = IPC::with_queue_capacity(HOOK_IPC_QUEUE_CAPACITY);
         let runtime = Runtime::new()?;
@@ -84,6 +86,10 @@ impl Server {
                 srs_config: config.srs.clone().unwrap_or_default(),
                 srs_transmit: Arc::new(Mutex::new(rx)),
                 auth_config: config.auth.clone().unwrap_or_default(),
+                recovery_reads_per_second: config
+                    .recovery_telemetry
+                    .enabled
+                    .then_some(config.recovery_telemetry.reads_per_second),
             },
             srs_transmit: tx,
             shutdown,
@@ -217,10 +223,15 @@ async fn try_run(
         srs_config,
         srs_transmit,
         auth_config,
+        recovery_reads_per_second,
     } = state;
 
-    let mut mission_rpc: MissionRpc =
-        MissionRpc::new(ipc_mission.clone(), stats.clone(), shutdown_signal.clone());
+    let mut mission_rpc: MissionRpc = MissionRpc::new(
+        ipc_mission.clone(),
+        stats.clone(),
+        shutdown_signal.clone(),
+        recovery_reads_per_second,
+    );
     let mut hook_rpc = HookRpc::new(ipc_hook, stats, shutdown_signal.clone());
 
     if eval_enabled {
@@ -303,6 +314,52 @@ pub enum StartError {
     Io(#[from] std::io::Error),
     #[error(transparent)]
     AddrParse(#[from] std::net::AddrParseError),
+    #[error("invalid recovery telemetry configuration: {0}")]
+    RecoveryTelemetryConfig(String),
+}
+
+fn validate_recovery_telemetry_config(config: &Config) -> Result<(), StartError> {
+    let telemetry = &config.recovery_telemetry;
+    if !telemetry.enabled {
+        return Ok(());
+    }
+    let host: std::net::IpAddr = config
+        .host
+        .parse()
+        .map_err(|_| StartError::RecoveryTelemetryConfig("host must be an IP address".into()))?;
+    if !host.is_loopback() && !config.auth.as_ref().is_some_and(|auth| auth.enabled) {
+        return Err(StartError::RecoveryTelemetryConfig(
+            "authentication must be enabled when listening outside loopback".into(),
+        ));
+    }
+    if let Some(auth) = config.auth.as_ref().filter(|auth| auth.enabled)
+        && auth
+            .tokens
+            .iter()
+            .any(|key| key.client.is_empty() || key.client.len() > 128)
+    {
+        return Err(StartError::RecoveryTelemetryConfig(
+            "authenticated client labels must contain 1 to 128 UTF-8 bytes".into(),
+        ));
+    }
+    if !(0.05..=0.1).contains(&telemetry.period_seconds) {
+        return Err(StartError::RecoveryTelemetryConfig(
+            "periodSeconds must be between 0.05 and 0.1".into(),
+        ));
+    }
+    if !(1.0..=30.0).contains(&telemetry.retention_seconds)
+        || !(1..=600).contains(&telemetry.capacity)
+        || !(15.0..=300.0).contains(&telemetry.lease_seconds)
+        || !(1..=64).contains(&telemetry.max_active_recoveries)
+        || !(1..=32).contains(&telemetry.max_active_carriers)
+        || !(1..=100).contains(&telemetry.max_batch_size)
+        || !(1.0..=100.0).contains(&telemetry.reads_per_second)
+    {
+        return Err(StartError::RecoveryTelemetryConfig(
+            "one or more configured limits are outside their hard bounds".into(),
+        ));
+    }
+    Ok(())
 }
 
 impl mlua::FromLua for TtsOptions {

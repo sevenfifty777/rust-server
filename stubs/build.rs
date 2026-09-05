@@ -30,6 +30,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "#[serde(try_from = \"GetRecoverySnapshotResponseIntermediate\")]",
         )
         .type_attribute(
+            "dcs.recovery.v0.ReadRecoveryTelemetryResponse",
+            "#[serde(try_from = \"ReadRecoveryTelemetryResponseIntermediate\")]",
+        )
+        .type_attribute(
             "dcs.mission.v0.StreamUnitsResponse.update",
             "#[allow(clippy::large_enum_variant)]",
         )

@@ -429,6 +429,7 @@ dependencies = [
  "tokio-stream",
  "tonic",
  "tonic-middleware",
+ "uuid",
  "walkdir",
 ]
 

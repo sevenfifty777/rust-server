@@ -22,6 +22,78 @@ pub struct Config {
     pub tts: Option<TtsConfig>,
     pub srs: Option<SrsConfig>,
     pub auth: Option<AuthConfig>,
+    #[serde(default)]
+    pub recovery_telemetry: RecoveryTelemetryConfig,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RecoveryTelemetryConfig {
+    #[serde(default)]
+    pub enabled: bool,
+    #[serde(default = "default_recovery_period")]
+    pub period_seconds: f64,
+    #[serde(default = "default_recovery_retention")]
+    pub retention_seconds: f64,
+    #[serde(default = "default_recovery_capacity")]
+    pub capacity: u32,
+    #[serde(default = "default_recovery_lease")]
+    pub lease_seconds: f64,
+    #[serde(default = "default_recovery_max_active")]
+    pub max_active_recoveries: u32,
+    #[serde(default = "default_recovery_max_carriers")]
+    pub max_active_carriers: u32,
+    #[serde(default = "default_recovery_max_batch")]
+    pub max_batch_size: u32,
+    #[serde(default = "default_recovery_reads_per_second")]
+    pub reads_per_second: f64,
+    #[serde(default = "default_recovery_diagnostics_interval")]
+    pub diagnostics_interval_seconds: f64,
+}
+
+impl Default for RecoveryTelemetryConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            period_seconds: default_recovery_period(),
+            retention_seconds: default_recovery_retention(),
+            capacity: default_recovery_capacity(),
+            lease_seconds: default_recovery_lease(),
+            max_active_recoveries: default_recovery_max_active(),
+            max_active_carriers: default_recovery_max_carriers(),
+            max_batch_size: default_recovery_max_batch(),
+            reads_per_second: default_recovery_reads_per_second(),
+            diagnostics_interval_seconds: default_recovery_diagnostics_interval(),
+        }
+    }
+}
+
+fn default_recovery_period() -> f64 {
+    0.05
+}
+fn default_recovery_retention() -> f64 {
+    30.0
+}
+fn default_recovery_capacity() -> u32 {
+    600
+}
+fn default_recovery_lease() -> f64 {
+    60.0
+}
+fn default_recovery_max_active() -> u32 {
+    16
+}
+fn default_recovery_max_carriers() -> u32 {
+    8
+}
+fn default_recovery_max_batch() -> u32 {
+    100
+}
+fn default_recovery_reads_per_second() -> f64 {
+    20.0
+}
+fn default_recovery_diagnostics_interval() -> f64 {
+    1.0
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]

@@ -7,6 +7,8 @@ mod fps;
 #[cfg(feature = "hot-reload")]
 mod hot_reload;
 mod integrity;
+#[cfg(test)]
+mod recovery_telemetry_lua_tests;
 pub mod rpc;
 mod server;
 mod shutdown;
@@ -347,6 +349,18 @@ pub fn log_debug(_: &Lua, err: String) -> LuaResult<()> {
     Ok(())
 }
 
+#[unsafe(no_mangle)]
+pub fn new_session_id(_: &Lua, _: ()) -> LuaResult<String> {
+    Ok(uuid::Uuid::new_v4().to_string())
+}
+
+#[unsafe(no_mangle)]
+pub fn monotonic_time_ns(_: &Lua, _: ()) -> LuaResult<u64> {
+    use std::sync::OnceLock;
+    static ORIGIN: OnceLock<Instant> = OnceLock::new();
+    Ok(ORIGIN.get_or_init(Instant::now).elapsed().as_nanos() as u64)
+}
+
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("Failed to deserialize params: {0}")]
@@ -383,6 +397,14 @@ pub fn dcs_grpc_hot_reload(lua: &Lua) -> LuaResult<LuaTable> {
     exports.set("logWarning", lua.create_function(hot_reload::log_warning)?)?;
     exports.set("logInfo", lua.create_function(hot_reload::log_info)?)?;
     exports.set("logDebug", lua.create_function(hot_reload::log_debug)?)?;
+    exports.set(
+        "newSessionId",
+        lua.create_function(hot_reload::new_session_id)?,
+    )?;
+    exports.set(
+        "monotonicTimeNs",
+        lua.create_function(hot_reload::monotonic_time_ns)?,
+    )?;
     Ok(exports)
 }
 
@@ -401,6 +423,8 @@ pub fn dcs_grpc(lua: &Lua) -> LuaResult<LuaTable> {
     exports.set("logWarning", lua.create_function(log_warning)?)?;
     exports.set("logInfo", lua.create_function(log_info)?)?;
     exports.set("logDebug", lua.create_function(log_debug)?)?;
+    exports.set("newSessionId", lua.create_function(new_session_id)?)?;
+    exports.set("monotonicTimeNs", lua.create_function(monotonic_time_ns)?)?;
     Ok(exports)
 }
 

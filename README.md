@@ -90,6 +90,19 @@ auth.tokens = {
   { client = "SomeClient2", token = "SomeOtherToken" }
 }
 
+-- Source-buffered recovery telemetry is opt-in. Authentication is strongly
+-- recommended; it is mandatory when host is not a loopback address.
+recoveryTelemetry.enabled = false
+recoveryTelemetry.periodSeconds = 0.05       -- 20 Hz; allowed: 0.05 .. 0.1
+recoveryTelemetry.retentionSeconds = 30      -- allowed: 1 .. 30
+recoveryTelemetry.capacity = 600             -- hard maximum: 600 per recovery
+recoveryTelemetry.leaseSeconds = 60          -- allowed: 15 .. 300
+recoveryTelemetry.maxActiveRecoveries = 16   -- hard maximum: 64
+recoveryTelemetry.maxActiveCarriers = 8      -- hard maximum: 32
+recoveryTelemetry.maxBatchSize = 100         -- hard maximum: 100
+recoveryTelemetry.readsPerSecond = 20        -- pre-IPC quota per authenticated client label
+recoveryTelemetry.diagnosticsIntervalSeconds = 1.0 -- minimum spacing between full diagnostics blocks
+
 -- The default TTS provider to use if a TTS request does not explicitly specify another one.
 tts.defaultProvider = "win"
 

@@ -5,6 +5,9 @@ use tonic_middleware::RequestInterceptor;
 
 use crate::config::AuthConfig;
 
+#[derive(Clone, Debug)]
+pub struct ClientIdentity(pub String);
+
 #[derive(Clone)]
 pub struct AuthInterceptor {
     pub auth_config: AuthConfig,
@@ -12,8 +15,10 @@ pub struct AuthInterceptor {
 
 #[async_trait]
 impl RequestInterceptor for AuthInterceptor {
-    async fn intercept(&self, req: Request<Body>) -> Result<Request<Body>, Status> {
+    async fn intercept(&self, mut req: Request<Body>) -> Result<Request<Body>, Status> {
         if !self.auth_config.enabled {
+            req.extensions_mut()
+                .insert(ClientIdentity("anonymous-loopback".to_string()));
             Ok(req)
         } else {
             match req.headers().get("X-API-Key").map(|v| v.to_str()) {
@@ -29,6 +34,8 @@ impl RequestInterceptor for AuthInterceptor {
                     match client {
                         Some(client_name) => {
                             log::debug!("Authenticated client: {}", client_name);
+                            req.extensions_mut()
+                                .insert(ClientIdentity(client_name.to_string()));
                             Ok(req)
                         }
                         _ => Err(Status::unauthenticated("Unauthenticated")),

@@ -9,7 +9,8 @@ local function init()
       -- scaffold nested tables to allow direct assignment in config file
       tts = { provider = { gcloud = {}, aws = {}, azure = {}, win = {} } },
       srs = {},
-      auth = { tokens = {} }
+      auth = { tokens = {} },
+      recoveryTelemetry = {}
     }
   end
 

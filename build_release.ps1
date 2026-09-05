@@ -274,6 +274,7 @@ $RequiredReleaseFiles = @(
     "Docs\DCS-gRPC\CHANGELOG.md",
     "Docs\DCS-gRPC\README.md",
     "Docs\DCS-gRPC\STATUS.md",
+    "Docs\DCS-gRPC\recovery_telemetry.md",
     "Docs\DCS-gRPC\api.html",
     "Missions\DCS-gRPC-Example.miz"
 )

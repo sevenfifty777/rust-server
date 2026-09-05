@@ -67,6 +67,7 @@ tokio.workspace = true
 tokio-stream.workspace = true
 tonic.workspace = true
 tonic-middleware = "0.3"
+uuid = { version = "1.10", features = ["v4"] }
 
 [build-dependencies]
 walkdir = "2.3"
