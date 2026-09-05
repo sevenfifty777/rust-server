@@ -11,7 +11,7 @@ Install or provide the following tools before starting:
 - `protoc-gen-doc`, either on `PATH`, installed in `%USERPROFILE%\go\bin`, or supplied with `-ProtocGenDocPath`.
 - PowerShell 5.1 or PowerShell 7.
 
-The packaging script treats the server DLL, REPL, API documentation, sample mission, third-party tools, licences, and other documented artifacts as required. It stops before replacing an existing release if a prerequisite cannot be found.
+The packaging script treats the server DLL, REPL, API documentation, sample mission, source protobufs, and other documented artifacts as required. It stops before replacing an existing release if a prerequisite cannot be found.
 
 ## 1. Update the version
 
@@ -102,14 +102,27 @@ DCS-gRPC-X.Y.Z/
     └── DCS-gRPC/
         ├── protos/
         │   └── dcs/
-        ├── grpcui.exe
-        ├── grpcui-LICENSE.txt
-        ├── grpcurl.exe
-        ├── grpcurl-LICENSE.txt
+        ├── OPTIONAL-TOOLS.txt
         └── repl.exe
 ```
 
 The ZIP contains the contents of `DCS-gRPC-X.Y.Z/` at its root. It intentionally does not add an extra enclosing `DCS-gRPC-X.Y.Z` directory, so users can extract the ZIP directly into their DCS Saved Games directory.
+
+`Tools/DCS-gRPC/repl.exe` is built from the current checkout and lets an authorized operator execute Lua in the
+mission scripting environment. `Tools/DCS-gRPC/protos/dcs` contains the exact protobuf schemas from the current
+checkout for use by `grpcurl`, generated clients, and other diagnostic tooling. The script verifies every packaged
+protobuf by relative path and SHA-256 hash, so a same-count stale schema set cannot pass validation.
+
+`grpcurl` and `grpcui` are optional third-party diagnostic clients and are not required by the DCS-gRPC server.
+They are deliberately not bundled: release operators and users should obtain a reviewed version directly from the
+upstream [`grpcurl`](https://github.com/fullstorydev/grpcurl/releases) or
+[`grpcui`](https://github.com/fullstorydev/grpcui/releases) release page. This prevents a DCS-gRPC release from
+silently redistributing an old executable inherited from a historical sample package. The same official links are
+provided inside each release in `Tools/DCS-gRPC/OPTIONAL-TOOLS.txt`.
+
+The sample mission is sourced from the version-neutral tracked asset at
+`build/release-assets/Missions/DCS-gRPC-Example.miz`. The ignored
+`sample_release/DCS-gRPC-0.8.1` directory is a historical archive and is not a packaging input.
 
 ## 5. Manual API documentation generation
 
@@ -140,7 +153,9 @@ Releases/DCS-gRPC-X.Y.Z/
 Releases/DCS-gRPC-X.Y.Z.zip
 ```
 
-The script already verifies required files in the release directory, compares the packaged protobuf counts with the sources, generates `api.html`, and reopens the ZIP to verify its required entries.
+The script already verifies required files in the release directory, compares packaged DLL/REPL/mission/protobuf
+content with its current source using SHA-256, generates `api.html`, and reopens the ZIP to verify its required
+entries.
 
 Extracting `DCS-gRPC-X.Y.Z.zip` directly into a DCS Saved Games directory places `Mods`, `Scripts`, `Tools`, `Docs`, and `Missions` at the correct level.
 

@@ -219,6 +219,8 @@ fn to_status(err: dcs_module_ipc::Error) -> Status {
             Some("RESOURCE_EXHAUSTED") => Status::resource_exhausted(message),
             Some("UNAUTHENTICATED") => Status::unauthenticated(message),
             Some("UNIMPLEMENTED") => Status::unimplemented(message),
+            // `GRPC.errorInternal`; any unknown kind also maps to INTERNAL (below).
+            Some("INTERNAL") => Status::internal(message),
             _ => Status::internal(message),
         },
         queue_full @ Error::QueueFull { .. } => Status::resource_exhausted(queue_full.to_string()),

@@ -18,7 +18,7 @@ mod stream;
 
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 use std::time::Instant;
 
 use config::Config;
@@ -31,16 +31,30 @@ use thiserror::Error;
 
 static INITIALIZED: AtomicBool = AtomicBool::new(false);
 static SERVER: Lazy<RwLock<Option<Server>>> = Lazy::new(|| RwLock::new(None));
+/// Epoch of the monotonic clock exposed to Lua as `grpc.monotonicMs()`.
+static MONOTONIC_EPOCH: Lazy<Instant> = Lazy::new(Instant::now);
 
-pub fn init(config: &Config) {
+/// Initialise file logging once per process. Returns a human-readable error (and leaves the
+/// process un-initialised so a later `start` can retry) instead of panicking, since a panic here
+/// would unwind across the Lua FFI boundary.
+pub fn init(config: &Config) -> Result<(), String> {
     if INITIALIZED
         .compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed)
         .unwrap_or(true)
     {
-        return;
+        return Ok(());
     }
 
-    // init logging
+    match init_logging(config) {
+        Ok(()) => Ok(()),
+        Err(err) => {
+            INITIALIZED.store(false, Ordering::Release);
+            Err(err)
+        }
+    }
+}
+
+fn init_logging(config: &Config) -> Result<(), String> {
     use log::LevelFilter;
     use log4rs::append::file::FileAppender;
     use log4rs::config::{Appender, Config, Logger, Root};
@@ -54,8 +68,8 @@ pub fn init(config: &Config) {
             "{d(%Y-%m-%d %H:%M:%S%.3f)} {l:<7} {t}: {m}{n}",
         )))
         .append(false)
-        .build(log_file)
-        .unwrap();
+        .build(&log_file)
+        .map_err(|err| format!("failed to open log file {}: {err}", log_file.display()))?;
 
     let level = if config.debug {
         LevelFilter::Debug
@@ -70,20 +84,42 @@ pub fn init(config: &Config) {
         .logger(Logger::builder().build("tokio", level))
         .logger(Logger::builder().build("tonic", level))
         .build(Root::builder().appender("file").build(LevelFilter::Off))
-        .unwrap();
+        .map_err(|err| format!("invalid log configuration: {err}"))?;
 
-    log4rs::init_config(log_config).unwrap();
+    log4rs::init_config(log_config).map_err(|err| format!("failed to install logger: {err}"))?;
+    Ok(())
+}
+
+/// Convert a poisoned `SERVER` lock into a logged Lua error instead of panicking.
+fn server_lock_error(op: &str, err: &dyn std::fmt::Display) -> mlua::Error {
+    let message = format!("dcs_grpc: server state lock poisoned while acquiring {op} lock: {err}");
+    log::error!("{message}");
+    mlua::Error::RuntimeError(message)
+}
+
+fn server_read() -> LuaResult<RwLockReadGuard<'static, Option<Server>>> {
+    SERVER.read().map_err(|err| server_lock_error("read", &err))
+}
+
+fn server_write() -> LuaResult<RwLockWriteGuard<'static, Option<Server>>> {
+    SERVER
+        .write()
+        .map_err(|err| server_lock_error("write", &err))
 }
 
 #[unsafe(no_mangle)]
 pub fn start(_: &Lua, config: Config) -> LuaResult<(bool, Option<String>)> {
     {
-        if SERVER.read().unwrap().is_some() {
+        if server_read()?.is_some() {
             return Ok((true, None));
         }
     }
 
-    init(&config);
+    if let Err(err) = init(&config) {
+        // Logging is not available yet, so the message is handed back to Lua where `grpc.lua`
+        // raises it through `assert(grpc.start(...))` into the DCS log.
+        return Ok((false, Some(format!("dcs_grpc failed to initialise: {err}"))));
+    }
 
     log::debug!("Config: {:#?}", config);
 
@@ -103,7 +139,7 @@ pub fn start(_: &Lua, config: Config) -> LuaResult<(bool, Option<String>)> {
     let mut server =
         Server::new(&config).map_err(|err| mlua::Error::ExternalError(Arc::new(err)))?;
     server.run_in_background();
-    *(SERVER.write().unwrap()) = Some(server);
+    *server_write()? = Some(server);
 
     log::info!("Started");
 
@@ -114,7 +150,7 @@ pub fn start(_: &Lua, config: Config) -> LuaResult<(bool, Option<String>)> {
 pub fn stop(_: &Lua, _: ()) -> LuaResult<()> {
     log::info!("Stopping ...");
 
-    if let Some(server) = SERVER.write().unwrap().take() {
+    if let Some(server) = server_write()?.take() {
         server.stop_blocking();
     }
 
@@ -127,7 +163,7 @@ pub fn stop(_: &Lua, _: ()) -> LuaResult<()> {
 pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
     let start = Instant::now();
 
-    if let Some(server) = &*SERVER.read().unwrap() {
+    if let Some(server) = &*server_read()? {
         let _guard = server.stats().track_block_time(start);
 
         let (next, discarded_cancelled) = match env {
@@ -168,8 +204,16 @@ pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
                 log::debug!("Sending request `{}`", method,);
             }
 
+            // Per-request IPC metadata handed to the Lua request handler as a third argument, so
+            // individual methods (e.g. `getRecoverySnapshot`) can report queue diagnostics.
+            let meta = lua.create_table()?;
+            meta.set("requestId", request_id)?;
+            meta.set("queueWaitMs", queue_wait.as_secs_f64() * 1_000.0)?;
+            meta.set("queueDepthAtEnqueue", queue_depth_at_enqueue)?;
+            meta.set("queueDepthAtDequeue", queue_depth_at_dequeue)?;
+
             let execution_started_at = Instant::now();
-            let result: LuaTable = callback.call((method.as_str(), params))?;
+            let result: LuaTable = callback.call((method.as_str(), params, meta))?;
             let error: Option<LuaTable> = result.get("error")?;
 
             if let Some(error) = error {
@@ -225,7 +269,7 @@ pub fn next(lua: &Lua, (env, callback): (i32, Function)) -> LuaResult<bool> {
 #[unsafe(no_mangle)]
 pub fn tts(_lua: &Lua, (ssml, freq, opts): (String, u64, Option<TtsOptions>)) -> LuaResult<()> {
     let start = Instant::now();
-    if let Some(server) = &*SERVER.read().unwrap() {
+    if let Some(server) = &*server_read()? {
         let _guard = server.stats().track_block_time(start);
         server.tts(ssml, freq, opts);
     }
@@ -248,7 +292,12 @@ pub fn event(lua: &Lua, event: Value) -> LuaResult<()> {
         }
     };
 
-    if let Some(server) = &*SERVER.read().unwrap() {
+    // A poisoned lock is already logged by `server_read`; swallow it here for the same
+    // crash-avoidance reason as the deserialization error above.
+    let Ok(server) = server_read() else {
+        return Ok(());
+    };
+    if let Some(server) = &*server {
         let _guard = server.stats().track_block_time(start);
         server.stats().track_event();
 
@@ -266,6 +315,14 @@ pub fn simulation_frame(_lua: &Lua, time: f64) -> LuaResult<()> {
     crate::fps::frame(time);
 
     Ok(())
+}
+
+/// Milliseconds elapsed on a monotonic clock since the first call into this function. Exposed to
+/// Lua as `grpc.monotonicMs()` so callbacks can measure their own execution time even when the
+/// mission scripting environment has `os` sanitized.
+#[unsafe(no_mangle)]
+pub fn monotonic_ms(_: &Lua, _: ()) -> LuaResult<f64> {
+    Ok(MONOTONIC_EPOCH.elapsed().as_secs_f64() * 1_000.0)
 }
 
 #[unsafe(no_mangle)]
@@ -332,6 +389,10 @@ pub fn dcs_grpc_hot_reload(lua: &Lua) -> LuaResult<LuaTable> {
         lua.create_function(hot_reload::simulation_frame)?,
     )?;
     exports.set("tts", lua.create_function(hot_reload::tts)?)?;
+    exports.set(
+        "monotonicMs",
+        lua.create_function(hot_reload::monotonic_ms)?,
+    )?;
     exports.set("logError", lua.create_function(hot_reload::log_error)?)?;
     exports.set("logWarning", lua.create_function(hot_reload::log_warning)?)?;
     exports.set("logInfo", lua.create_function(hot_reload::log_info)?)?;
@@ -357,6 +418,7 @@ pub fn dcs_grpc(lua: &Lua) -> LuaResult<LuaTable> {
     exports.set("event", lua.create_function(event)?)?;
     exports.set("simulationFrame", lua.create_function(simulation_frame)?)?;
     exports.set("tts", lua.create_function(tts)?)?;
+    exports.set("monotonicMs", lua.create_function(monotonic_ms)?)?;
     exports.set("logError", lua.create_function(log_error)?)?;
     exports.set("logWarning", lua.create_function(log_warning)?)?;
     exports.set("logInfo", lua.create_function(log_info)?)?;

@@ -561,3 +561,14 @@ Primarily enhanced with `GRPC.exporters.unit`
 
 ### Detection
 TODO
+
+---
+
+## Custom services (DCS-gRPC fork additions)
+
+These do not map 1:1 onto a DCS API; they compose several calls inside one Lua callback.
+
+| Service / RPC | Environment | Status | Notes |
+| --- | --- | --- | --- |
+| `RecoveryService.GetRecoverySnapshot` | mission | [x] | `Unit.getByName` x2 + `Unit.getDrawArgumentValue` + `timer.getTime` in one callback; optional latency diagnostics since 0.9.2 |
+| `HookService.GetOwnshipHookState` | hook | [x] | `Export.LoGetMechInfo().hook`; only works on a client DCS instance with a local cockpit, never on a dedicated server (always `UNAVAILABLE` there) |

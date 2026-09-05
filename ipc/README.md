@@ -9,3 +9,9 @@ It remains licensed under `MIT OR Apache-2.0`. The local copy adds bounded
 queues, cancellation-aware dequeue, request correlation metadata, and queue
 timing needed by DCS-gRPC recovery telemetry. Keeping it as a workspace crate
 makes those changes reproducible and testable with the server.
+
+The `src/` content is identical to `sevenfifty777/dcs-module-ipc@55f0bf5`,
+which the server depended on as a git revision before 0.9.2. `Cargo.toml` uses
+workspace inheritance and `build.rs` delay-loads `lua.dll` for the test binary
+on MSVC so `cargo test --workspace` runs without a DCS installation on `PATH`
+(the tests never call into Lua).

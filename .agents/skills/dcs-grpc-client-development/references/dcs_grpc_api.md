@@ -3,6 +3,7 @@
 
 ## Table of Contents
 
+- [dcs/dcs.proto](#dcs_dcs-proto)
 - [dcs/atmosphere/v0/atmosphere.proto](#dcs_atmosphere_v0_atmosphere-proto)
     - [GetTemperatureAndPressureRequest](#dcs-atmosphere-v0-GetTemperatureAndPressureRequest)
     - [GetTemperatureAndPressureResponse](#dcs-atmosphere-v0-GetTemperatureAndPressureResponse)
@@ -42,9 +43,9 @@
     - [AddGroupRequest.Point.AltitudeType](#dcs-coalition-v0-AddGroupRequest-Point-AltitudeType)
     - [AddGroupRequest.Point.PointType](#dcs-coalition-v0-AddGroupRequest-Point-PointType)
     - [AddGroupRequest.Skill](#dcs-coalition-v0-AddGroupRequest-Skill)
-  
+
     - [CoalitionService](#dcs-coalition-v0-CoalitionService)
-  
+
 - [dcs/common/v0/common.proto](#dcs_common_v0_common-proto)
     - [Airbase](#dcs-common-v0-Airbase)
     - [Cargo](#dcs-common-v0-Cargo)
@@ -63,13 +64,13 @@
     - [Vector](#dcs-common-v0-Vector)
     - [Velocity](#dcs-common-v0-Velocity)
     - [Weapon](#dcs-common-v0-Weapon)
-  
+
     - [AirbaseCategory](#dcs-common-v0-AirbaseCategory)
     - [Coalition](#dcs-common-v0-Coalition)
     - [Country](#dcs-common-v0-Country)
     - [GroupCategory](#dcs-common-v0-GroupCategory)
     - [ObjectCategory](#dcs-common-v0-ObjectCategory)
-  
+
 - [dcs/controller/v0/controller.proto](#dcs_controller_v0_controller-proto)
     - [GetDetectedTargetsRequest](#dcs-controller-v0-GetDetectedTargetsRequest)
     - [GetDetectedTargetsResponse](#dcs-controller-v0-GetDetectedTargetsResponse)
@@ -95,12 +96,12 @@
     - [SetOptionResponse](#dcs-controller-v0-SetOptionResponse)
     - [SetTaskRequest](#dcs-controller-v0-SetTaskRequest)
     - [SetTaskResponse](#dcs-controller-v0-SetTaskResponse)
-  
+
     - [GetDetectedTargetsRequest.DetectionType](#dcs-controller-v0-GetDetectedTargetsRequest-DetectionType)
     - [SetAlarmStateRequest.AlarmState](#dcs-controller-v0-SetAlarmStateRequest-AlarmState)
-  
+
     - [ControllerService](#dcs-controller-v0-ControllerService)
-  
+
 - [dcs/custom/v0/custom.proto](#dcs_custom_v0_custom-proto)
     - [AbortMissionRequest](#dcs-custom-v0-AbortMissionRequest)
     - [AbortMissionResponse](#dcs-custom-v0-AbortMissionResponse)
@@ -114,10 +115,9 @@
     - [JoinMissionResponse](#dcs-custom-v0-JoinMissionResponse)
     - [RequestMissionAssignmentRequest](#dcs-custom-v0-RequestMissionAssignmentRequest)
     - [RequestMissionAssignmentResponse](#dcs-custom-v0-RequestMissionAssignmentResponse)
-  
+
     - [CustomService](#dcs-custom-v0-CustomService)
-  
-- [dcs/dcs.proto](#dcs_dcs-proto)
+
 - [dcs/group/v0/group.proto](#dcs_group_v0_group-proto)
     - [ActivateRequest](#dcs-group-v0-ActivateRequest)
     - [ActivateResponse](#dcs-group-v0-ActivateResponse)
@@ -135,9 +135,9 @@
     - [GetUnitResponse](#dcs-group-v0-GetUnitResponse)
     - [GetUnitsRequest](#dcs-group-v0-GetUnitsRequest)
     - [GetUnitsResponse](#dcs-group-v0-GetUnitsResponse)
-  
+
     - [GroupService](#dcs-group-v0-GroupService)
-  
+
 - [dcs/hook/v0/hook.proto](#dcs_hook_v0_hook-proto)
     - [BanDetails](#dcs-hook-v0-BanDetails)
     - [BanPlayerRequest](#dcs-hook-v0-BanPlayerRequest)
@@ -168,6 +168,8 @@
     - [GetMissionResultResponse](#dcs-hook-v0-GetMissionResultResponse)
     - [GetModelTimeRequest](#dcs-hook-v0-GetModelTimeRequest)
     - [GetModelTimeResponse](#dcs-hook-v0-GetModelTimeResponse)
+    - [GetOwnshipHookStateRequest](#dcs-hook-v0-GetOwnshipHookStateRequest)
+    - [GetOwnshipHookStateResponse](#dcs-hook-v0-GetOwnshipHookStateResponse)
     - [GetPausedRequest](#dcs-hook-v0-GetPausedRequest)
     - [GetPausedResponse](#dcs-hook-v0-GetPausedResponse)
     - [GetRealTimeRequest](#dcs-hook-v0-GetRealTimeRequest)
@@ -192,9 +194,11 @@
     - [StopMissionResponse](#dcs-hook-v0-StopMissionResponse)
     - [UnbanPlayerRequest](#dcs-hook-v0-UnbanPlayerRequest)
     - [UnbanPlayerResponse](#dcs-hook-v0-UnbanPlayerResponse)
-  
+
+    - [OwnshipHookObservationStatus](#dcs-hook-v0-OwnshipHookObservationStatus)
+
     - [HookService](#dcs-hook-v0-HookService)
-  
+
 - [dcs/land/v0/land.proto](#dcs_land_v0_land-proto)
     - [FindPathOnRoadsRequest](#dcs-land-v0-FindPathOnRoadsRequest)
     - [FindPathOnRoadsResponse](#dcs-land-v0-FindPathOnRoadsResponse)
@@ -212,19 +216,19 @@
     - [IsVisibleResponse](#dcs-land-v0-IsVisibleResponse)
     - [ProfileRequest](#dcs-land-v0-ProfileRequest)
     - [ProfileResponse](#dcs-land-v0-ProfileResponse)
-  
+
     - [SurfaceType](#dcs-land-v0-SurfaceType)
-  
+
     - [LandService](#dcs-land-v0-LandService)
-  
+
 - [dcs/metadata/v0/metadata.proto](#dcs_metadata_v0_metadata-proto)
     - [GetHealthRequest](#dcs-metadata-v0-GetHealthRequest)
     - [GetHealthResponse](#dcs-metadata-v0-GetHealthResponse)
     - [GetVersionRequest](#dcs-metadata-v0-GetVersionRequest)
     - [GetVersionResponse](#dcs-metadata-v0-GetVersionResponse)
-  
+
     - [MetadataService](#dcs-metadata-v0-MetadataService)
-  
+
 - [dcs/mission/v0/mission.proto](#dcs_mission_v0_mission-proto)
     - [AddCoalitionCommandRequest](#dcs-mission-v0-AddCoalitionCommandRequest)
     - [AddCoalitionCommandResponse](#dcs-mission-v0-AddCoalitionCommandResponse)
@@ -304,11 +308,11 @@
     - [StreamUnitsRequest](#dcs-mission-v0-StreamUnitsRequest)
     - [StreamUnitsResponse](#dcs-mission-v0-StreamUnitsResponse)
     - [StreamUnitsResponse.UnitGone](#dcs-mission-v0-StreamUnitsResponse-UnitGone)
-  
+
     - [StreamEventsResponse.DisconnectReason](#dcs-mission-v0-StreamEventsResponse-DisconnectReason)
-  
+
     - [MissionService](#dcs-mission-v0-MissionService)
-  
+
 - [dcs/net/v0/net.proto](#dcs_net_v0_net-proto)
     - [ForcePlayerSlotRequest](#dcs-net-v0-ForcePlayerSlotRequest)
     - [ForcePlayerSlotResponse](#dcs-net-v0-ForcePlayerSlotResponse)
@@ -321,9 +325,9 @@
     - [SendChatResponse](#dcs-net-v0-SendChatResponse)
     - [SendChatToRequest](#dcs-net-v0-SendChatToRequest)
     - [SendChatToResponse](#dcs-net-v0-SendChatToResponse)
-  
+
     - [NetService](#dcs-net-v0-NetService)
-  
+
 - [dcs/recovery/v0/recovery.proto](#dcs_recovery_v0_recovery-proto)
     - [DrawArgumentObservation](#dcs-recovery-v0-DrawArgumentObservation)
     - [GetRecoverySnapshotRequest](#dcs-recovery-v0-GetRecoverySnapshotRequest)
@@ -351,9 +355,9 @@
     - [SetCodeResponse](#dcs-spot-v0-SetCodeResponse)
     - [SetPointRequest](#dcs-spot-v0-SetPointRequest)
     - [SetPointResponse](#dcs-spot-v0-SetPointResponse)
-  
+
     - [SpotService](#dcs-spot-v0-SpotService)
-  
+
 - [dcs/srs/v0/srs.proto](#dcs_srs_v0_srs-proto)
     - [GetClientsRequest](#dcs-srs-v0-GetClientsRequest)
     - [GetClientsResponse](#dcs-srs-v0-GetClientsResponse)
@@ -364,9 +368,9 @@
     - [TransmitRequest.GCloud](#dcs-srs-v0-TransmitRequest-GCloud)
     - [TransmitRequest.Windows](#dcs-srs-v0-TransmitRequest-Windows)
     - [TransmitResponse](#dcs-srs-v0-TransmitResponse)
-  
+
     - [SrsService](#dcs-srs-v0-SrsService)
-  
+
 - [dcs/timer/v0/timer.proto](#dcs_timer_v0_timer-proto)
     - [GetAbsoluteTimeRequest](#dcs-timer-v0-GetAbsoluteTimeRequest)
     - [GetAbsoluteTimeResponse](#dcs-timer-v0-GetAbsoluteTimeResponse)
@@ -374,9 +378,9 @@
     - [GetTimeResponse](#dcs-timer-v0-GetTimeResponse)
     - [GetTimeZeroRequest](#dcs-timer-v0-GetTimeZeroRequest)
     - [GetTimeZeroResponse](#dcs-timer-v0-GetTimeZeroResponse)
-  
+
     - [TimerService](#dcs-timer-v0-TimerService)
-  
+
 - [dcs/trigger/v0/trigger.proto](#dcs_trigger_v0_trigger-proto)
     - [ActivateGroupRequest](#dcs-trigger-v0-ActivateGroupRequest)
     - [ActivateGroupResponse](#dcs-trigger-v0-ActivateGroupResponse)
@@ -463,15 +467,15 @@
     - [SmokeResponse](#dcs-trigger-v0-SmokeResponse)
     - [TextToAllRequest](#dcs-trigger-v0-TextToAllRequest)
     - [TextToAllResponse](#dcs-trigger-v0-TextToAllResponse)
-  
+
     - [EffectSmokeBigRequest.SmokePreset](#dcs-trigger-v0-EffectSmokeBigRequest-SmokePreset)
     - [LineType](#dcs-trigger-v0-LineType)
     - [Shape](#dcs-trigger-v0-Shape)
     - [SignalFlareRequest.FlareColor](#dcs-trigger-v0-SignalFlareRequest-FlareColor)
     - [SmokeRequest.SmokeColor](#dcs-trigger-v0-SmokeRequest-SmokeColor)
-  
+
     - [TriggerService](#dcs-trigger-v0-TriggerService)
-  
+
 - [dcs/unit/v0/unit.proto](#dcs_unit_v0_unit-proto)
     - [AmmoItem](#dcs-unit-v0-AmmoItem)
     - [DestroyRequest](#dcs-unit-v0-DestroyRequest)
@@ -528,9 +532,9 @@
     - [SensorCategory](#dcs-unit-v0-SensorCategory)
     - [SetEmissionRequest](#dcs-unit-v0-SetEmissionRequest)
     - [SetEmissionResponse](#dcs-unit-v0-SetEmissionResponse)
-  
+
     - [UnitService](#dcs-unit-v0-UnitService)
-  
+
 - [dcs/warehouse/v0/warehouse.proto](#dcs_warehouse_v0_warehouse-proto)
     - [AddItemRequest](#dcs-warehouse-v0-AddItemRequest)
     - [AddItemResponse](#dcs-warehouse-v0-AddItemResponse)
@@ -550,9 +554,9 @@
     - [SetItemResponse](#dcs-warehouse-v0-SetItemResponse)
     - [SetLiquidAmountRequest](#dcs-warehouse-v0-SetLiquidAmountRequest)
     - [SetLiquidAmountResponse](#dcs-warehouse-v0-SetLiquidAmountResponse)
-  
+
     - [WarehouseService](#dcs-warehouse-v0-WarehouseService)
-  
+
 - [dcs/weapon/v0/weapon.proto](#dcs_weapon_v0_weapon-proto)
     - [DestroyRequest](#dcs-weapon-v0-DestroyRequest)
     - [DestroyResponse](#dcs-weapon-v0-DestroyResponse)
@@ -582,9 +586,9 @@
     - [InAirResponse](#dcs-weapon-v0-InAirResponse)
     - [IsExistRequest](#dcs-weapon-v0-IsExistRequest)
     - [IsExistResponse](#dcs-weapon-v0-IsExistResponse)
-  
+
     - [WeaponService](#dcs-weapon-v0-WeaponService)
-  
+
 - [dcs/world/v0/world.proto](#dcs_world_v0_world-proto)
     - [AirbaseParking](#dcs-world-v0-AirbaseParking)
     - [AirbaseRunway](#dcs-world-v0-AirbaseRunway)
@@ -613,10 +617,26 @@
     - [SetAirbaseRadioSilentModeRequest](#dcs-world-v0-SetAirbaseRadioSilentModeRequest)
     - [SetAirbaseRadioSilentModeResponse](#dcs-world-v0-SetAirbaseRadioSilentModeResponse)
     - [SphereVolume](#dcs-world-v0-SphereVolume)
-  
+
     - [WorldService](#dcs-world-v0-WorldService)
-  
+
 - [Scalar Value Types](#scalar-value-types)
+
+
+
+<a name="dcs_dcs-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dcs/dcs.proto
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1117,7 +1137,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_atmosphere
 
 
 
- 
+
 
 
 <a name="dcs-coalition-v0-AddGroupRequest-Point-AltitudeType"></a>
@@ -1164,9 +1184,9 @@ https://wiki.hoggitworld.com/view/DCS_singleton_atmosphere
 | SKILL_PLAYER | 5 |  |
 
 
- 
 
- 
+
+
 
 
 <a name="dcs-coalition-v0-CoalitionService"></a>
@@ -1188,7 +1208,7 @@ This position is set at mission start and does not change for the duration of th
 See https://wiki.hoggitworld.com/view/DCS_func_getMainRefPoint for more details |
 | GetPlayerUnits | [GetPlayerUnitsRequest](#dcs-coalition-v0-GetPlayerUnitsRequest) | [GetPlayerUnitsResponse](#dcs-coalition-v0-GetPlayerUnitsResponse) | https://wiki.hoggitworld.com/view/DCS_func_getPlayers |
 
- 
+
 
 
 
@@ -1553,7 +1573,7 @@ ship-killer missiles
 
 
 
- 
+
 
 
 <a name="dcs-common-v0-AirbaseCategory"></a>
@@ -1738,11 +1758,11 @@ See https://wiki.hoggitworld.com/view/DCS_Class_Object for more information
 | OBJECT_CATEGORY_CARGO | 6 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -2094,7 +2114,7 @@ See https://wiki.hoggitworld.com/view/DCS_Class_Object for more information
 
 
 
- 
+
 
 
 <a name="dcs-controller-v0-GetDetectedTargetsRequest-DetectionType"></a>
@@ -2127,9 +2147,9 @@ See https://wiki.hoggitworld.com/view/DCS_Class_Object for more information
 | ALARM_STATE_RED | 3 |  |
 
 
- 
 
- 
+
+
 
 
 <a name="dcs-controller-v0-ControllerService"></a>
@@ -2152,7 +2172,7 @@ See https://wiki.hoggitworld.com/view/DCS_Class_Object for more information
 | ResetTask | [ResetTaskRequest](#dcs-controller-v0-ResetTaskRequest) | [ResetTaskResponse](#dcs-controller-v0-ResetTaskResponse) | https://wiki.hoggitworld.com/view/DCS_func_resetTask |
 | SetCommand | [SetCommandRequest](#dcs-controller-v0-SetCommandRequest) | [SetCommandResponse](#dcs-controller-v0-SetCommandResponse) | https://wiki.hoggitworld.com/view/DCS_func_setCommand |
 
- 
+
 
 
 
@@ -2326,11 +2346,11 @@ See https://wiki.hoggitworld.com/view/DCS_Class_Object for more information
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-custom-v0-CustomService"></a>
@@ -2350,23 +2370,7 @@ Expect to find APIs here that may be useful for mission frameworks etc.
 | Eval | [EvalRequest](#dcs-custom-v0-EvalRequest) | [EvalResponse](#dcs-custom-v0-EvalResponse) | Evaluate some Lua inside of the mission and return the result as a JSON string. Disabled by default. |
 | GetMagneticDeclination | [GetMagneticDeclinationRequest](#dcs-custom-v0-GetMagneticDeclinationRequest) | [GetMagneticDeclinationResponse](#dcs-custom-v0-GetMagneticDeclinationResponse) | Calculates the magnetic declination at the given position using the International Geomagnetic Reference Field (IGRF) model. The result is not always exactly the same as what DCS seem to use, but it is very close (DCS doesn&#39;t expose its declination). |
 
- 
 
-
-
-<a name="dcs_dcs-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## dcs/dcs.proto
-
-
- 
-
- 
-
- 
-
- 
 
 
 
@@ -2605,11 +2609,11 @@ Expect to find APIs here that may be useful for mission frameworks etc.
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-group-v0-GroupService"></a>
@@ -2628,7 +2632,7 @@ https://wiki.hoggitworld.com/view/DCS_Class_Group
 | GetGroup | [GetGroupRequest](#dcs-group-v0-GetGroupRequest) | [GetGroupResponse](#dcs-group-v0-GetGroupResponse) |  |
 | GetUnit | [GetUnitRequest](#dcs-group-v0-GetUnitRequest) | [GetUnitResponse](#dcs-group-v0-GetUnitResponse) |  |
 
- 
+
 
 
 
@@ -3026,6 +3030,36 @@ https://wiki.hoggitworld.com/view/DCS_Class_Group
 
 
 
+<a name="dcs-hook-v0-GetOwnshipHookStateRequest"></a>
+
+### GetOwnshipHookStateRequest
+
+
+
+
+
+
+
+<a name="dcs-hook-v0-GetOwnshipHookStateResponse"></a>
+
+### GetOwnshipHookStateResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| observation_status | [OwnshipHookObservationStatus](#dcs-hook-v0-OwnshipHookObservationStatus) |  |  |
+| model_time | [double](#double) |  | DCS model time captured in the same hook callback as the observation. |
+| aircraft_type | [string](#string) |  | Empty when DCS does not expose ownship data. |
+| status_value | [double](#double) | optional | Raw hook.status from LoGetMechInfo(). Boolean values are normalized to 0.0/1.0; numeric values are preserved. No lever polarity is inferred. |
+| value | [double](#double) | optional | Raw hook.value from LoGetMechInfo(). No physical-state polarity is inferred. |
+| ownship_unit_id | [uint32](#uint32) | optional | DCS object ID from LoGetPlayerPlaneId(), used by clients to reject an ownship observation that belongs to a different tracked aircraft. |
+
+
+
+
+
+
 <a name="dcs-hook-v0-GetPausedRequest"></a>
 
 ### GetPausedRequest
@@ -3331,11 +3365,24 @@ https://wiki.hoggitworld.com/view/DCS_Class_Group
 
 
 
- 
 
- 
 
- 
+
+<a name="dcs-hook-v0-OwnshipHookObservationStatus"></a>
+
+### OwnshipHookObservationStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OWNSHIP_HOOK_OBSERVATION_STATUS_UNSPECIFIED | 0 |  |
+| OWNSHIP_HOOK_OBSERVATION_STATUS_OBSERVED | 1 |  |
+| OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE | 2 |  |
+
+
+
+
+
 
 
 <a name="dcs-hook-v0-HookService"></a>
@@ -3365,6 +3412,7 @@ APis that are part of the hook environment
 | GetRealTime | [GetRealTimeRequest](#dcs-hook-v0-GetRealTimeRequest) | [GetRealTimeResponse](#dcs-hook-v0-GetRealTimeResponse) | https://wiki.hoggitworld.com/view/DCS_func_getRealTime |
 | GetBallisticsCount | [GetBallisticsCountRequest](#dcs-hook-v0-GetBallisticsCountRequest) | [GetBallisticsCountResponse](#dcs-hook-v0-GetBallisticsCountResponse) | Get a count of ballistics objects |
 | GetModelTime | [GetModelTimeRequest](#dcs-hook-v0-GetModelTimeRequest) | [GetModelTimeResponse](#dcs-hook-v0-GetModelTimeResponse) |  |
+| GetOwnshipHookState | [GetOwnshipHookStateRequest](#dcs-hook-v0-GetOwnshipHookStateRequest) | [GetOwnshipHookStateResponse](#dcs-hook-v0-GetOwnshipHookStateResponse) | Returns the local player&#39;s raw arresting-hook mechanization reported by Export.LoGetMechInfo(). This is ownship-only and is subject to the DCS allow_ownship_export setting. |
 | GetMissionOptions | [GetMissionOptionsRequest](#dcs-hook-v0-GetMissionOptionsRequest) | [GetMissionOptionsResponse](#dcs-hook-v0-GetMissionOptionsResponse) |  |
 | GetCurrentMission | [GetCurrentMissionRequest](#dcs-hook-v0-GetCurrentMissionRequest) | [GetCurrentMissionResponse](#dcs-hook-v0-GetCurrentMissionResponse) |  |
 | GetAvailableSlots | [GetAvailableSlotsRequest](#dcs-hook-v0-GetAvailableSlotsRequest) | [GetAvailableSlotsResponse](#dcs-hook-v0-GetAvailableSlotsResponse) |  |
@@ -3372,7 +3420,7 @@ APis that are part of the hook environment
 | GetMissionResult | [GetMissionResultRequest](#dcs-hook-v0-GetMissionResultRequest) | [GetMissionResultResponse](#dcs-hook-v0-GetMissionResultResponse) |  |
 | GetUnitProperty | [GetUnitPropertyRequest](#dcs-hook-v0-GetUnitPropertyRequest) | [GetUnitPropertyResponse](#dcs-hook-v0-GetUnitPropertyResponse) |  |
 
- 
+
 
 
 
@@ -3629,7 +3677,7 @@ APis that are part of the hook environment
 
 
 
- 
+
 
 
 <a name="dcs-land-v0-SurfaceType"></a>
@@ -3647,9 +3695,9 @@ protolint:disable ENUM_FIELD_NAMES_PREFIX ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
 | RUNWAY | 4 |  |
 
 
- 
 
- 
+
+
 
 
 <a name="dcs-land-v0-LandService"></a>
@@ -3668,7 +3716,7 @@ protolint:disable ENUM_FIELD_NAMES_PREFIX ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
 | GetIP | [GetIPRequest](#dcs-land-v0-GetIPRequest) | [GetIPResponse](#dcs-land-v0-GetIPResponse) |  |
 | Profile | [ProfileRequest](#dcs-land-v0-ProfileRequest) | [ProfileResponse](#dcs-land-v0-ProfileResponse) |  |
 
- 
+
 
 
 
@@ -3728,11 +3776,11 @@ protolint:disable ENUM_FIELD_NAMES_PREFIX ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-metadata-v0-MetadataService"></a>
@@ -3745,7 +3793,7 @@ A service to get administrative/meta data like server health checks and version
 | GetHealth | [GetHealthRequest](#dcs-metadata-v0-GetHealthRequest) | [GetHealthResponse](#dcs-metadata-v0-GetHealthResponse) |  |
 | GetVersion | [GetVersionRequest](#dcs-metadata-v0-GetVersionRequest) | [GetVersionResponse](#dcs-metadata-v0-GetVersionResponse) |  |
 
- 
+
 
 
 
@@ -5024,7 +5072,7 @@ Fired for each payload of an aircraft spawened midair.
 
 
 
- 
+
 
 
 <a name="dcs-mission-v0-StreamEventsResponse-DisconnectReason"></a>
@@ -5050,9 +5098,9 @@ The reason a player disconnected for.
 | DISCONNECT_REASON_DENIED_TRIAL_ONLY | 107 |  |
 
 
- 
 
- 
+
+
 
 
 <a name="dcs-mission-v0-MissionService"></a>
@@ -5077,7 +5125,7 @@ Contains the streaming APIs that streaming information out of the DCS server.
 | RemoveGroupCommandItem | [RemoveGroupCommandItemRequest](#dcs-mission-v0-RemoveGroupCommandItemRequest) | [RemoveGroupCommandItemResponse](#dcs-mission-v0-RemoveGroupCommandItemResponse) | Removes a group coalition command. See https://wiki.hoggitworld.com/view/DCS_func_removeItemForGroup |
 | GetSessionId | [GetSessionIdRequest](#dcs-mission-v0-GetSessionIdRequest) | [GetSessionIdResponse](#dcs-mission-v0-GetSessionIdResponse) | Returns an ID for the current session. The ID will change upon mission change or server restart. |
 
- 
+
 
 
 
@@ -5239,11 +5287,11 @@ Contains the streaming APIs that streaming information out of the DCS server.
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-net-v0-NetService"></a>
@@ -5259,7 +5307,7 @@ Contains the streaming APIs that streaming information out of the DCS server.
 | KickPlayer | [KickPlayerRequest](#dcs-net-v0-KickPlayerRequest) | [KickPlayerResponse](#dcs-net-v0-KickPlayerResponse) | Kick a specified player from the server with a message https://wiki.hoggitworld.com/view/DCS_func_kick |
 | ForcePlayerSlot | [ForcePlayerSlotRequest](#dcs-net-v0-ForcePlayerSlotRequest) | [ForcePlayerSlotResponse](#dcs-net-v0-ForcePlayerSlotResponse) | Force a player into a slot / coalition. To move the player back into spectators, use the following pseudo: `ForcePlayerSlot({ player_id: ..., coalition: NEUTRAL, slot_id: &#34;&#34; })` |
 
- 
+
 
 
 
@@ -5615,11 +5663,11 @@ transaction.
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-spot-v0-SpotService"></a>
@@ -5638,7 +5686,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_spot
 | SetCode | [SetCodeRequest](#dcs-spot-v0-SetCodeRequest) | [SetCodeResponse](#dcs-spot-v0-SetCodeResponse) |  |
 | GetCategory | [GetCategoryRequest](#dcs-spot-v0-GetCategoryRequest) | [GetCategoryResponse](#dcs-spot-v0-GetCategoryResponse) |  |
 
- 
+
 
 
 
@@ -5789,11 +5837,11 @@ https://wiki.hoggitworld.com/view/DCS_singleton_spot
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-srs-v0-SrsService"></a>
@@ -5806,7 +5854,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_spot
 | Transmit | [TransmitRequest](#dcs-srs-v0-TransmitRequest) | [TransmitResponse](#dcs-srs-v0-TransmitResponse) | Synthesize text to speech and transmit it over SRS. By default, this blocks until a transmission completed (unless `async` is set to `true`). This can be used to prevent transmission to overlap each other, by not sending another transmission on the same frequency until you&#39;ve received the response from the previous transmission on that frequency. However, it does not block or prevent any other client from transmitting over the same frequency at the same time. |
 | GetClients | [GetClientsRequest](#dcs-srs-v0-GetClientsRequest) | [GetClientsResponse](#dcs-srs-v0-GetClientsResponse) | Retrieve a list of units (players) and their active frequencies that are connected to SRS. |
 
- 
+
 
 
 
@@ -5897,11 +5945,11 @@ https://wiki.hoggitworld.com/view/DCS_singleton_spot
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-timer-v0-TimerService"></a>
@@ -5915,7 +5963,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_timer
 | GetAbsoluteTime | [GetAbsoluteTimeRequest](#dcs-timer-v0-GetAbsoluteTimeRequest) | [GetAbsoluteTimeResponse](#dcs-timer-v0-GetAbsoluteTimeResponse) | https://wiki.hoggitworld.com/view/DCS_func_getAbsTime |
 | GetTimeZero | [GetTimeZeroRequest](#dcs-timer-v0-GetTimeZeroRequest) | [GetTimeZeroResponse](#dcs-timer-v0-GetTimeZeroResponse) | https://wiki.hoggitworld.com/view/DCS_func_getTime0 |
 
- 
+
 
 
 
@@ -7160,7 +7208,7 @@ RGBA of 1, 0, 0, 0.5
 
 
 
- 
+
 
 
 <a name="dcs-trigger-v0-EffectSmokeBigRequest-SmokePreset"></a>
@@ -7247,9 +7295,9 @@ RGBA of 1, 0, 0, 0.5
 | SMOKE_COLOR_BLUE | 5 |  |
 
 
- 
 
- 
+
+
 
 
 <a name="dcs-trigger-v0-TriggerService"></a>
@@ -7302,7 +7350,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_trigger
 | TextToAll | [TextToAllRequest](#dcs-trigger-v0-TextToAllRequest) | [TextToAllResponse](#dcs-trigger-v0-TextToAllResponse) |  |
 | ArrowToAll | [ArrowToAllRequest](#dcs-trigger-v0-ArrowToAllRequest) | [ArrowToAllResponse](#dcs-trigger-v0-ArrowToAllResponse) |  |
 
- 
+
 
 
 
@@ -8139,11 +8187,11 @@ Sensors
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-unit-v0-UnitService"></a>
@@ -8177,7 +8225,7 @@ https://wiki.hoggitworld.com/view/DCS_Class_Unit
 | GetDescentCapacity | [GetDescentCapacityRequest](#dcs-unit-v0-GetDescentCapacityRequest) | [GetDescentCapacityResponse](#dcs-unit-v0-GetDescentCapacityResponse) |  |
 | GetDescByName | [GetDescByNameRequest](#dcs-unit-v0-GetDescByNameRequest) | [GetDescByNameResponse](#dcs-unit-v0-GetDescByNameResponse) |  |
 
- 
+
 
 
 
@@ -8454,11 +8502,11 @@ https://wiki.hoggitworld.com/view/DCS_Class_Unit
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-warehouse-v0-WarehouseService"></a>
@@ -8478,7 +8526,7 @@ https://wiki.hoggitworld.com/view/DCS_Class_Unit
 | SetLiquidAmount | [SetLiquidAmountRequest](#dcs-warehouse-v0-SetLiquidAmountRequest) | [SetLiquidAmountResponse](#dcs-warehouse-v0-SetLiquidAmountResponse) |  |
 | GetOwner | [GetOwnerRequest](#dcs-warehouse-v0-GetOwnerRequest) | [GetOwnerResponse](#dcs-warehouse-v0-GetOwnerResponse) |  |
 
- 
+
 
 
 
@@ -8903,11 +8951,11 @@ https://wiki.hoggitworld.com/view/DCS_Class_Unit
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-weapon-v0-WeaponService"></a>
@@ -8932,7 +8980,7 @@ https://wiki.hoggitworld.com/view/DCS_Class_Unit
 | GetTypeName | [GetTypeNameRequest](#dcs-weapon-v0-GetTypeNameRequest) | [GetTypeNameResponse](#dcs-weapon-v0-GetTypeNameResponse) |  |
 | GetPoint | [GetPointRequest](#dcs-weapon-v0-GetPointRequest) | [GetPointResponse](#dcs-weapon-v0-GetPointResponse) |  |
 
- 
+
 
 
 
@@ -9351,11 +9399,11 @@ Volume used by world.searchObjects.
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="dcs-world-v0-WorldService"></a>
@@ -9376,7 +9424,7 @@ https://wiki.hoggitworld.com/view/DCS_singleton_world
 | SetAirbaseRadioSilentMode | [SetAirbaseRadioSilentModeRequest](#dcs-world-v0-SetAirbaseRadioSilentModeRequest) | [SetAirbaseRadioSilentModeResponse](#dcs-world-v0-SetAirbaseRadioSilentModeResponse) |  |
 | SetAirbaseCoalition | [SetAirbaseCoalitionRequest](#dcs-world-v0-SetAirbaseCoalitionRequest) | [SetAirbaseCoalitionResponse](#dcs-world-v0-SetAirbaseCoalitionResponse) |  |
 
- 
+
 
 
 
