@@ -1,6 +1,6 @@
 ---
 name: dcs-grpc-client-development
-description: Build, review, or debug Rust and Python clients for sevenfifty777/rust-server, including matching protobuf generation, API-key metadata, unary RPCs, MissionService streams, and RecoveryService snapshots. Do not use for implementing the Rust server or its DCS Lua bridge.
+description: Build, review, or debug Rust and Python clients for sevenfifty777/rust-server, including matching protobuf generation, API-key metadata, unary RPCs, MissionService streams, RecoveryService snapshots, and ownship hook mechanization. Do not use for implementing the Rust server or its DCS Lua bridge.
 ---
 
 # DCS gRPC client development
@@ -44,7 +44,7 @@ The current server registers 19 versioned services under `dcs.<domain>.v0`. Pack
 ## Streaming behavior to preserve
 
 - `MissionService.StreamEvents` is a long-running server stream and ends when the server or mission-side stream shuts down. Re-establish it after a transient disconnect.
-- `MissionService.StreamUnits` defaults `poll_rate` to 5 seconds and `max_backoff` to 30 seconds. The server clamps `max_backoff` to at least `poll_rate`, sends an initial unit snapshot, then emits `unit` changes or `gone` notifications. Do not treat it as high-rate Tacview telemetry.
+- `MissionService.StreamUnits` defaults `poll_rate` to 5 seconds and `max_backoff` to 30 seconds. The server clamps `max_backoff` to at least `poll_rate`, sends an initial unit snapshot, then emits `unit` changes or `gone` notifications. Do not treat it as high-rate Tacview telemetry. Since 0.9.2, `poll_rate_ms` (minimum 50) takes precedence over `poll_rate`, a zero poll rate is rejected with `INVALID_ARGUMENT`, and the server keeps at most 8 `GetTransform` calls in flight per stream; it is a discovery/pre-filter API, not suitable for sub-100 ms telemetry.
 - Use `MissionService.GetSessionId` when continuity across mission reloads matters; the contract states that the ID changes on mission change or server restart.
 - Treat stream timestamps according to their message documentation. Do not substitute wall-clock receipt time for mission-relative time.
 
@@ -60,6 +60,17 @@ Use `dcs.recovery.v0.RecoveryService.GetRecoverySnapshot` when a recovery-gradin
 - The response transforms contain `Position`, `Orientation`, and `Velocity`. Rust bindings expose message-valued fields as `Option<T>`; validate required observations instead of unwrapping blindly.
 - The Rust client path is `dcs_grpc_stubs::recovery::v0::recovery_service_client::RecoveryServiceClient`, unless the dependency is aliased. Python generated modules remain under the `dcs.recovery.v0` package hierarchy.
 - A unary polling loop determines its own requested cadence, but actual sampling can be delayed by the client, transport, IPC queue, or Lua execution. Measure observed intervals and latency; do not call a timer setting or request loop a guaranteed sampling rate.
+
+## Ownship hook mechanization
+
+Use `dcs.hook.v0.HookService.GetOwnshipHookState` when a client running beside an occupied DCS cockpit needs the raw hook mechanization returned by `Export.LoGetMechInfo().hook`. It only works on a client DCS instance with a local cockpit; on a dedicated server there is no ownship and it always returns `OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE`.
+
+- This is a hook-environment, ownship-only observation. It is subject to DCS ownship-export permission and normally cannot describe AI aircraft, remote multiplayer aircraft, or an unoccupied dedicated server. `observation_status = UNAVAILABLE` is valid evidence of that limitation, not a hook-up indication.
+- The response captures `model_time`, `aircraft_type`, optional `ownship_unit_id`, and optional raw `status_value`/`value`. Boolean DCS `hook.status` values are normalized to `0.0` or `1.0`; numeric values are preserved.
+- Do not assume which raw field represents lever command, physical mechanism position, or up/down polarity. Establish those meanings with live before/after observations for every supported aircraft module before using them for grading or control decisions.
+- Match `ownship_unit_id` to the unit being tracked before accepting an observation. Aircraft type alone is not a sufficient identity check. Treat an absent or mismatched ID as diagnostic-only evidence.
+- This RPC is separate from `RecoveryService.GetRecoverySnapshot`: it does not make hook-environment data callback-atomic with mission-environment transforms. Timestamp and correlate the two streams explicitly.
+- The Rust client path is `dcs_grpc_stubs::hook::v0::hook_service_client::HookServiceClient`. Handle the `OwnshipHookObservationStatus` enum defensively and preserve absent optional values.
 
 ## Status and retry policy
 

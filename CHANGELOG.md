@@ -6,6 +6,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-09-06
+
+### Added
+
+- Added additive `RecoveryService` `StartRecoveryTelemetry` / `ReadRecoveryTelemetry` / `StopRecoveryTelemetry` RPCs backed by a lazy mission-Lua collector, per-recovery bounded rings, callback-wide source timestamps, per-recovery sequences, global capture ticks, source epochs, unit-incarnation validation, explicit loss/lifecycle metadata, leases, tombstones, resource limits, and owner-scoped access. See `docs/recovery_telemetry.md`.
+- Added native UUID epoch generation and monotonic capture-cost timing plus deterministic Lua-engine tests (run in CI) for retries, pagination, overflow, carrier sharing, producer gaps, invalid unit incarnations, stop, and TTL expiry.
+- Added `HookService.GetOwnshipHookState`, an additive hook-environment API that returns the local player's raw `Export.LoGetMechInfo().hook` status/value, DCS model time, aircraft type, and ownship unit ID. The response explicitly reports unavailable evidence when ownship export or hook mechanization is not exposed. Note: this only works on a client DCS instance with a local cockpit (an ownship); on a dedicated server there is no ownship, so it always reports `OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE`.
+- Added latency diagnostics to `RecoveryService.GetRecoverySnapshot` (`queue_wait_ms`, `lua_exec_ms`, `queue_depth`, `dequeued_model_time`; all optional) and `DrawArgumentObservation.detail` carrying the Lua error text when a draw argument is unavailable.
+- Added `StreamUnitsRequest.poll_rate_ms` (takes precedence over `poll_rate`; minimum 50 ms).
+- Added `grpc.monotonicMs()` (re-exported as `GRPC.monotonicMs()`) to the Lua bridge, a monotonic wall-clock in milliseconds usable even when `os` is sanitized, and the DLL now passes per-request IPC metadata (`requestId`, `queueWaitMs`, `queueDepthAtEnqueue`, `queueDepthAtDequeue`) as a third argument to the Lua request handler.
+- Added the missing `GRPC.errorInternal` Lua helper (maps to gRPC `INTERNAL`).
+- Added the `recoveryTelemetry.diagnosticsIntervalSeconds` config key (default `1.0`).
+- Added a non-blocking `cargo audit` CI job.
+
+### Changed
+
+- Authentication now propagates the configured client label (never the API token) to mission RPC handlers, and script `PERMISSION_DENIED`, `RESOURCE_EXHAUSTED`, and `UNAUTHENTICATED` errors retain their gRPC status codes.
+- Recovery telemetry read quotas are enforced before mission IPC enqueueing, and live tombstones now prevent ambiguous immediate handle reuse.
+- `ReadRecoveryTelemetry` now purges ring entries acknowledged by `after_sequence` on the following read instead of retaining them until capacity/retention eviction, cutting steady-state ring occupancy without weakening same-request retry safety; genuine capacity overflow (`capacityOverflowCount`) is now counted separately from these acknowledged evictions.
+- The `diagnostics` block on `ReadRecoveryTelemetryResponse` is now refreshed at most once per `recoveryTelemetry.diagnosticsIntervalSeconds` per recovery instead of every batch; it is omitted from responses in between.
+- The deduplicated `telemetryObservationErrors` table is now bounded to the 128 most recent distinct errors instead of growing for the life of the mission.
+- `StreamUnits` is documented as a discovery / pre-filter API not suitable for sub-100 ms telemetry; it now caps concurrent `GetTransform` fan-out to 8 requests per stream and rejects a zero poll rate (or `poll_rate_ms` below 50) with `INVALID_ARGUMENT` instead of panicking the stream task.
+- `methods/recovery.lua` is now loaded only in the mission scripting environment and `methods/hook.lua` only in the hook environment; `hook.lua` no longer captures `DCS`/`Export` as load-time upvalues.
+- The DLL no longer panics when the log file cannot be created or the server state lock is poisoned; `grpc.start` reports the failure to Lua and the other entry points return a Lua error (or return early for `event`).
+
+### Fixed
+
+- Recovery capture callbacks survive unexpected Lua exceptions, scheduling failures roll back registrations, idle periods no longer inflate missed-tick diagnostics, empty rings expose a `0/0` sequence range, and mixed retention/capacity losses retain accurate provenance.
+- `GRPC.errorInternal` was called from `methods/spot.lua` and `methods/unit.lua` but never defined, turning those failures into `attempt to call field 'errorInternal' (a nil value)` errors.
+- The hook environment request loop executed one call more than `callsPerTick` per tick (off-by-one against the mission environment loop).
+- Removed the stray empty `lua_files.rs` at the repository root (the real file is generated into `OUT_DIR`).
 
 ## [0.9.1] - 2026-09-01
 

@@ -15,6 +15,7 @@ protos/google
 /Feature_inplementation
 /sample_release
 /Releases
+/.ignore
 
 # Repository-local Codex skill
 !/.agents/

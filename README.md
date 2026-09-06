@@ -7,13 +7,13 @@ mission on a DCS server.
 
 ### Download
 
-Download the latest version of the server from the [Releases](https://github.com/DCS-gRPC/rust-server/releases) and
+Download the latest version of the server from the [Releases](https://github.com/sevenfifty777/rust-server/releases) and
 extract the zip file into your DCS Server directory.
 
 This is typically found in `C:\Users\USERNAME\Saved Games\DCS.openbeta_server`.
 Once extracted you will have a `Scripts\DCS-gRPC` folder, a `Mods\Tech\DCS-gRPC` folder, and a
 `Scripts\Hooks\DCS-gRPC.lua` file in your server folder. As well as these scripts there will be a `Docs/DCS-gRPC`
-folder containing documentation and a `Tools/DCS-gRPC` folder containing client tools.
+folder containing documentation and a `Tools/DCS-gRPC` folder containing the matching REPL and protobuf schemas.
 
 ### Prepare DCS
 
@@ -89,6 +89,19 @@ auth.tokens = {
   { client = "SomeClient", token = "SomeToken" }, 
   { client = "SomeClient2", token = "SomeOtherToken" }
 }
+
+-- Source-buffered recovery telemetry is opt-in. Authentication is strongly
+-- recommended; it is mandatory when host is not a loopback address.
+recoveryTelemetry.enabled = false
+recoveryTelemetry.periodSeconds = 0.05       -- 20 Hz; allowed: 0.05 .. 0.1
+recoveryTelemetry.retentionSeconds = 30      -- allowed: 1 .. 30
+recoveryTelemetry.capacity = 600             -- hard maximum: 600 per recovery
+recoveryTelemetry.leaseSeconds = 60          -- allowed: 15 .. 300
+recoveryTelemetry.maxActiveRecoveries = 16   -- hard maximum: 64
+recoveryTelemetry.maxActiveCarriers = 8      -- hard maximum: 32
+recoveryTelemetry.maxBatchSize = 100         -- hard maximum: 100
+recoveryTelemetry.readsPerSecond = 20        -- pre-IPC quota per authenticated client label
+recoveryTelemetry.diagnosticsIntervalSeconds = 1.0 -- minimum spacing between full diagnostics blocks
 
 -- The default TTS provider to use if a TTS request does not explicitly specify another one.
 tts.defaultProvider = "win"
@@ -215,6 +228,21 @@ The server will be running on port 50051 by default.
     }
     ```
 
+## Custom services
+
+This fork adds two services that do not exist upstream. Both are additive; see `protos/dcs/recovery/v0/recovery.proto`
+and `protos/dcs/hook/v0/hook.proto` for the full definitions.
+
+- `RecoveryService.GetRecoverySnapshot` (mission scripting environment) - reads one carrier and one aircraft transform
+  plus an optional external-model draw argument inside a single Lua callback, sharing one mission timestamp and echoing
+  a client sequence number. Since 0.9.2 the response also carries server-side latency diagnostics (`queue_wait_ms`,
+  `lua_exec_ms`, `queue_depth`, `dequeued_model_time`); every diagnostic field is optional and absent when it could not
+  be measured. Use this rather than `StreamUnits` for low-latency tracking of a small number of units.
+- `HookService.GetOwnshipHookState` (hook environment) - returns the raw `Export.LoGetMechInfo().hook` status/value
+  of the local player's aircraft. **It only works on a client DCS instance with a local cockpit** (the ownship, subject
+  to the DCS `allow_ownship_export` setting). On a dedicated server there is no ownship, so the call always returns
+  `OWNSHIP_HOOK_OBSERVATION_STATUS_UNAVAILABLE`; it can never observe other players' hooks.
+
 ## Client Development
 
 `DCS-gRPC`, as the name implies, uses the [gRPC](https://grpc.io/) framework to handle communication between clients
@@ -325,10 +353,16 @@ The script will:
 - read the version from `Cargo.toml`
 - run the locked Rust 1.98.0 release build for the server and REPL
 - create the `DCS-gRPC-<version>` release folder with the expected DCS layout
-- copy the server DLL, Lua bridge, tools, protos and docs
+- copy the server DLL, Lua bridge, current-build REPL, source protobufs, sample mission and docs
 - generate and validate `api.html`
-- verify the required release files and ZIP entries
+- verify the required release files and ZIP entries, including SHA-256 equality for the DLL, REPL, mission and every protobuf
 - create `Releases/DCS-gRPC-<version>.zip`
+
+The release does not bundle `grpcurl` or `grpcui`. They are optional third-party diagnostic clients, not runtime
+components of DCS-gRPC. Download a reviewed version directly from the upstream
+[`grpcurl`](https://github.com/fullstorydev/grpcurl/releases) or
+[`grpcui`](https://github.com/fullstorydev/grpcui/releases) release page when needed. These links are also included
+in the release as `Tools/DCS-gRPC/OPTIONAL-TOOLS.txt`.
 
 After the script finishes, publish the resulting ZIP and tag the commit as described in [`docs/release_process.md`](docs/release_process.md).
 
@@ -355,7 +389,8 @@ For development:
 - Search for `[GRPC]` in the DCS logs
 - Consult the gRPC Server logs at `Saved Games\DCS.openbeta\Logs\gRPC.log`
 
-Test the running server via [grpcurl](https://github.com/fullstorydev/grpcurl): (Remove the `.exe` when running on Linux).
+Test the running server via [grpcurl](https://github.com/fullstorydev/grpcurl) after installing it separately.
+(Remove the `.exe` when running on Linux.)
 
 > [!TIP]
 > FOR WINDOWS USERS on the command prompt, you may need to wrap the JSON in double quotes instead of single quotes in the commands below.

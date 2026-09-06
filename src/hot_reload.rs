@@ -1,7 +1,6 @@
 #![allow(clippy::type_complexity)]
-///! This module is a wrapper around all exposed Lua methods which are forwarded to a dynamically
-///! loaded dcs_grpc.dll. Upon calling the `stop()` method, the library is unloaded, and re-
-///! loaded during the next `start()` call.
+//! This module wraps all exposed Lua methods forwarded to a dynamically loaded dcs_grpc.dll.
+//! Calling `stop()` unloads the library; the next `start()` call loads it again.
 use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 use std::{error, fmt};
@@ -97,6 +96,18 @@ pub fn simulation_frame(lua: &Lua, time: f64) -> LuaResult<()> {
     }
 }
 
+pub fn monotonic_ms(lua: &Lua, arg: ()) -> LuaResult<f64> {
+    if let Some(ref lib) = *LIBRARY.read().unwrap() {
+        let f: Symbol<fn(lua: &Lua, arg: ()) -> LuaResult<f64>> = unsafe {
+            lib.get(b"monotonic_ms")
+                .map_err(|err| mlua::Error::ExternalError(Arc::new(err)))?
+        };
+        f(lua, arg).map_err(take_error_ownership)
+    } else {
+        Ok(0.0)
+    }
+}
+
 pub fn log_error(lua: &Lua, err: String) -> LuaResult<()> {
     if let Some(ref lib) = *LIBRARY.read().unwrap() {
         let f: Symbol<fn(lua: &Lua, err: String) -> LuaResult<()>> = unsafe {
@@ -142,6 +153,30 @@ pub fn log_debug(lua: &Lua, msg: String) -> LuaResult<()> {
         f(lua, msg).map_err(take_error_ownership)
     } else {
         Ok(())
+    }
+}
+
+pub fn new_session_id(lua: &Lua, arg: ()) -> LuaResult<String> {
+    if let Some(ref lib) = *LIBRARY.read().unwrap() {
+        let f: Symbol<fn(lua: &Lua, arg: ()) -> LuaResult<String>> = unsafe {
+            lib.get(b"new_session_id")
+                .map_err(|err| mlua::Error::ExternalError(Arc::new(err)))?
+        };
+        f(lua, arg).map_err(take_error_ownership)
+    } else {
+        Err(mlua::Error::external("DCS-gRPC is not started"))
+    }
+}
+
+pub fn monotonic_time_ns(lua: &Lua, arg: ()) -> LuaResult<u64> {
+    if let Some(ref lib) = *LIBRARY.read().unwrap() {
+        let f: Symbol<fn(lua: &Lua, arg: ()) -> LuaResult<u64>> = unsafe {
+            lib.get(b"monotonic_time_ns")
+                .map_err(|err| mlua::Error::ExternalError(Arc::new(err)))?
+        };
+        f(lua, arg).map_err(take_error_ownership)
+    } else {
+        Err(mlua::Error::external("DCS-gRPC is not started"))
     }
 }
 

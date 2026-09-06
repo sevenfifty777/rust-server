@@ -14,6 +14,7 @@ use stubs::mission::v0::stream_units_response::{UnitGone, Update};
 use stubs::mission::v0::{StreamUnitsRequest, StreamUnitsResponse};
 use stubs::unit::v0::unit_service_server::UnitService;
 use stubs::unit::v0::{GetTransformRequest, GetTransformResponse};
+use tokio::sync::Semaphore;
 use tokio::sync::mpsc::Sender;
 use tokio::sync::mpsc::error::SendError;
 use tokio::time::MissedTickBehavior;
@@ -21,7 +22,22 @@ use tonic::{Code, Request, Status};
 
 use crate::rpc::MissionRpc;
 
+/// Poll interval used when the request specifies neither `poll_rate` nor `poll_rate_ms`.
+const DEFAULT_POLL_RATE: Duration = Duration::from_secs(5);
+/// Default maximum backoff (seconds) for units that have not moved recently.
+const DEFAULT_MAX_BACKOFF_SECS: u32 = 30;
+/// Smallest accepted `poll_rate_ms`.
+const MIN_POLL_RATE_MS: u32 = 50;
+/// Maximum number of `GetTransform` requests one stream keeps in flight at the same time.
+const MAX_CONCURRENT_TRANSFORM_REQUESTS: usize = 8;
+
 /// Stream unit updates.
+///
+/// This is a discovery / pre-filter API: every poll tick fans out one `GetTransform` request per
+/// tracked unit (bounded to [MAX_CONCURRENT_TRANSFORM_REQUESTS] in flight per stream), and all of
+/// those requests are still throttled by the mission `throughputLimit`. It is therefore not
+/// suitable for sub-100 ms telemetry of individual units; use targeted unary calls (e.g.
+/// `RecoveryService.GetRecoverySnapshot`) for that.
 #[allow(clippy::result_large_err)] // Preserve established tonic and channel error types.
 pub async fn stream_units(
     opts: StreamUnitsRequest,
@@ -29,9 +45,11 @@ pub async fn stream_units(
     tx: Sender<Result<StreamUnitsResponse, Status>>,
 ) -> Result<(), Error> {
     // initialize the state for the current units stream instance
-    let poll_rate = opts.poll_rate.unwrap_or(5);
-    let max_backoff = Duration::from_secs(opts.max_backoff.unwrap_or(30).max(poll_rate) as u64);
-    let poll_rate = Duration::from_secs(poll_rate as u64);
+    let poll_rate = poll_rate_from_request(&opts)?;
+    let max_backoff = Duration::from_secs(u64::from(
+        opts.max_backoff.unwrap_or(DEFAULT_MAX_BACKOFF_SECS),
+    ))
+    .max(poll_rate);
     let category = GroupCategory::try_from(opts.category).unwrap_or(GroupCategory::Unspecified);
     let mut state = State {
         units: HashMap::new(),
@@ -40,6 +58,7 @@ pub async fn stream_units(
             tx,
             poll_rate,
             max_backoff,
+            transform_permits: Semaphore::new(MAX_CONCURRENT_TRANSFORM_REQUESTS),
         },
     };
 
@@ -117,6 +136,25 @@ pub async fn stream_units(
     }
 }
 
+/// Resolve the poll interval of a units stream request. `poll_rate_ms` takes precedence over the
+/// second-granular `poll_rate`; a zero interval (or a `poll_rate_ms` below [MIN_POLL_RATE_MS]) is
+/// rejected as it would hammer the mission scripting environment (and a zero interval would panic
+/// `tokio::time::interval`).
+#[allow(clippy::result_large_err)] // Preserve the established tonic Status return type.
+fn poll_rate_from_request(opts: &StreamUnitsRequest) -> Result<Duration, Status> {
+    match (opts.poll_rate_ms, opts.poll_rate) {
+        (Some(ms), _) if ms < MIN_POLL_RATE_MS => Err(Status::invalid_argument(format!(
+            "poll_rate_ms must be at least {MIN_POLL_RATE_MS} ms (got {ms})"
+        ))),
+        (Some(ms), _) => Ok(Duration::from_millis(u64::from(ms))),
+        (None, Some(0)) => Err(Status::invalid_argument(
+            "poll_rate must be greater than 0 seconds (use poll_rate_ms for sub-second intervals)",
+        )),
+        (None, Some(secs)) => Ok(Duration::from_secs(u64::from(secs))),
+        (None, None) => Ok(DEFAULT_POLL_RATE),
+    }
+}
+
 /// The state of an active units stream.
 // TODO: re-use one state for all concurrent unit streams?
 struct State {
@@ -130,6 +168,8 @@ struct Context {
     tx: Sender<Result<StreamUnitsResponse, Status>>,
     poll_rate: Duration,
     max_backoff: Duration,
+    /// Caps the number of concurrent `GetTransform` requests fanned out by this stream.
+    transform_permits: Semaphore,
 }
 
 /// Update the given [State] based on the given [Event].
@@ -300,13 +340,19 @@ impl UnitState {
     async fn update(&mut self, ctx: &Context) -> Result<bool, Status> {
         let mut changed = false;
 
-        let res = UnitService::get_transform(
-            &ctx.rpc,
-            Request::new(GetTransformRequest {
-                name: self.unit.name.clone(),
-            }),
-        )
-        .await?;
+        let res = {
+            // Hold a permit only for the duration of the mission round-trip.
+            let _permit = ctx.transform_permits.acquire().await.map_err(|_| {
+                Status::internal("GetTransform concurrency limiter closed unexpectedly")
+            })?;
+            UnitService::get_transform(
+                &ctx.rpc,
+                Request::new(GetTransformRequest {
+                    name: self.unit.name.clone(),
+                }),
+            )
+            .await?
+        };
         let GetTransformResponse {
             time,
             position,
@@ -460,4 +506,55 @@ fn degrees_equalish(a: f64, b: f64) -> bool {
 fn speed_equalish(a: f64, b: f64) -> bool {
     const EPSILON: f64 = 0.001;
     (a - b).abs() < EPSILON
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn request(poll_rate: Option<u32>, poll_rate_ms: Option<u32>) -> StreamUnitsRequest {
+        StreamUnitsRequest {
+            poll_rate,
+            poll_rate_ms,
+            max_backoff: None,
+            category: GroupCategory::Unspecified.into(),
+        }
+    }
+
+    #[test]
+    fn poll_rate_defaults_to_five_seconds() {
+        assert_eq!(
+            poll_rate_from_request(&request(None, None)).unwrap(),
+            Duration::from_secs(5)
+        );
+        assert_eq!(
+            poll_rate_from_request(&request(Some(2), None)).unwrap(),
+            Duration::from_secs(2)
+        );
+    }
+
+    #[test]
+    fn poll_rate_ms_takes_precedence_over_seconds() {
+        assert_eq!(
+            poll_rate_from_request(&request(Some(5), Some(250))).unwrap(),
+            Duration::from_millis(250)
+        );
+        assert_eq!(
+            poll_rate_from_request(&request(Some(0), Some(50))).unwrap(),
+            Duration::from_millis(50)
+        );
+    }
+
+    #[test]
+    fn zero_or_too_small_poll_rates_are_rejected() {
+        for req in [
+            request(Some(0), None),
+            request(Some(0), Some(0)),
+            request(None, Some(0)),
+            request(Some(5), Some(49)),
+        ] {
+            let status = poll_rate_from_request(&req).unwrap_err();
+            assert_eq!(status.code(), Code::InvalidArgument, "{req:?}");
+        }
+    }
 }

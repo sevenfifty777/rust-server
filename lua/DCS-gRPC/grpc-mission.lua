@@ -3,8 +3,13 @@ if not GRPC then
     -- scaffold nested tables to allow direct assignment in config file
     tts = { provider = { gcloud = {}, aws = {}, azure = {}, win = {} } },
     srs = {},
-    auth = { tokens = {} }
+    auth = { tokens = {} },
+    recoveryTelemetry = {}
   }
+end
+
+if GRPC.recoveryTelemetry == nil then
+  GRPC.recoveryTelemetry = {}
 end
 
 -- load settings from `Saved Games/DCS/Config/dcs-grpc.lua`
