@@ -54,9 +54,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install luacheck
+      - name: Install luacheck and Lua 5.1
         run: |
-          sudo apt-get install -y luarocks
+          sudo apt-get install -y luarocks lua5.1
           sudo luarocks install luacheck
 
       - name: Checkout code
@@ -64,6 +64,11 @@ jobs:
 
       - name: Lint
         run: luacheck ./lua
+
+      - name: Recovery telemetry engine tests
+        run: |
+          lua5.1 tests/lua/recovery_telemetry_test.lua
+          lua5.1 tests/lua/recovery_method_scheduler_test.lua
 
   proto:
     name: Proto

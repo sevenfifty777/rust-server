@@ -592,8 +592,12 @@ function M.read(engine, params)
   -- (thousands per trap) is pure overhead, so it is refreshed on a timer
   -- instead; the wire field is already optional, so omitting it is a no-op
   -- for readers that only look at snapshots.
+  -- The small tolerance absorbs floating-point noise in mission time (for example
+  -- 1.15 - 0.15 evaluates to just under 1.0) so a read landing exactly on the
+  -- interval boundary still refreshes diagnostics.
   local includeDiagnostics = recovery.lastDiagnosticsAt == nil
-    or (now - recovery.lastDiagnosticsAt) >= (engine.config.diagnosticsIntervalSeconds or 1.0)
+    or (now - recovery.lastDiagnosticsAt) + 0.000001
+      >= (engine.config.diagnosticsIntervalSeconds or 1.0)
   local diagnosticsPayload = nil
   if includeDiagnostics then
     diagnosticsPayload = diagnostics(engine, recovery, now)

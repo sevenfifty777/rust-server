@@ -75,3 +75,4 @@ walkdir = "2.3"
 [features]
 default = []
 hot-reload = ["libloading"]
+lua-tests = []

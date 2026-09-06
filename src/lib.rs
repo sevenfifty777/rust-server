@@ -460,3 +460,6 @@ fn pretty_print_value(val: Value, indent: usize) -> LuaResult<String> {
         Value::Other(_) => "(unknown type)".to_string(),
     })
 }
+
+#[cfg(all(test, feature = "lua-tests"))]
+mod recovery_telemetry_lua_tests;
