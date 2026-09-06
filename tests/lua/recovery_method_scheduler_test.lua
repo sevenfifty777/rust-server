@@ -50,8 +50,7 @@ GRPC = {
   errorUnimplemented = function(message) return { errorKind = "UNIMPLEMENTED", message = message } end,
   logInfo = function() end,
   logError = function(message) table.insert(errors, message) end,
-}
-grpc = {
+  -- Native helpers are exposed on GRPC by grpc.lua (not as a global `grpc`).
   newSessionId = function() return "epoch-scheduler-test" end,
   monotonicTimeNs = function() return 1000000 end,
 }
