@@ -43,7 +43,7 @@ Ordre des sources : résultat fraîchement exécuté > code courant du dépôt c
 - Crate `lso` 0.2.0, Rust 2021.
 - `tonic = 0.13`; résolution actuelle `tonic 0.13.1`.
 - Stubs : **dépendance de chemin local** dans `Cargo.toml` (`path = "../DCS-gRPC/stubs"`) pointant directement vers ce dépôt (checkout frère), pas un tag/commit Git figé. `v0.9.0` / `5bd6d6e4...` est une référence historique périmée maintenant que `RecoveryService` existe ici. Le remplacement par un pin Git immuable et revu reste à faire avant tout packaging release (rappelé dans `CHANGES.md` de LSO et le `CHANGELOG.md`/section « Changed » de ce dépôt).
-- Serveur attendu pour le dev local : ce dépôt en `v0.10.0`, servi depuis `E:\DCS World Server\DCS World Server\bin\DCS_server.exe`. Compatibilité fonctionnelle avec un serveur distinct/plus ancien non validée.
+- Serveur attendu pour le dev local : ce dépôt en `v0.9.2`, servi depuis `E:\DCS World Server\DCS World Server\bin\DCS_server.exe`. Compatibilité fonctionnelle avec un serveur distinct/plus ancien non validée.
 
 Dernière validation locale consignée dans `.agents/agents.md` de LSO (4 septembre 2026) :
 

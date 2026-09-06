@@ -7,7 +7,7 @@ mission on a DCS server.
 
 ### Download
 
-Download the latest version of the server from the [Releases](https://github.com/DCS-gRPC/rust-server/releases) and
+Download the latest version of the server from the [Releases](https://github.com/sevenfifty777/rust-server/releases) and
 extract the zip file into your DCS Server directory.
 
 This is typically found in `C:\Users\USERNAME\Saved Games\DCS.openbeta_server`.
