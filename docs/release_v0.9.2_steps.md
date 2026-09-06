@@ -53,6 +53,9 @@ git commit -m "chore: release v0.9.2"
 ```powershell
 git push origin justice-version-analysis
 
+# The clone has two remotes (origin = fork, upstream = DCS-gRPC). Tell gh which one to target once:
+gh repo set-default sevenfifty777/rust-server
+
 $prBody = @'
 ## Release v0.9.2
 
