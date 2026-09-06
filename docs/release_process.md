@@ -86,7 +86,8 @@ DCS-gRPC-X.Y.Z/
 │       ├── api.html
 │       ├── CHANGELOG.md
 │       ├── README.md
-│       └── STATUS.md
+│       ├── STATUS.md
+│       └── recovery_telemetry.md
 ├── Missions/
 │   └── DCS-gRPC-Example.miz
 ├── Mods/

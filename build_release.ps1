@@ -156,7 +156,7 @@ $LuaBridgeSourceDir = Join-Path $RepoRoot "lua\DCS-gRPC"
 $ProtosSourceDir = Join-Path $RepoRoot "protos\dcs"
 $SampleMission = Join-Path $RepoRoot "build\release-assets\Missions\DCS-gRPC-Example.miz"
 $OptionalToolsInfo = Join-Path $RepoRoot "build\release-assets\Tools\DCS-gRPC\OPTIONAL-TOOLS.txt"
-$DocsToCopy = @("CHANGELOG.md", "README.md", "STATUS.md")
+$DocsToCopy = @("CHANGELOG.md", "README.md", "STATUS.md", "docs\recovery_telemetry.md")
 
 Assert-RequiredPath -Path $ServerDllPath -Description "server DLL" -PathType Leaf
 Assert-RequiredPath -Path $ReplExecutablePath -Description "REPL executable" -PathType Leaf
