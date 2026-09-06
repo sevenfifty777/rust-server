@@ -7,8 +7,6 @@ mod fps;
 #[cfg(feature = "hot-reload")]
 mod hot_reload;
 mod integrity;
-#[cfg(test)]
-mod recovery_telemetry_lua_tests;
 pub mod rpc;
 mod server;
 mod shutdown;

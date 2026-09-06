@@ -286,7 +286,7 @@ function M.new(options)
   }
 end
 
-local function lifecycleResponse(engine, params, now)
+local function lifecycleResponse(engine, params)
   local tombstone = engine.tombstones[params.recoveryHandle]
   if tombstone then
     if tombstone.owner ~= params.owner then return nil, "PERMISSION_DENIED" end
@@ -501,7 +501,7 @@ function M.read(engine, params)
   end
   local recovery = engine.recoveries[params.recoveryHandle]
   if not recovery then
-    local lifecycle, errorType = lifecycleResponse(engine, params, now)
+    local lifecycle, errorType = lifecycleResponse(engine, params)
     if errorType then return nil, errorType, "recovery handle is owned by another client" end
     return {
       sourceEpoch = engine.sourceEpoch,
@@ -632,7 +632,7 @@ function M.stop(engine, params)
   end
   local recovery = engine.recoveries[params.recoveryHandle]
   if not recovery then
-    local lifecycle, errorType = lifecycleResponse(engine, params, now)
+    local lifecycle, errorType = lifecycleResponse(engine, params)
     if errorType then return nil, errorType, "recovery handle is owned by another client" end
     return {
       sourceEpoch = engine.sourceEpoch,
