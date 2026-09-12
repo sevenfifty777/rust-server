@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Restored the `GRPC.errorResourceExhausted` Lua helper that was lost in the 0.9.2 merge. `methods/recovery.lua` calls it when `StartRecoveryTelemetry` hits `recoveryTelemetry.maxActiveRecoveries` or `maxActiveCarriers`; without it the limit surfaced as `attempt to call field 'errorResourceExhausted' (a nil value)` instead of a `RESOURCE_EXHAUSTED` status.
+
 ## [0.9.2] - 2026-09-06
 
 ### Added

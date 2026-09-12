@@ -153,6 +153,16 @@ GRPC.errorPermissionDenied = function(msg)
   }
 end
 
+--- The operation was rejected because a configured resource limit was reached.
+GRPC.errorResourceExhausted = function(msg)
+  return {
+    error = {
+      type = "RESOURCE_EXHAUSTED",
+      message = msg,
+    }
+  }
+end
+
 --- Internal errors: some invariant expected by the underlying system has been broken.
 GRPC.errorInternal = function(msg)
   return {
