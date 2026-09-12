@@ -13,13 +13,25 @@ fn main() {
 
 /// Write the current version into `lua/DCS-gRPC/version.lua` to be picked up by the Lua side of the
 /// server.
+///
+/// The file is generated and ignored by git. The version is read from the environment at run time
+/// (not baked in with `env!` at compile time) so that a build script binary compiled for one
+/// version can never write a stale version after a branch switch. The file is only rewritten when
+/// its content changes, so unrelated builds leave its timestamp alone.
 fn write_version_to_lua() {
     println!("cargo:rerun-if-env-changed=CARGO_PKG_VERSION");
 
+    let version = std::env::var("CARGO_PKG_VERSION").expect("CARGO_PKG_VERSION is set by cargo");
+    let content =
+        format!("-- this file is auto-generated on `cargo build`\nGRPC.version = \"{version}\"\n");
+
     let path = PathBuf::from("./lua/DCS-gRPC/version.lua");
+    if std::fs::read_to_string(&path).ok().as_deref() == Some(content.as_str()) {
+        return;
+    }
+
     let mut out = File::create(path).unwrap();
-    writeln!(out, r#"-- this file is auto-generated on `cargo build`"#).unwrap();
-    writeln!(out, r#"GRPC.version = "{}""#, env!("CARGO_PKG_VERSION")).unwrap();
+    out.write_all(content.as_bytes()).unwrap();
 }
 
 /// Embed the hash of each Lua file into the binary to allow a runtime integrity check.
