@@ -148,6 +148,19 @@ try {
     Pop-Location
 }
 
+# The build script generates lua\DCS-gRPC\version.lua (git-ignored); make sure the packaged copy
+# carries the version we are releasing.
+$LuaVersionPath = Join-Path $RepoRoot "lua\DCS-gRPC\version.lua"
+Assert-RequiredPath -Path $LuaVersionPath -Description "generated Lua bridge version file" -PathType Leaf
+$LuaVersionLine = Select-String -LiteralPath $LuaVersionPath -Pattern '^GRPC\.version\s*=\s*"([^"]+)"' | Select-Object -First 1
+if (-not $LuaVersionLine) {
+    throw "Could not find GRPC.version in $LuaVersionPath."
+}
+$LuaVersion = $LuaVersionLine.Matches.Groups[1].Value
+if ($LuaVersion -ne $Version) {
+    throw "Generated Lua bridge version '$LuaVersion' does not match Cargo.toml version '$Version'. Re-run cargo build."
+}
+
 $ServerDllPath = Join-Path $RepoRoot "target\release\dcs_grpc.dll"
 $ServerPdbPath = Join-Path $RepoRoot "target\release\dcs_grpc.pdb"
 $ReplExecutablePath = Join-Path $RepoRoot "target\release\dcs-grpc-repl.exe"
