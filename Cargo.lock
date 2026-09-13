@@ -406,7 +406,7 @@ dependencies = [
 
 [[package]]
 name = "dcs-grpc"
-version = "0.9.3"
+version = "0.10.0"
 dependencies = [
  "backoff",
  "dcs-grpc-srs",
@@ -435,7 +435,7 @@ dependencies = [
 
 [[package]]
 name = "dcs-grpc-repl"
-version = "0.9.3"
+version = "0.10.0"
 dependencies = [
  "clap",
  "dcs-grpc-stubs",
@@ -447,7 +447,7 @@ dependencies = [
 
 [[package]]
 name = "dcs-grpc-srs"
-version = "0.9.3"
+version = "0.10.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -467,7 +467,7 @@ dependencies = [
 
 [[package]]
 name = "dcs-grpc-stubs"
-version = "0.9.3"
+version = "0.10.0"
 dependencies = [
  "prost",
  "prost-types",
@@ -480,7 +480,7 @@ dependencies = [
 
 [[package]]
 name = "dcs-grpc-tts"
-version = "0.9.3"
+version = "0.10.0"
 dependencies = [
  "audiopus",
  "base64 0.22.1",
